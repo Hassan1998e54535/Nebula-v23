@@ -1667,6 +1667,12 @@ fn desktop_module_for_relative_path(relative: &str) -> Result<Option<&str>> {
     let Some(rest) = relative.strip_prefix(&format!("{DESKTOP_MODULE_ASSETS_DIR_NAME}/")) else {
         return Ok(None);
     };
+    // Profile media is a normal static asset tree, not an on-demand desktop
+    // module. Keep its nested paths in the bundled renderer instead of
+    // interpreting "profile-media" as a module name.
+    if rest.starts_with("profile-media/") {
+        return Ok(None);
+    }
     let Some((segment, name)) = rest.split_once('/') else {
         return Ok(None);
     };
@@ -6739,6 +6745,10 @@ mod tests {
         write_file(&root.join("version.json"), "{\"version\":\"2026.1009.1\"}");
         write_file(&root.join("assets/main.js"), "main");
         write_file(&root.join("assets/main.js.map"), "{}");
+        write_file(
+            &root.join("assets/profile-media/avatar-decorations/frame.png"),
+            "profile media",
+        );
         write_file(&root.join("assets/nexus_fonts_jp/a.woff2"), "font");
         write_file(&root.join("assets/nexus_grammar_rust/b.wasm"), "wasm");
 
@@ -6754,6 +6764,9 @@ mod tests {
         );
         assert!(root.join("index.html").is_file());
         assert!(root.join("assets/main.js").is_file());
+        assert!(root
+            .join("assets/profile-media/avatar-decorations/frame.png")
+            .is_file());
         assert!(!root.join("assets/main.js.map").exists());
         assert!(!root.join("assets/nexus_fonts_jp").exists());
         assert_eq!(read_bundled_renderer_version(&root).unwrap(), "2026.1009.1");
@@ -6820,6 +6833,10 @@ mod tests {
                 (
                     "assets/nexus_grammars/en.json".to_string(),
                     "nexus_grammars".to_string()
+                ),
+                (
+                    "assets/profile-media/avatar-decorations/frame.png".to_string(),
+                    "nexus_renderer".to_string()
                 ),
                 ("index.html".to_string(), "nexus_renderer".to_string()),
             ]
