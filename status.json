@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "phase": "metadata-started",
-  "conclusion": "in_progress",
+  "phase": "metadata-completed",
+  "conclusion": "success",
   "runner": "Linux",
   "job": "meta",
   "runId": "42425204917",
