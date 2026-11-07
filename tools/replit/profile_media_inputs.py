@@ -11,6 +11,8 @@ import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import tempfile
+import time
+from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import urlopen
 
@@ -65,7 +67,7 @@ def verify_cache(cache, manifest):
     return len(manifest["files"])
 
 
-def restore(cache, manifest, opener=urlopen):
+def restore(cache, manifest, opener=urlopen, sleeper=time.sleep):
     validate_manifest(manifest)
     cache.mkdir(parents=True, exist_ok=True)
 
@@ -76,8 +78,19 @@ def restore(cache, manifest, opener=urlopen):
         if matches(destination, entry):
             return
         url = manifest["assetOrigin"].rstrip("/") + "/assets/profile-media/" + quote(entry["path"], safe="/")
-        with opener(url, timeout=30) as response:
-            data = response.read(entry["bytes"] + 1)
+        for attempt in range(7):
+            try:
+                with opener(url, timeout=30) as response:
+                    data = response.read(entry["bytes"] + 1)
+                break
+            except HTTPError as error:
+                if error.code not in (408, 429, 500, 502, 503, 504) or attempt == 6:
+                    raise
+                sleeper(min(2 ** attempt, 30))
+            except (URLError, TimeoutError):
+                if attempt == 6:
+                    raise
+                sleeper(min(2 ** attempt, 30))
         if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
             raise ValueError(f"Profile asset download did not match the original: {entry['path']}")
         destination.parent.mkdir(parents=True, exist_ok=True)

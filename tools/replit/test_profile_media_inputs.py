@@ -3,6 +3,7 @@ import io
 import tempfile
 from pathlib import Path
 import unittest
+from urllib.error import HTTPError
 
 from profile_media_inputs import restore, validate_manifest, verify_cache
 
@@ -55,6 +56,33 @@ class ProfileMediaInputTests(unittest.TestCase):
             (root / "effects").symlink_to(outside, target_is_directory=True)
             with self.assertRaises(ValueError):
                 restore(root, self.manifest(), opener=lambda *a, **kw: io.BytesIO(b"asset"))
+
+    def test_temporary_gateway_errors_are_retried_then_hash_verified(self):
+        with tempfile.TemporaryDirectory() as folder:
+            attempts, delays = [], []
+
+            def opener(url, timeout):
+                attempts.append((url, timeout))
+                if len(attempts) < 3:
+                    raise HTTPError(url, 502, "Bad Gateway", None, None)
+                return io.BytesIO(b"asset")
+
+            self.assertEqual(restore(Path(folder), self.manifest(), opener, delays.append), 1)
+            self.assertEqual(len(attempts), 3)
+            self.assertEqual(delays, [1, 2])
+
+    def test_permanent_not_found_is_not_retried_or_silenced(self):
+        with tempfile.TemporaryDirectory() as folder:
+            attempts = []
+
+            def opener(url, timeout):
+                attempts.append(url)
+                raise HTTPError(url, 404, "Not Found", None, None)
+
+            with self.assertRaises(HTTPError):
+                restore(Path(folder), self.manifest(), opener, lambda _: self.fail("404 must not retry"))
+            self.assertEqual(len(attempts), 1)
+            self.assertFalse((Path(folder) / "effects/original.webp").exists())
 
 
 if __name__ == "__main__":
