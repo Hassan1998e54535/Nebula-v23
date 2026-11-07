@@ -21,6 +21,9 @@ CACHE = ROOT / "generated-artifacts" / "profile-media"
 MANIFEST = ROOT / ".nexus-build" / "profile-media.json"
 MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 512 * 1024 * 1024
+DOWNLOAD_TIMEOUT_SECONDS = 300
+DOWNLOAD_CHUNK_BYTES = 1024 * 1024
+DOWNLOAD_WORKERS = 2
 EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".webm", ".mp4", ".riv", ".glb", ".woff2", ".md"}
 
 
@@ -77,32 +80,49 @@ def restore(cache, manifest, opener=urlopen, sleeper=time.sleep):
             raise ValueError("Profile-media destination escapes the generated cache.")
         if matches(destination, entry):
             return
+        destination.parent.mkdir(parents=True, exist_ok=True)
         url = manifest["assetOrigin"].rstrip("/") + "/assets/profile-media/" + quote(entry["path"], safe="/")
         for attempt in range(7):
+            temporary = None
             try:
-                with opener(url, timeout=30) as response:
-                    data = response.read(entry["bytes"] + 1)
-                break
+                with opener(url, timeout=DOWNLOAD_TIMEOUT_SECONDS) as response:
+                    with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as output:
+                        temporary = Path(output.name)
+                        digest = hashlib.sha256()
+                        received = 0
+                        while received <= entry["bytes"]:
+                            chunk = response.read(min(
+                                DOWNLOAD_CHUNK_BYTES,
+                                entry["bytes"] + 1 - received,
+                            ))
+                            if not chunk:
+                                break
+                            output.write(chunk)
+                            digest.update(chunk)
+                            received += len(chunk)
+                if received != entry["bytes"] or digest.hexdigest() != entry["sha256"]:
+                    raise ValueError(f"Profile asset download did not match the original: {entry['path']}")
+                temporary.replace(destination)
+                return
             except HTTPError as error:
                 if error.code not in (408, 429, 500, 502, 503, 504) or attempt == 6:
-                    raise
+                    raise RuntimeError(
+                        f"Profile-media download failed for {entry['path']} "
+                        f"(HTTP {error.code}; attempt {attempt + 1}/7)."
+                    ) from error
                 sleeper(min(2 ** attempt, 30))
-            except (URLError, TimeoutError):
+            except (URLError, TimeoutError) as error:
                 if attempt == 6:
-                    raise
+                    raise RuntimeError(
+                        f"Profile-media download stalled for {entry['path']} "
+                        f"after {attempt + 1} attempts ({type(error).__name__})."
+                    ) from error
                 sleeper(min(2 ** attempt, 30))
-        if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
-            raise ValueError(f"Profile asset download did not match the original: {entry['path']}")
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as output:
-            temporary = Path(output.name)
-            output.write(data)
-        try:
-            temporary.replace(destination)
-        finally:
-            temporary.unlink(missing_ok=True)
+            finally:
+                if temporary is not None:
+                    temporary.unlink(missing_ok=True)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=DOWNLOAD_WORKERS) as pool:
         list(pool.map(download, manifest["files"]))
     return verify_cache(cache, manifest)
 

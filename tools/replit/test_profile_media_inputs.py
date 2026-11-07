@@ -69,7 +69,37 @@ class ProfileMediaInputTests(unittest.TestCase):
 
             self.assertEqual(restore(Path(folder), self.manifest(), opener, delays.append), 1)
             self.assertEqual(len(attempts), 3)
+            self.assertTrue(all(timeout == 300 for _, timeout in attempts))
             self.assertEqual(delays, [1, 2])
+
+    def test_read_timeouts_retry_and_report_asset_after_exhaustion(self):
+        with tempfile.TemporaryDirectory() as folder:
+            attempts, delays = [], []
+
+            def opener(url, timeout):
+                attempts.append((url, timeout))
+                if len(attempts) < 3:
+                    raise TimeoutError("read operation timed out")
+                return io.BytesIO(b"asset")
+
+            self.assertEqual(restore(Path(folder), self.manifest(), opener, delays.append), 1)
+            self.assertEqual(len(attempts), 3)
+            self.assertTrue(all(timeout == 300 for _, timeout in attempts))
+            self.assertEqual(delays, [1, 2])
+
+    def test_exhausted_read_timeout_names_the_locked_asset(self):
+        with tempfile.TemporaryDirectory() as folder:
+            attempts, delays = [], []
+
+            def opener(url, timeout):
+                attempts.append(timeout)
+                raise TimeoutError("read operation timed out")
+
+            with self.assertRaisesRegex(RuntimeError, "effects/original.webp.*7 attempts"):
+                restore(Path(folder), self.manifest(), opener, delays.append)
+            self.assertEqual(len(attempts), 7)
+            self.assertTrue(all(timeout == 300 for timeout in attempts))
+            self.assertFalse((Path(folder) / "effects/original.webp").exists())
 
     def test_permanent_not_found_is_not_retried_or_silenced(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -79,7 +109,7 @@ class ProfileMediaInputTests(unittest.TestCase):
                 attempts.append(url)
                 raise HTTPError(url, 404, "Not Found", None, None)
 
-            with self.assertRaises(HTTPError):
+            with self.assertRaisesRegex(RuntimeError, r"effects/original\.webp.*HTTP 404"):
                 restore(Path(folder), self.manifest(), opener, lambda _: self.fail("404 must not retry"))
             self.assertEqual(len(attempts), 1)
             self.assertFalse((Path(folder) / "effects/original.webp").exists())
