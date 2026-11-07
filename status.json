@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "phase": "renderer-started",
+  "conclusion": "in_progress",
+  "runner": "Linux",
+  "job": "shared_assets",
+  "runId": "42416121032",
+  "attempt": "1",
+  "runUrl": "https://github.com/Hassan1998e54535/Nebula-v23/actions/runs/42416121032",
+  "installerProduced": false
+}
