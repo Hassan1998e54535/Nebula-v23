@@ -1,0 +1,58 @@
+name: NEXUS Windows build environment check
+
+on:
+  push:
+    branches: [nexus-windows-preflight]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nexus-windows-preflight
+  cancel-in-progress: true
+
+jobs:
+  environment:
+    name: Check ${{ matrix.os }} standard runner
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 6
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - name: Check out the minimal preflight source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Record that the runner actually started
+        shell: bash
+        run: node tools/ci/report-progress.mjs environment-started in_progress
+
+      - name: Check Windows build prerequisites
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (!(Test-Path $vswhere)) { throw 'The standard Windows runner has no Visual Studio installer discovery tool.' }
+          $compiler = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (!$compiler) { throw 'The Windows x64 native compiler is unavailable.' }
+          if (!(Get-Command python -ErrorAction SilentlyContinue)) { throw 'Python is unavailable.' }
+          if (!(Get-Command node -ErrorAction SilentlyContinue)) { throw 'Node.js is unavailable.' }
+          Write-Host 'Windows x64 compiler, Python, and Node.js are available.'
+          node --version
+          python --version
+
+      - name: Check the external Linux container build environment
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker version --format '{{.Server.Version}}'
+          node --version
+          python3 --version
+
+      - name: Record the actual preflight result
+        if: always()
+        shell: bash
+        run: node tools/ci/report-progress.mjs environment-completed '${{ job.status }}'
