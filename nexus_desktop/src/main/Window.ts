@@ -10,6 +10,7 @@ import {
 	MIN_WINDOW_WIDTH,
 } from '@electron/common/Constants';
 import {getDesktopWindowBehaviorSettings, getPrebootTheme} from '@electron/common/DesktopConfig';
+import {DESKTOP_APP_NAME} from '@electron/common/DesktopIdentity';
 import {createChildLogger} from '@electron/common/Logger';
 import type {DesktopWindowBehaviorSettings} from '@electron/common/Types';
 import {createAppLoadRetry} from '@electron/main/AppLoadRetry';
@@ -716,6 +717,7 @@ export function createWindow(options: CreateWindowOptions = {}): BrowserWindow {
 	initialUseNativeTitleBar = useNativeTitleBar;
 	initialAllowTransparency = allowTransparency;
 	const windowOptions: Electron.BrowserWindowConstructorOptions = {
+		title: DESKTOP_APP_NAME,
 		width: windowWidth,
 		height: windowHeight,
 		minWidth: MIN_WINDOW_WIDTH,
@@ -741,8 +743,11 @@ export function createWindow(options: CreateWindowOptions = {}): BrowserWindow {
 	} else {
 		windowOptions.center = true;
 	}
-	mainWindow = new BrowserWindow(windowOptions);
-	signalMainWindowCreated(mainWindow);
+	const createdMainWindow = new BrowserWindow(windowOptions);
+	mainWindow = createdMainWindow;
+	createdMainWindow.webContents.on('page-title-updated', (event) => event.preventDefault());
+	createdMainWindow.setTitle(DESKTOP_APP_NAME);
+	signalMainWindowCreated(createdMainWindow);
 	mainWindowRendererGone = false;
 	installHtmlFullscreenChromeGuard(mainWindow);
 	lastGoodWindowBounds = mainWindow.getNormalBounds();

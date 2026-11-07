@@ -4,7 +4,7 @@ import {DEFAULT_APP_SHELL_BRANDING, resolveAppShellBranding} from '@app/features
 import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
 import {type BrandSvgProps, getDataFlx, getImageSizingProps} from '@app/features/ui/components/icons/BrandImageUtils';
 import NEXUSWordmarkMonochromeAsset from '@app/media/images/nexus-brand-icon-monochrome.svg?react';
-import NEXUSWordmarkAsset from '@app/media/images/nexus-wordmark.svg?react';
+import NEXUSLogoAsset from '@app/media/images/nexus-brand-icon.svg?react';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
@@ -54,6 +54,30 @@ export const NEXUSWordmark = observer(({variant = 'default', ...props}: NEXUSWor
 			</span>
 		);
 	}
-	const Asset = variant === 'monochrome' ? NEXUSWordmarkMonochromeAsset : NEXUSWordmarkAsset;
-	return <Asset role="img" aria-label={ariaLabel} data-flx="ui.icons.nexus-wordmark.img" {...props} />;
+	const Asset = variant === 'monochrome' ? NEXUSWordmarkMonochromeAsset : NEXUSLogoAsset;
+	const style: React.CSSProperties = {
+		...(props.style as React.CSSProperties | undefined),
+		alignItems: 'center',
+		display: 'inline-flex',
+		fontWeight: 800,
+		gap: '0.35em',
+		lineHeight: 1,
+		whiteSpace: 'nowrap',
+	};
+	return (
+		<span
+			className={props.className}
+			style={style}
+			role="img"
+			aria-label={ariaLabel}
+			data-flx={getDataFlx(props, 'ui.icons.nexus-wordmark.nexus-brand')}
+		>
+			<Asset
+				aria-hidden="true"
+				focusable="false"
+				style={{width: '1.15em', height: '1.15em', flexShrink: 0}}
+			/>
+			<span aria-hidden="true">{productName}</span>
+		</span>
+	);
 });

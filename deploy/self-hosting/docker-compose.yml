@@ -456,7 +456,7 @@ services:
 
   api:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -491,7 +491,7 @@ services:
 
   worker:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -521,7 +521,7 @@ services:
 
   gateway:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gateway:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-gateway:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -561,7 +561,7 @@ services:
 
   media-proxy:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-media-proxy:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-media-proxy:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -604,7 +604,7 @@ services:
 
   push:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-push:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-push:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -638,7 +638,7 @@ services:
 
   static-proxy:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-static:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-static:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -653,7 +653,7 @@ services:
 
   app-proxy:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-app-proxy-self-hosted:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-app-proxy-self-hosted:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -696,7 +696,7 @@ services:
 
   snowflakes:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -711,7 +711,7 @@ services:
 
   snowflakes-shard:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -727,7 +727,7 @@ services:
 
   users:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -742,7 +742,7 @@ services:
 
   users-shard:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -760,7 +760,7 @@ services:
 
   gifs:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -775,7 +775,7 @@ services:
 
   gifs-shard:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -792,7 +792,7 @@ services:
 
   messages:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -807,7 +807,7 @@ services:
 
   messages-shard:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -825,7 +825,7 @@ services:
 
   unfurl:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -840,7 +840,7 @@ services:
 
   unfurl-shard:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:
@@ -857,7 +857,7 @@ services:
 
   admin:
     <<: *nexus-service
-    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-admin:${NEXUS_IMAGE_TAG:-v1}
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hassan1998e54535}}/nexus-admin:${NEXUS_IMAGE_TAG:-v1}
     deploy:
       resources:
         limits:

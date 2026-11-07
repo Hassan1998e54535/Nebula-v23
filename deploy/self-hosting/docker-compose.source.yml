@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Nebula
+# Local-source build overlay. Images are built from the checked-out NEXUS source tree.
+x-source-build: &source-build
+  context: ../..
+  args:
+    BUILD_VERSION: ${NEXUS_IMAGE_TAG:-source}
+    SOURCE_SHA: ${NEXUS_SOURCE_SHA:-local}
+    SOURCE_DATE: ${NEXUS_SOURCE_DATE:-local}
+
+services:
+  api:
+    build:
+      <<: *source-build
+      dockerfile: nexus_api/Dockerfile
+
+  worker:
+    build:
+      <<: *source-build
+      dockerfile: nexus_api/Dockerfile
+
+  gateway:
+    build:
+      <<: *source-build
+      dockerfile: nexus_gateway/Dockerfile
+
+  media-proxy:
+    build:
+      <<: *source-build
+      dockerfile: nexus_media_proxy/Dockerfile
+
+  push:
+    build:
+      <<: *source-build
+      dockerfile: nexus_push/Dockerfile
+
+  static-proxy:
+    build:
+      <<: *source-build
+      dockerfile: nexus_static/Dockerfile
+
+  app-proxy:
+    build:
+      <<: *source-build
+      dockerfile: nexus_app_proxy/Dockerfile
+      args:
+        BUILD_VERSION: ${NEXUS_IMAGE_TAG:-source}
+        SOURCE_SHA: ${NEXUS_SOURCE_SHA:-local}
+        SOURCE_DATE: ${NEXUS_SOURCE_DATE:-local}
+        BUNDLE_LOCAL_ASSETS: "true"
+    volumes: !reset []
+
+  snowflakes:
+    build:
+      <<: *source-build
+      dockerfile: nexus_snowflakes/Dockerfile
+
+  snowflakes-shard:
+    build:
+      <<: *source-build
+      dockerfile: nexus_snowflakes/Dockerfile
+
+  users:
+    build:
+      <<: *source-build
+      dockerfile: nexus_users/Dockerfile
+
+  users-shard:
+    build:
+      <<: *source-build
+      dockerfile: nexus_users/Dockerfile
+
+  gifs:
+    build:
+      <<: *source-build
+      dockerfile: nexus_gifs/Dockerfile
+
+  gifs-shard:
+    build:
+      <<: *source-build
+      dockerfile: nexus_gifs/Dockerfile
+
+  messages:
+    build:
+      <<: *source-build
+      dockerfile: nexus_messages/Dockerfile
+
+  messages-shard:
+    build:
+      <<: *source-build
+      dockerfile: nexus_messages/Dockerfile
+
+  unfurl:
+    build:
+      <<: *source-build
+      dockerfile: nexus_unfurl/Dockerfile
+
+  unfurl-shard:
+    build:
+      <<: *source-build
+      dockerfile: nexus_unfurl/Dockerfile
+
+  admin:
+    build:
+      <<: *source-build
+      dockerfile: nexus_admin/Dockerfile

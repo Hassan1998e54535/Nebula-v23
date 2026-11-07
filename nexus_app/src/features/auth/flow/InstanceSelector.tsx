@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Nebula
 
-import Config from '@app/features/app/config/Config';
 import {EXAMPLE_DOMAIN} from '@app/features/app/config/I18nDisplayConstants';
 import type {RuntimeConfigSnapshot} from '@app/features/app/state/InstanceSnapshotStore';
 import RuntimeConfig, {describeAPIEndpoint} from '@app/features/app/state/RuntimeConfig';
@@ -43,7 +42,6 @@ import {SteppedCarousel} from '@app/features/ui/stepped_carousel/SteppedCarousel
 import {flxElementClassName} from '@app/lib/react';
 import type {DesktopKnownInstanceRecord} from '@nexus/desktop_ipc/src/KnownInstanceContract';
 import {NETWORK_ENDPOINT_INPUT_MAX_BYTES} from '@nexus/instance_bootstrap/src/NetworkOrigin';
-import {officialMarketingOrigin} from '@nexus/instance_bootstrap/src/OfficialInstance';
 import type {I18n} from '@lingui/core';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
@@ -320,11 +318,6 @@ export const InstanceSelector = observer(function InstanceSelector({
 		},
 		[discoveryRequestOwner, onChange, updateDiscoveryStatus],
 	);
-	const handleSelectOfficial = useCallback(() => {
-		const origin = officialMarketingOrigin(Config.PUBLIC_RELEASE_CHANNEL);
-		onChange(origin);
-		startDiscovery(origin, false);
-	}, [onChange, startDiscovery]);
 	const handleSelectKnown = useCallback(
 		(instance: InstanceInfo) => {
 			onChange(instance.domain);
@@ -459,7 +452,6 @@ export const InstanceSelector = observer(function InstanceSelector({
 					pinnedInstance={resolveLocalDevelopmentInstance(knownInstances)}
 					onAddInstance={handleAddInstance}
 					onRemoveInstance={handleRemoveKnownInstance}
-					onSelectOfficial={handleSelectOfficial}
 					onSelectInstance={handleSelectKnown}
 					data-flx="auth.flow.instance-selector.instance-picker-rows"
 				/>
