@@ -1,0 +1,92 @@
+/* SPDX-License-Identifier: Nebula */
+
+:root {
+	--font-fallback-sans:
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+		'NEXUS Fallback', 'NEXUS Symbols', 'NEXUS Math',
+		'Noto Sans', 'Nirmala UI',
+		'Noto Sans Bengali', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Kannada', 'Noto Sans Malayalam',
+		'Noto Sans Gujarati', 'Noto Sans Gurmukhi', 'Noto Sans Oriya', 'Noto Sans Sinhala',
+		'Noto Sans Khmer', 'Noto Sans Lao', 'Noto Sans Myanmar', 'Noto Sans Tibetan',
+		'Noto Sans Armenian', 'Noto Sans Georgian', 'Noto Sans Ethiopic', 'Noto Sans Cherokee',
+		'Noto Sans Canadian Aboriginal', 'Noto Sans Mongolian', 'Noto Sans Vai', 'Noto Sans NKo',
+		'Noto Sans Adlam', 'Noto Sans Yi', 'Noto Sans Osage', 'Noto Sans Thaana',
+		'Noto Sans CJK SC', 'Noto Sans CJK TC', 'Noto Sans CJK JP', 'Noto Sans CJK KR',
+		'Segoe UI Symbol', 'Segoe UI Historic', 'Apple Symbols',
+		'Noto Sans Symbols', 'Noto Sans Symbols 2', 'Noto Sans Math', 'Cambria Math';
+	--font-fallback-mono:
+		'Noto Sans Mono', 'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', var(--font-fallback-sans);
+
+	--font-sans-primary: 'NEXUS Sans';
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari', 'NEXUS Sans Thai Looped',
+		'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Segoe UI', 'Roboto', var(--font-fallback-sans), sans-serif;
+	--font-mono: 'NEXUS Mono', 'Menlo', 'Monaco', 'Courier New', var(--font-fallback-mono), monospace;
+}
+
+:root.platform-windows:not(.windows-nexus-sans) {
+	--font-sans-primary: 'Segoe UI Variable Text', 'Segoe UI';
+}
+
+:root:lang(ja) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans JP', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans Thai Looped', 'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo',
+		var(--font-fallback-sans), sans-serif;
+}
+:root:lang(ko) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans KR', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans Thai Looped', 'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Malgun Gothic', 'Apple SD Gothic Neo', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(zh-CN),
+:root:lang(zh-Hans) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans SC', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans Thai Looped', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(zh-Hant-TW),
+:root:lang(zh-TW) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans TC', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans Thai Looped', 'NEXUS Sans SC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'PingFang TC', 'Microsoft JhengHei', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(zh-HK),
+:root:lang(zh-Hant-HK) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans TC', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans Thai Looped', 'NEXUS Sans SC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'PingFang HK', 'Microsoft JhengHei', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(ar) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari', 'NEXUS Sans Thai Looped',
+		'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Segoe UI', 'Geeza Pro', 'Arabic Typesetting', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(he) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans Hebrew', 'NEXUS Sans Arabic', 'NEXUS Sans Devanagari', 'NEXUS Sans Thai Looped',
+		'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Segoe UI', 'Arial Hebrew', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(hi),
+:root:lang(mr),
+:root:lang(ne),
+:root:lang(sa) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans Devanagari', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Thai Looped',
+		'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Nirmala UI', 'Noto Sans Devanagari', var(--font-fallback-sans), sans-serif;
+}
+:root:lang(th) {
+	--font-sans:
+		var(--font-sans-primary), 'NEXUS Sans Thai Looped', 'NEXUS Sans Arabic', 'NEXUS Sans Hebrew', 'NEXUS Sans Devanagari',
+		'NEXUS Sans SC', 'NEXUS Sans TC', 'NEXUS Sans JP', 'NEXUS Sans KR', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Leelawadee UI', 'Thonburi', var(--font-fallback-sans), sans-serif;
+}

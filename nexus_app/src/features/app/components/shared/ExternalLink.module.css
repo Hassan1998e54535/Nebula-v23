@@ -1,0 +1,12 @@
+/* SPDX-License-Identifier: Nebula */
+
+.externalLink {
+	border-radius: 0.125rem;
+	transition: text-decoration 0.2s ease-in-out;
+	cursor: pointer;
+}
+
+:global(:where(html.window-focused, html.unfocused-fully-interactive):not(.window-focus-activation-guard))
+	.externalLink:hover {
+	text-decoration: underline;
+}

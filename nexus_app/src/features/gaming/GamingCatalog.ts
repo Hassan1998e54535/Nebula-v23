@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: Nebula
+
+import type {GamingEntry} from '@app/features/gaming/GamingTypes';
+
+export const GAMING_INFINITY_CATALOG: ReadonlyArray<GamingEntry> = [
+	{id: 'ea sports fc 27', name: 'EA SPORTS FC 27', platform: 'computer'},
+	{id: 'ea sports fc 26', name: 'EA SPORTS FC 26', platform: 'computer'},
+	{id: 'arc raiders', name: 'ARC Raiders', platform: 'computer'},
+	{id: 'grand theft auto v enhanced', name: 'Grand Theft Auto V Enhanced', platform: 'computer'},
+	{id: 'roblox', name: 'Roblox', platform: 'computer'},
+	{id: 'valorant', name: 'VALORANT', platform: 'computer'},
+	{id: 'league of legends', name: 'League of Legends', platform: 'computer'},
+	{id: 'minecraft', name: 'Minecraft', platform: 'computer'},
+	{id: 'counter-strike 2', name: 'Counter-Strike 2', platform: 'computer'},
+	{id: 'rocket league', name: 'Rocket League', platform: 'computer'},
+	{id: 'fortnite', name: 'Fortnite', platform: 'computer'},
+	{id: 'genshin impact', name: 'Genshin Impact', platform: 'computer'},
+	{id: 'wuthering waves', name: 'Wuthering Waves', platform: 'computer'},
+	{id: 'risk: global domination', name: 'RISK: Global Domination', platform: 'computer'},
+	{id: 'beamng.drive', name: 'BeamNG.drive', platform: 'computer'},
+	{id: 'chivalry 2', name: 'Chivalry 2', platform: 'computer'},
+	{id: 'euro truck simulator 2', name: 'Euro Truck Simulator 2', platform: 'computer'},
+	{id: 'overwatch 2', name: 'Overwatch 2', platform: 'computer'},
+	{id: 'apex legends', name: 'Apex Legends', platform: 'computer'},
+	{id: 'call of duty: black ops 6', name: 'Call of Duty: Black Ops 6', platform: 'computer'},
+	{id: 'destiny 2', name: 'Destiny 2', platform: 'computer'},
+	{id: 'the finals', name: 'THE FINALS', platform: 'computer'},
+	{id: 'helldivers 2', name: 'HELLDIVERS 2', platform: 'computer'},
+	{id: 'pubg mobile', name: 'PUBG Mobile', platform: 'mobile'},
+	{id: 'mobile legends: bang bang', name: 'Mobile Legends: Bang Bang', platform: 'mobile'},
+	{id: 'honkai: star rail', name: 'Honkai: Star Rail', platform: 'mobile'},
+	{id: 'gran turismo 7', name: 'Gran Turismo 7', platform: 'console'},
+	{id: 'the legend of zelda: tears of the kingdom', name: 'The Legend of Zelda: Tears of the Kingdom', platform: 'console'},
+	{id: 'marvel’s spider-man 2', name: 'Marvel’s Spider-Man 2', platform: 'console'},
+];

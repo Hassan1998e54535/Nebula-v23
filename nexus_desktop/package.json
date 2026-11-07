@@ -1,0 +1,68 @@
+{
+	"name": "nexus_desktop",
+	"version": "0.0.0",
+	"description": "NEXUS instant messaging and VoIP application",
+	"homepage": "https://nexus.chat",
+	"author": "NEXUS",
+	"license": "Nebula",
+	"private": true,
+	"type": "module",
+	"main": "dist/main/index.js",
+	"scripts": {
+		"build": "node scripts/build.mjs",
+		"set-channel": "../tools/ci/run.sh build-desktop --step set_build_channel",
+		"test": "pnpm test:main",
+		"test:main": "pnpm set-channel && node --test 'src/main/*.test.mjs' 'src/preload/*.test.mjs' 'src/common/*.test.mjs'",
+		"test:native": "cargo test --manifest-path native/app-store/Cargo.toml && cargo test --manifest-path native/gateway-socket/Cargo.toml",
+		"typecheck": "pnpm set-channel && tsc --noEmit"
+	},
+	"dependencies": {
+		"@nexus/constants": "workspace:*",
+		"@nexus/desktop_ipc": "workspace:*",
+		"@nexus/instance_bootstrap": "workspace:*",
+		"@nexus/ip_utils": "workspace:*",
+		"@nexus/record_utils": "workspace:*",
+		"@nexus/voice_engine_v2": "workspace:*",
+		"@simplewebauthn/browser": "14.0.0",
+		"franc-min": "6.2.0",
+		"hunspell-asm": "4.0.2",
+		"velopack": "1.2.0"
+	},
+	"devDependencies": {
+		"@types/node": "24.13.5",
+		"electron": "44.4.1",
+		"electron-builder": "27.0.0-alpha.8",
+		"esbuild": "catalog:",
+		"typescript": "catalog:ts7"
+	},
+	"knip": {
+		"ignoreDependencies": [
+			"electron-builder"
+		]
+	},
+	"optionalDependencies": {
+		"@nexus/app-store": "file:./native/app-store",
+		"@nexus/gateway-socket": "file:./native/gateway-socket",
+		"@nexus/hardware-encoder": "file:./native/hardware-encoder",
+		"@nexus/linux-audio-capture": "file:./native/linux-audio-capture",
+		"@nexus/linux-evdev": "file:./native/linux-evdev",
+		"@nexus/linux-input-hook": "file:./native/linux-input-hook",
+		"@nexus/linux-notifications": "file:./native/linux-notifications",
+		"@nexus/linux-portals": "file:./native/linux-portals",
+		"@nexus/mac-app-audio": "file:./native/mac-app-audio",
+		"@nexus/mac-clipboard": "file:./native/mac-clipboard",
+		"@nexus/mac-screen-capture": "file:./native/mac-screen-capture",
+		"@nexus/mac-sysctl": "file:./native/mac-sysctl",
+		"@nexus/mac-tcc": "file:./native/mac-tcc",
+		"@nexus/macos-input-hook": "file:./native/macos-input-hook",
+		"@nexus/platform-info": "file:./native/platform-info",
+		"@nexus/system-hunspell": "file:./native/system-hunspell",
+		"@nexus/webauthn": "file:./native/webauthn",
+		"@nexus/win-clipboard": "file:./native/win-clipboard",
+		"@nexus/win-shell": "file:./native/win-shell",
+		"@nexus/win-game-capture": "file:./native/win-game-capture",
+		"@nexus/win-process-loopback": "file:./native/win-process-loopback",
+		"@nexus/windows-input-hook": "file:./native/windows-input-hook",
+		"electron-log": "5.4.4"
+	}
+}

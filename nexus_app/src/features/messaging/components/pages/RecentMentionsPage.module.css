@@ -1,0 +1,7 @@
+/* SPDX-License-Identifier: Nebula */
+
+.icon {
+	width: 1.5rem;
+	height: 1.5rem;
+	color: var(--text-primary-muted);
+}

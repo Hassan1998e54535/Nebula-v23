@@ -1,0 +1,136 @@
+.artwork {
+	background: #17191e;
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 12px;
+	color: #fff;
+	isolation: isolate;
+	overflow: hidden;
+	position: relative;
+}
+
+.portrait {
+	aspect-ratio: 0.74;
+	width: 100%;
+}
+
+.wide {
+	aspect-ratio: 2.45;
+	width: 100%;
+}
+
+.thumbnail {
+	aspect-ratio: 1.2;
+	flex: 0 0 76px;
+	width: 76px;
+}
+
+.placeholder {
+	height: 100%;
+	inset: 0;
+	position: absolute;
+	width: 100%;
+	z-index: 0;
+}
+
+.placeholder {
+	align-items: center;
+	background: linear-gradient(145deg, #20232a, #14161b);
+	color: rgba(255, 255, 255, 0.62);
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+	justify-content: center;
+}
+
+.placeholder svg {
+	height: 38px;
+	width: 38px;
+}
+
+.placeholder span {
+	font-size: 0.72rem;
+	font-weight: 600;
+	text-align: center;
+}
+
+.coverImage {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+	z-index: 0;
+}
+
+.sourceMark {
+	background: rgba(5, 8, 15, 0.72);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 999px;
+	font-size: 0.55rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	padding: 4px 7px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	z-index: 2;
+}
+
+.title {
+	background: linear-gradient(transparent, rgba(4, 6, 13, 0.88));
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	left: 0;
+	padding: 34px 12px 12px;
+	position: absolute;
+	right: 0;
+	z-index: 2;
+}
+
+.title span {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.55rem;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+}
+
+.title strong {
+	display: -webkit-box;
+	font-size: 0.93rem;
+	line-height: 1.2;
+	overflow: hidden;
+	text-shadow: 0 2px 9px rgba(0, 0, 0, 0.62);
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.wide .title {
+	padding: 46px 16px 13px;
+}
+
+.wide .title strong {
+	font-size: 1.02rem;
+}
+
+.thumbnail .placeholder {
+	gap: 0;
+}
+
+.thumbnail .placeholder svg {
+	height: 26px;
+	width: 26px;
+}
+
+.thumbnail .placeholder span {
+	display: none;
+}
+
+.thumbnail .title {
+	padding: 18px 7px 7px;
+}
+
+.thumbnail .title strong {
+	font-size: 0.67rem;
+}

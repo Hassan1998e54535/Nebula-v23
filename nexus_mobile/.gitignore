@@ -1,0 +1,11 @@
+.dart_tool/
+build/
+*.ipa
+*.apk
+*.aab
+*.mobileprovision
+*.p12
+*.p8
+*.keystore
+config.local.json
+signing/

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-labelledby="title description">
+  <title id="title">مخطط صور Docker لخدمات NEXUS</title>
+  <desc id="description">مخطط توضيحي للخدمات الاثنتي عشرة، وليس صورة حاوية منشورة.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101827"/>
+      <stop offset="1" stop-color="#080d17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0fc9b6"/>
+      <stop offset="1" stop-color="#5865f2"/>
+    </linearGradient>
+    <style>
+      text { font-family: "Noto Sans Arabic", "DejaVu Sans", Arial, sans-serif; }
+      .card { fill: #151f30; stroke: #29374a; stroke-width: 2; }
+      .name { fill: #f5f7fb; font-size: 25px; font-weight: 700; }
+      .role { fill: #b6c2d3; font-size: 20px; }
+      .number { fill: #0c1320; stroke: #5865f2; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1200" height="1500" rx="38" fill="url(#background)"/>
+  <rect x="64" y="66" width="1072" height="12" rx="6" fill="url(#accent)"/>
+  <text x="600" y="155" text-anchor="middle" fill="#ffffff" font-size="44" font-weight="800" direction="rtl">خدمات NEXUS داخل صور Docker</text>
+  <text x="600" y="205" text-anchor="middle" fill="#aeb9ca" font-size="22" direction="rtl">مخطط تعريفي — ليس لقطة لحزم منشورة في GitHub</text>
+
+  <g transform="translate(64 270)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">1</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-api</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">طلبات التطبيق وواجهته الخلفية</text>
+  </g>
+  <g transform="translate(432 270)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">2</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-gateway</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">الاتصال والبيانات اللحظية</text>
+  </g>
+  <g transform="translate(800 270)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">3</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-media-proxy</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">وسائط الصور والملفات</text>
+  </g>
+
+  <g transform="translate(64 492)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">4</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-push</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">إرسال الإشعارات</text>
+  </g>
+  <g transform="translate(432 492)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">5</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-static</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">الملفات والأصول الثابتة</text>
+  </g>
+  <g transform="translate(800 492)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">6</text>
+    <text class="name" x="168" y="88" text-anchor="middle" font-size="22">nexus-app-proxy-self-hosted</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">خدمة واجهة التطبيق المستضافة</text>
+  </g>
+
+  <g transform="translate(64 714)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">7</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-snowflakes</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">إنشاء معرّفات فريدة</text>
+  </g>
+  <g transform="translate(432 714)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">8</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-users</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">حسابات المستخدمين</text>
+  </g>
+  <g transform="translate(800 714)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">9</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-gifs</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">خدمة البحث عن GIF</text>
+  </g>
+
+  <g transform="translate(64 936)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">10</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-messages</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">خدمة الرسائل</text>
+  </g>
+  <g transform="translate(432 936)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">11</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-unfurl</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">معاينة الروابط</text>
+  </g>
+  <g transform="translate(800 936)">
+    <rect class="card" width="336" height="190" rx="22"/>
+    <circle class="number" cx="296" cy="38" r="22"/><text x="296" y="46" text-anchor="middle" fill="#fff" font-size="20">12</text>
+    <text class="name" x="168" y="88" text-anchor="middle">nexus-admin</text>
+    <text class="role" x="168" y="132" text-anchor="middle" direction="rtl">خدمات لوحة الإدارة</text>
+  </g>
+
+  <rect x="64" y="1180" width="1072" height="235" rx="24" fill="#101b2b" stroke="#33445c" stroke-width="2"/>
+  <text x="600" y="1235" text-anchor="middle" fill="#11c9b8" font-size="25" font-weight="700" direction="rtl">مهم</text>
+  <text x="600" y="1285" text-anchor="middle" fill="#e2e9f2" font-size="21" direction="rtl">هذه أسماء حزم تشغيل، وليست صورًا فوتوغرافية.</text>
+  <text x="600" y="1330" text-anchor="middle" fill="#b6c2d3" font-size="20" direction="rtl">الحزم الفعلية لم تُنشر بعد؛ ستظهر في GitHub Packages بعد رفع التغييرات</text>
+  <text x="600" y="1368" text-anchor="middle" fill="#b6c2d3" font-size="20" direction="rtl">ونجاح GitHub Actions.</text>
+</svg>

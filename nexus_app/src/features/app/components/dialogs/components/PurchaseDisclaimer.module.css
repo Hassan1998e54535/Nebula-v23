@@ -1,0 +1,15 @@
+/* SPDX-License-Identifier: Nebula */
+
+.disclaimer {
+	font-size: 0.75rem;
+	line-height: 1.625;
+	color: var(--text-primary-muted);
+}
+
+.center {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}

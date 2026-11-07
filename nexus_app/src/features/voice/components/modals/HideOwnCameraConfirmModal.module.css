@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: Nebula */
+
+.checkboxContainer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.checkboxLabel {
+	font-size: 0.875rem;
+}

@@ -1,0 +1,232 @@
+/* SPDX-License-Identifier: Nebula */
+
+.section {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.toolbar {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	padding: 0.75rem 0.875rem;
+	border-bottom: 0.0625rem solid var(--studio-border);
+	background: var(--studio-bg-panel-header);
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.searchWrap {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 26.25rem;
+}
+
+.toolbarActions {
+	display: flex;
+	gap: 0.5rem;
+	margin-left: auto;
+}
+
+.body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	padding-bottom: 1.125rem;
+}
+
+.searchEmpty {
+	padding: 2.5rem 1.5rem;
+}
+
+.summary {
+	display: flex;
+	gap: 0.75rem;
+	padding: 0.5rem 0.875rem;
+	color: var(--studio-fg-muted);
+	font-size: var(--studio-fs-xs);
+	border-bottom: 0.0625rem solid var(--studio-border);
+	background: var(--studio-bg-editor);
+	flex-wrap: wrap;
+}
+
+.summary strong {
+	color: var(--studio-fg-primary);
+	font-weight: 600;
+}
+
+.syncGroup,
+.previewGroup {
+	padding: 0.875rem;
+	border-bottom: 0.0625rem solid var(--studio-border);
+	background: var(--studio-bg-editor);
+}
+
+.syncHeading,
+.previewHeading {
+	margin: 0 0 0.625rem;
+	color: var(--studio-fg-primary);
+	font-size: var(--studio-fs-lg);
+	font-weight: 600;
+}
+
+.syncCard {
+	display: flex;
+	flex-direction: column;
+	padding: 0 0.875rem;
+	border: 0.0625rem solid var(--studio-border);
+	border-radius: var(--studio-radius-lg);
+	background: var(--studio-bg-elevated);
+}
+
+.syncRow {
+	padding: 0.25rem 0;
+}
+
+.syncRow + .syncRow {
+	border-top: 0.0625rem solid var(--studio-border);
+}
+
+.previewCard {
+	display: grid;
+	grid-template-columns: minmax(5.5rem, 22%) minmax(0, 1fr);
+	min-height: 10rem;
+	overflow: hidden;
+	border: 0.0625rem solid var(--studio-border);
+	border-radius: var(--studio-radius-lg);
+	background: var(--background-primary);
+	color: var(--text-primary);
+}
+
+.previewSidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+	padding: 0.75rem 0.5rem;
+	border-inline-end: 0.0625rem solid var(--studio-border);
+	background: var(--background-secondary);
+	font-size: var(--studio-fs-xs);
+}
+
+.previewBrand,
+.previewAvatar {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 1.75rem;
+	height: 1.75rem;
+	border-radius: 0.6rem;
+	background: var(--brand-primary);
+	color: var(--text-on-brand-primary);
+	font-weight: 700;
+}
+
+.previewCommunity {
+	margin: 0.15rem 0 0.25rem;
+	font-size: var(--studio-fs-sm);
+}
+
+.previewChannel,
+.previewChannelActive {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+	padding: 0.35rem;
+	border-radius: var(--studio-radius-sm);
+	color: var(--text-secondary);
+}
+
+.previewChannelActive {
+	background: var(--background-modifier-selected);
+	color: var(--text-primary);
+}
+
+.previewChat {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.previewChannelHeader {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	min-height: 2.5rem;
+	padding: 0 0.75rem;
+	border-bottom: 0.0625rem solid var(--studio-border);
+	font-size: var(--studio-fs-sm);
+}
+
+.previewMessage {
+	display: flex;
+	gap: 0.6rem;
+	padding: 0.85rem 0.75rem;
+}
+
+.previewAvatar {
+	width: 1.9rem;
+	height: 1.9rem;
+}
+
+.previewMessageBody {
+	min-width: 0;
+}
+
+.previewAuthorLine {
+	display: flex;
+	align-items: baseline;
+	gap: 0.45rem;
+	font-size: var(--studio-fs-sm);
+}
+
+.previewAuthorLine span,
+.previewMessageBody p {
+	color: var(--text-secondary);
+}
+
+.previewMessageBody p {
+	margin: 0.25rem 0 0;
+	font-size: var(--studio-fs-sm);
+}
+
+.previewComposer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	min-height: 2.25rem;
+	margin: auto 0.65rem 0.65rem;
+	padding: 0.4rem 0.55rem;
+	border-radius: var(--studio-radius-md);
+	background: var(--background-textarea);
+	color: var(--text-secondary);
+	font-size: var(--studio-fs-xs);
+}
+
+.previewSendButton {
+	display: grid;
+	place-items: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: var(--studio-radius-sm);
+	background: var(--brand-primary);
+	color: var(--text-on-brand-primary);
+	font-size: var(--studio-fs-md);
+	font-weight: 700;
+}
+
+@media (max-width: 480px) {
+	.syncGroup,
+	.previewGroup {
+		padding: 0.75rem;
+	}
+
+	.previewCard {
+		grid-template-columns: 5rem minmax(0, 1fr);
+		min-height: 9rem;
+	}
+}

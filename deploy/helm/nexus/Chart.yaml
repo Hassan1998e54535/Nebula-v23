@@ -1,0 +1,13 @@
+apiVersion: v2
+name: nexus
+description: A complete NEXUS instance on Kubernetes, at parity with the self-hosted Docker Compose stack.
+type: application
+version: 0.1.0
+appVersion: "v1"
+kubeVersion: ">=1.29.0-0"
+home: https://docs.nexus.app/operator/kubernetes/
+sources:
+  - https://github.com/nexusapp/nexus/tree/main/deploy/helm/nexus
+keywords:
+  - nexus
+  - chat

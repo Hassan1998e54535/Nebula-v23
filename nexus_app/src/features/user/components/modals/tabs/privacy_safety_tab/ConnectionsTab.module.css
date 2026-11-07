@@ -1,0 +1,7 @@
+/* SPDX-License-Identifier: Nebula */
+
+.confirmDescription {
+	margin-top: 0.5rem;
+	color: var(--text-primary-muted);
+	font-size: 0.875rem;
+}

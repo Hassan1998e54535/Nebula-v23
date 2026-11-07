@@ -1,0 +1,301 @@
+/* SPDX-License-Identifier: Nebula */
+
+.container {
+	position: fixed;
+	inset-inline: 0;
+	bottom: 0;
+	z-index: 100;
+	--mobile-nav-inline-padding: 0.6rem;
+	--mobile-nav-avatar-size: 3.5rem;
+	display: flex;
+	width: min(30rem, calc(100% - 2.5rem));
+	height: calc(var(--mobile-bottom-nav-height) - 0.1rem);
+	min-height: calc(var(--mobile-bottom-nav-height) - 0.1rem);
+	margin-inline: auto;
+	align-items: center;
+	justify-content: center;
+	padding-block: 0.25rem max(0.25rem, env(safe-area-inset-bottom));
+	padding-inline-start: 0;
+	padding-inline-end: var(--mobile-nav-inline-padding);
+	background: transparent;
+	border: 0;
+}
+
+.card {
+	position: relative;
+	display: flex;
+	flex: 1 1 auto;
+	width: 100%;
+	min-width: 0;
+	height: var(--mobile-nav-avatar-size);
+	min-height: var(--mobile-nav-avatar-size);
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.375rem;
+	isolation: isolate;
+	border-radius: 624.9375rem;
+	background: transparent;
+	animation: mobile-profile-bar-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card::before {
+	position: absolute;
+	z-index: 0;
+	inset: 0;
+	border: 0.0625rem solid color-mix(in srgb, var(--text-primary) 20%, transparent);
+	border-radius: 624.9375rem;
+	background: color-mix(in srgb, var(--background-secondary) 76%, transparent);
+	box-shadow:
+		0 0.7rem 2rem color-mix(in srgb, var(--background-primary) 50%, transparent),
+		inset 0 0.0625rem 0 color-mix(in srgb, white 12%, transparent);
+	-webkit-backdrop-filter: blur(1.375rem) saturate(165%);
+	backdrop-filter: blur(1.375rem) saturate(165%);
+	content: '';
+}
+
+:global(.theme-light) .card::before {
+	border-color: color-mix(in srgb, var(--text-primary) 13%, transparent);
+	background: color-mix(in srgb, var(--background-primary) 74%, transparent);
+	box-shadow:
+		0 0.5rem 1.75rem color-mix(in srgb, var(--background-primary) 35%, transparent),
+		inset 0 0.0625rem 0 color-mix(in srgb, white 68%, transparent);
+}
+
+.navButton {
+	position: relative;
+z-index: 2;
+	display: flex;
+	flex: 0 0 2.625rem;
+	height: 2.75rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+	border: 0;
+	border-radius: 1.5rem;
+	background: transparent;
+	cursor: pointer;
+	transition:
+		background-color 140ms ease,
+		color 140ms ease,
+		transform 140ms ease;
+}
+
+.navButtonActive {
+	color: var(--text-primary);
+	background: transparent;
+}
+
+.navButtonInactive {
+	color: var(--text-primary-muted);
+}
+
+.navButton:active,
+.accountButton:active {
+	transform: scale(0.96);
+}
+
+.voiceButton {
+	color: var(--status-online);
+	flex-basis: 2.5rem;
+}
+
+.notificationButton {
+	flex-basis: 2.75rem;
+	width: 2.75rem;
+height: 2.875rem;
+	border-radius: 50%;
+	background: transparent;
+}
+
+.notificationButton .icon {
+width: 1.5rem;
+height: 1.5rem;
+}
+
+.accountButton {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	height: var(--mobile-nav-avatar-size);
+	align-items: center;
+	gap: 0.5rem;
+	padding-block: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0.25rem;
+	border: 0;
+	border-radius: 624.9375rem;
+	background: transparent;
+	color: var(--text-primary);
+	text-align: start;
+	cursor: pointer;
+	transition:
+		background-color 140ms ease,
+		border-color 140ms ease,
+		transform 140ms ease;
+}
+
+.accountGroup {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	align-items: center;
+	gap: 0.125rem;
+}
+
+.profileAppearanceLayer {
+	position: absolute;
+	z-index: 1;
+	inset-block: 0;
+	inset-inline: 0;
+	overflow: hidden;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.avatarWrap {
+	position: relative;
+	z-index: 1;
+display: inline-flex;
+flex: 0 0 var(--mobile-nav-avatar-size);
+width: var(--mobile-nav-avatar-size);
+height: var(--mobile-nav-avatar-size);
+align-items: center;
+justify-content: center;
+overflow: visible;
+border-radius: 50%;
+background: transparent;
+}
+
+.avatarWrap :global([data-flx='ui.status-aware-avatar.avatar']) {
+	border-radius: 50%;
+	background: transparent;
+}
+
+.avatarWrap :global([data-flx='ui.base-avatar.overlay']) {
+	border-radius: 50%;
+}
+
+.avatarWrap :global([data-flx='ui.base-avatar.image']) {
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.accountPopout {
+	z-index: 120;
+}
+
+.accountButton:focus-visible,
+.navButton:focus-visible {
+	outline: 0.125rem solid var(--brand-primary);
+	outline-offset: 0.125rem;
+}
+
+.accountButtonActive {
+	border-color: transparent;
+	background: transparent;
+}
+
+.accountText {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.0625rem;
+	overflow: hidden;
+}
+
+.accountName,
+.accountTag {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.accountName {
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1rem;
+	color: var(--text-primary);
+}
+
+.accountTag {
+	font-size: 0.625rem;
+	line-height: 0.8125rem;
+	color: var(--text-primary-muted);
+}
+
+.icon {
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+.label {
+	font-weight: 600;
+	font-size: 0.625rem;
+	line-height: 0.75rem;
+}
+
+@media (max-width: 22.5rem) {
+	.container {
+		gap: 0.125rem;
+		width: calc(100% - 2rem);
+		--mobile-nav-inline-padding: 0.45rem;
+		padding-inline-start: 0;
+		padding-inline-end: var(--mobile-nav-inline-padding);
+	}
+
+	.card {
+		gap: 0.125rem;
+	}
+
+	.navButton {
+		flex-basis: 2.375rem;
+	}
+
+	.notificationButton {
+		flex-basis: 2.625rem;
+		width: 2.625rem;
+height: 2.75rem;
+}
+
+	.accountButton {
+		gap: 0.25rem;
+		padding-inline-start: 0;
+		padding-inline-end: 0.125rem;
+	}
+
+	.accountTag {
+		font-size: 0.6rem;
+	}
+
+	.icon {
+		height: 1.375rem;
+		width: 1.375rem;
+	}
+}
+
+@keyframes mobile-profile-bar-enter {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 1.25rem, 0);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate3d(0, -0.55rem, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card {
+		animation: none;
+		transform: translateY(-0.55rem);
+	}
+}

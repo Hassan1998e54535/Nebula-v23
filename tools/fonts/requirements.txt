@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: Nebula
+fonttools==4.65.0
+brotli==1.2.0

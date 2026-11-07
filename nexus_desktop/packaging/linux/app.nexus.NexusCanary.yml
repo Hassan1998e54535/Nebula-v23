@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Nebula
+id: app.nexus.NEXUSCanary
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '25.08'
+branch: stable
+command: app.nexus.NEXUSCanary
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --socket=pcsc
+  - --device=all
+  - --filesystem=xdg-download
+  - --filesystem=xdg-run/pipewire-0:ro
+  - --filesystem=xdg-run/speech-dispatcher:ro
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=org.ayatana.indicator.application
+  - --talk-name=com.canonical.indicator.application
+  - --talk-name=org.gnome.Mutter.IdleMonitor
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
+build-options:
+  strip: false
+  no-debuginfo: true
+cleanup-commands:
+  - rm -f /app/nexus/chrome-sandbox
+modules:
+  - name: nexus
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 app.nexus.NEXUSCanary.sh ${FLATPAK_DEST}/bin/${FLATPAK_ID}
+      - mkdir -p ${FLATPAK_DEST}/nexus
+      - cp -a app/. ${FLATPAK_DEST}/nexus/
+      - patch-electron-desktop-filename ${FLATPAK_DEST}/nexus/resources/app.asar
+      - install -Dm644 app.nexus.NEXUSCanary.desktop ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 app.nexus.NEXUSCanary.metainfo.xml ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 app.nexus.NEXUSCanary.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
+    sources:
+      - type: file
+        path: app.nexus.NEXUSCanary.sh
+      - type: file
+        path: app.nexus.NEXUSCanary.desktop
+      - type: file
+        path: app.nexus.NEXUSCanary.metainfo.xml
+      - type: file
+        path: app.nexus.NEXUSCanary.svg

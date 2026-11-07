@@ -1,0 +1,12 @@
+% SPDX-License-Identifier: Nebula
+[
+    {kernel, [
+        {logger_level, warning}
+    ]},
+    {sasl, [
+        {errlog_type, error}
+    ]},
+    {inet, [
+        {lookup, [native, file, dns]}
+    ]}
+].

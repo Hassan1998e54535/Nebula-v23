@@ -1,0 +1,23 @@
+% SPDX-License-Identifier: Nebula
+{application, nexus_gateway, [
+    {description, "NEXUS Gateway"},
+    {vsn, "0.0.0"},
+    {registered, []},
+    {mod, {nexus_gateway_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        crypto,
+        public_key,
+        ssl,
+        inets,
+        ranch,
+        cowboy,
+        ezstd,
+        enats
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["Nebula"]},
+    {links, []}
+]}.

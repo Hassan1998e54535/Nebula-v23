@@ -1,0 +1,22 @@
+{
+  "client": {
+    "repository": "fluxerapp/flutter_client",
+    "revision": "d90fc84bb5b1979f9f9d03eda415360529057439",
+    "sha256": "a3ec4bb706c2296b6d78aa8e6f58a850608a89e7688dec879066b491fc141b1d"
+  },
+  "sdk": {
+    "repository": "fluxerapp/dart_sdk",
+    "revision": "c242119b8dbdb038f3b3bfe586cba85a27c71ae0",
+    "sha256": "3bda5c36eb49f43e23c71b5ea466ea4bb841939864c30026fda189bc1e331d55"
+  },
+  "parser": {
+    "repository": "fluxerapp/fluxer",
+    "revision": "d6b742567af9290c384893e24a3c4ded0b1ea56b",
+    "sha256": "3f51f4019292d7050e55285ecb5e6b3b89b44f5daf359ca9cbe4609e7d310096"
+  },
+  "toolchain": {
+    "flutter": "3.47.9",
+    "flutter_revision": "c197ca5199e9ee5661e865596c9c07294dfab51c",
+    "dart_minimum": "3.12.0"
+  }
+}

@@ -1,0 +1,31 @@
+[workspace]
+members = [
+	"nexus_admin",
+	"nexus_app_proxy",
+	"nexus_common",
+	"nexus_media_proxy",
+	"nexus_gifs",
+	"nexus_svc",
+	"nexus_messages",
+	"nexus_push",
+	"nexus_snowflakes",
+	"tools/ci",
+	"tools/dev",
+	"tools/i18n_auto",
+	"nexus_users",
+	"nexus_unfurl",
+	"packages/markdown_parser/rust",
+]
+exclude = [
+	"packages/markdown_parser/rust/fuzz",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+license = "Nebula"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"

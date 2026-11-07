@@ -1,0 +1,12 @@
+/* SPDX-License-Identifier: Nebula */
+
+.selectable {
+	user-select: text;
+	-webkit-user-select: text;
+}
+
+.topic {
+	overflow: hidden;
+	text-wrap: wrap;
+	word-break: break-word;
+}

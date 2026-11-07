@@ -1,0 +1,9 @@
+.root {display: grid; gap: .7rem; margin-top: 1rem;}
+.root button {border: 1px solid #74dfd04d; border-radius: .5rem; padding: .6rem .8rem; background: #74dfd012; color: inherit; font: inherit; cursor: pointer;}
+.root button:disabled {opacity: .45; cursor: not-allowed;}
+.root button:focus-visible {outline: 2px solid #74dfd0; outline-offset: 3px;}
+.uploads {display: flex; flex-wrap: wrap; gap: .5rem;}
+.uploads button {display: grid; width: 7rem; gap: .4rem; font-size: .75rem;}
+.uploads img {width: 100%; height: 2.5rem; border-radius: .25rem; object-fit: cover;}
+.uploads button[aria-pressed=true] {border-color: #74dfd0;}
+.error {color: var(--text-danger, #ff9393); font-size: .8rem; overflow-wrap: anywhere;}

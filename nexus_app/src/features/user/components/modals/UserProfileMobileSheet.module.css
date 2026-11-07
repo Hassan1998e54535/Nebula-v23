@@ -1,0 +1,705 @@
+/* SPDX-License-Identifier: Nebula */
+
+.container {
+	position: relative;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	flex-direction: column;
+	overflow: hidden;
+	box-sizing: border-box;
+border: 1px solid color-mix(in srgb, var(--profile-border-color, var(--profile-sheet-accent)) 72%, transparent);
+	border-radius: 1.25rem;
+	background-color: var(--profile-background-primary, var(--background-primary));
+	background-image: linear-gradient(
+		145deg,
+		var(--profile-background-primary, var(--background-primary)),
+		var(--profile-background-secondary, var(--background-secondary-alt))
+	);
+}
+
+.loadingScreen {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.sheetContainer {
+	background-color: transparent;
+}
+
+.profileHeaderArea {
+	position: relative;
+	width: 100%;
+	overflow: visible;
+}
+
+.profileHeaderArea > header {
+	width: 100%;
+}
+
+.profileHeaderArea > header :global(button[data-flx='user.profile.profile-card.profile-card-banner.avatar-button.avatar-click']) {
+	left: 1rem;
+}
+
+.notchContainer {
+	position: absolute;
+	z-index: 30;
+	top: 0;
+	inset-inline: 0;
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	padding-block: 0.75rem;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+}
+
+.notch {
+	width: 2.5rem;
+	height: 0.25rem;
+	border-radius: 999rem;
+	background-color: color-mix(in srgb, var(--text-primary) 52%, transparent);
+}
+
+.mobileIdentity {
+	position: absolute;
+	z-index: 4;
+	top: 69%;
+	right: 1rem;
+	left: calc(1rem + var(--mobile-avatar-size, 4.125rem) + 0.75rem);
+	min-width: 0;
+	color: var(--text-primary);
+	text-shadow: 0 1px 8px rgb(0 0 0 / 58%);
+}
+
+.mobileIdentityContent,
+.usernameContainer {
+	min-width: 0;
+	margin: 0;
+}
+
+.usernameRow {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-width: 0;
+}
+
+.accountActionsButton {
+	display: inline-flex;
+	width: 1.75rem;
+	height: 1.75rem;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-primary);
+	cursor: pointer;
+	text-shadow: inherit;
+}
+
+.accountActionsButton svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.accountActionsButton:focus-visible {
+	outline: 2px solid var(--brand-primary-fill);
+	outline-offset: 2px;
+}
+
+.username {
+	display: block;
+	min-width: 0;
+	flex: 1 1 auto;
+	max-width: 100%;
+	overflow: hidden;
+	color: var(--text-primary);
+	font-family: var(--font-sans);
+	font-size: clamp(1.25rem, 5.2vw, 1.5rem);
+	font-weight: 700;
+	line-height: 1.08;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.username[data-name-font='editorial'] { font-family: Georgia, serif; font-style: italic; }
+.username[data-name-font='terminal'] { font-family: ui-monospace, monospace; letter-spacing: 0; }
+.username[data-name-font='rounded'] { font-family: "Trebuchet MS", system-ui, sans-serif; }
+.username[data-name-font='display'] { font-family: Impact, sans-serif; font-weight: 400; letter-spacing: .01em; }
+.username[data-name-font='classic'] { font-family: "Times New Roman", Times, serif; }
+.username[data-name-font='wide'] { font-family: "Arial Black", Arial, sans-serif; font-weight: 900; letter-spacing: .07em; }
+.username[data-name-font='stencil'] { font-family: Impact, sans-serif; text-transform: uppercase; letter-spacing: .12em; }
+.username[data-name-font='typewriter'] { font-family: "Courier New", Courier, monospace; letter-spacing: -.025em; }
+.username[data-name-font='humanist'] { font-family: Verdana, Geneva, sans-serif; font-weight: 600; letter-spacing: -.04em; }
+.username[data-name-font='compact'] { font-family: Tahoma, Arial, sans-serif; letter-spacing: -.045em; }
+.username[data-name-font='refined'] { font-family: Garamond, "Palatino Linotype", serif; font-style: italic; font-weight: 600; }
+.username[data-name-font='handwritten'] { font-family: cursive; font-style: italic; font-weight: 600; }
+.username[data-name-font='geometric'] { font-family: "Century Gothic", "Trebuchet MS", sans-serif; letter-spacing: .04em; }
+.username[data-name-effect='solid'],
+.username[data-name-effect='neon'],
+.username[data-name-effect='outline'],
+.username[data-name-effect='wave'],
+.username[data-name-effect='bounce'] { color: var(--profile-name-start); }
+.username[data-name-effect='gradient'],
+.username[data-name-effect='prism'],
+.username[data-name-effect='aurora'],
+.username[data-name-effect='spectrum'],
+.username[data-name-effect='flow'],
+.username[data-name-effect='shimmer'],
+.username[data-name-effect='comet'],
+.username[data-name-effect='orbit'],
+.username[data-name-effect='ember'],
+.username[data-name-effect='frost'],
+.username[data-name-effect='pulse'],
+.username[data-name-effect='flicker'],
+.username[data-name-effect='ripple'],
+.username[data-name-effect='echo'],
+.username[data-name-effect='glass'] {
+	color: transparent;
+	background: var(--profile-name-gradient);
+	background-clip: text;
+	-webkit-background-clip: text;
+}
+.username[data-name-effect='neon'] { color: var(--profile-name-start); text-shadow: 0 0 9px color-mix(in srgb, var(--profile-name-end) 48%, transparent); }
+.username[data-name-effect='outline'] { color: transparent; -webkit-text-stroke: 1px var(--profile-name-start); }
+.username[data-name-effect='echo'] { text-shadow: 1px 1px 0 color-mix(in srgb, var(--profile-name-end) 58%, transparent), 2px 2px 0 color-mix(in srgb, var(--profile-name-start) 42%, transparent); }
+.username[data-name-effect='glass'] { filter: drop-shadow(0 1px 0 rgb(255 255 255 / 35%)); }
+.username[data-name-effect='shimmer'],
+.username[data-name-effect='flow'],
+.username[data-name-effect='pulse'],
+.username[data-name-effect='spectrum'],
+.username[data-name-effect='flicker'],
+.username[data-name-effect='comet'],
+.username[data-name-effect='ripple'],
+.username[data-name-effect='orbit'],
+.username[data-name-effect='ember'],
+.username[data-name-effect='frost'],
+.username[data-name-motion='shimmer'],
+.username[data-name-motion='pulse'],
+.username[data-name-motion='spectrum'] {
+	animation: profile-name-flow var(--profile-name-duration, 2.8s) ease-in-out infinite alternate;
+}
+.username[data-name-effect='wave'],
+.username[data-name-motion='wave'] { animation: profile-name-wave var(--profile-name-duration, 2.8s) ease-in-out infinite alternate; }
+.username[data-name-effect='bounce'],
+.username[data-name-motion='bounce'] { animation: profile-name-bounce var(--profile-name-duration, 2.8s) ease-in-out infinite alternate; }
+@keyframes profile-name-flow { to { opacity: .66; background-position: 100% 50%; } }
+@keyframes profile-name-wave { to { transform: translateY(calc(var(--profile-name-intensity, 70%) / -18)); } }
+@keyframes profile-name-bounce { to { transform: translateY(calc(var(--profile-name-intensity, 70%) / -12)); } }
+@media (prefers-reduced-motion: reduce) {
+	.username[data-name-effect],
+	.username[data-name-motion] { animation: none !important; }
+}
+
+.tagBadgeRow {
+	display: block;
+	min-width: 0;
+	margin-top: 0.28rem;
+}
+
+.usernameHandle {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	color: color-mix(in srgb, var(--text-primary) 82%, transparent);
+	font-size: 0.76rem;
+	line-height: 1.15;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.customStatusRow {
+	max-width: 100%;
+	max-height: 2.3rem;
+	margin-top: 0.32rem;
+	overflow: hidden;
+	font-size: 0.72rem;
+	line-height: 1.2;
+}
+
+.customStatusText {
+	display: block;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	color: color-mix(in srgb, var(--text-primary) 88%, transparent);
+	font-size: 0.72rem;
+	line-height: 1.2;
+}
+
+.customStatusRow:hover .customStatusText,
+.customStatusRow:active .customStatusText {
+	--emoji-show-animated: 1;
+}
+
+.mobileHeaderActions {
+	position: absolute;
+	z-index: 5;
+	top: calc(env(safe-area-inset-top, 0px) + 2.55rem);
+	right: 0.85rem;
+}
+
+.headerActionsContainer {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.actionButton {
+	display: flex;
+	width: 2.125rem;
+	height: 2.125rem;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid color-mix(in srgb, var(--text-primary) 24%, transparent);
+	border-radius: 999rem;
+	background: color-mix(in srgb, var(--background-primary) 55%, transparent);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+	color: var(--text-primary);
+	backdrop-filter: blur(16px) saturate(140%);
+	-webkit-backdrop-filter: blur(16px) saturate(140%);
+	cursor: pointer;
+}
+
+.belowCoverBadges {
+	display: flex;
+	min-height: 2.35rem;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	padding: 0.35rem 1rem 0.15rem;
+}
+
+.profileNameplate {
+	max-width: 9rem;
+	overflow: hidden;
+	padding: 0.2rem 0.38rem;
+	border: 1px solid color-mix(in srgb, var(--brand-primary) 38%, transparent);
+	border-radius: 0.2rem;
+	background: color-mix(in srgb, var(--brand-primary) 9%, var(--background-primary));
+	color: var(--text-primary-muted);
+	font: 700 0.52rem/1.2 var(--font-mono, monospace);
+	letter-spacing: 0.08em;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.profileContent {
+	position: relative;
+	background:
+		linear-gradient(155deg, color-mix(in srgb, var(--profile-sheet-accent) 8%, transparent), transparent 45%);
+}
+
+.contentPadding {
+	position: relative;
+	z-index: 1;
+	padding: 0.45rem 1rem calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
+}
+
+.infoCard {
+	margin-top: 0.25rem;
+	padding: 0.15rem 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+.bioSection {
+	position: relative;
+	margin: 0.15rem 0 0.8rem;
+	padding: 0.3rem 0.2rem 0.7rem 1.15rem;
+	border: 0;
+	border-bottom: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 24%, transparent);
+}
+
+.bioHeader {
+	margin-bottom: 0.35rem;
+	color: var(--text-tertiary);
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+
+.bioSection::before {
+	position: absolute;
+	top: 0;
+	left: 0.05rem;
+	color: var(--profile-sheet-accent);
+	content: '“';
+	font-size: 1.55rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.infoCard :global(section[data-flx='user.user-profile-shared.user-profile-bio.bio-container']) {
+	position: relative;
+}
+
+.infoCard :global(button[data-flx='user.user-profile-shared.user-profile-bio.view-full-button.show-more']) {
+	color: var(--profile-sheet-accent);
+	font-size: 0.6875rem;
+	font-weight: 700;
+}
+
+.infoCard :global([data-flx='user.user-profile-shared.user-profile-membership-info.membership-container']) {
+	margin-top: 0.65rem;
+	padding: 0.65rem 0.2rem 0.25rem;
+	border: 0;
+	border-top: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 25%, transparent);
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.infoCard :global([data-flx='user.user-profile-shared.user-profile-membership-info.membership-title']) {
+	color: var(--text-tertiary);
+	font-size: 0.62rem;
+	font-weight: 700;
+	letter-spacing: 0.11em;
+	text-transform: uppercase;
+}
+
+.rolesSection {
+	margin-top: 0.75rem;
+}
+
+.mutualButtonsGroup {
+	margin-top: 0.8rem;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 22%, transparent);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--background-secondary-alt) 68%, transparent);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+	backdrop-filter: blur(16px) saturate(135%);
+	-webkit-backdrop-filter: blur(16px) saturate(135%);
+}
+
+.mutualButton {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.8rem 0.9rem;
+	text-align: left;
+	cursor: pointer;
+	appearance: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.mutualButton:active {
+	background-color: color-mix(in srgb, var(--background-modifier-hover) 72%, var(--brand-primary) 28%);
+}
+
+.mutualButtonLabel {
+	flex: 1;
+	color: var(--text-primary);
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.mutualDivider {
+	height: 1px;
+	margin-inline: 1rem;
+	background-color: color-mix(in srgb, var(--brand-primary) 26%, var(--background-header-secondary));
+}
+
+.noteButton {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 0.8rem;
+	padding: 0.8rem;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 22%, transparent);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--background-primary) 36%, transparent);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+	backdrop-filter: blur(18px) saturate(145%);
+	-webkit-backdrop-filter: blur(18px) saturate(145%);
+	text-align: left;
+	cursor: pointer;
+}
+
+.noteTitle {
+	color: var(--text-primary);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.noteSubtitle {
+	color: var(--text-tertiary);
+	font-size: 0.75rem;
+}
+
+.noteText {
+	margin-top: 0.25rem;
+	color: var(--text-primary-muted);
+	font-size: 0.875rem;
+}
+
+.noteIconContainer {
+	display: flex;
+	width: 2rem;
+	height: 2rem;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 34%, transparent);
+	border-radius: 999rem;
+	background: color-mix(in srgb, var(--background-tertiary) 62%, transparent);
+}
+
+.noteIcon {
+	width: 1rem;
+	height: 1rem;
+	color: var(--text-primary);
+}
+
+.ownerAccountActions {
+	margin: 0.35rem 1rem 0.75rem;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 26%, transparent);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--profile-background-primary, var(--background-secondary)) 28%, rgb(20 20 24 / 65%));
+	box-shadow:
+		0 0.25rem 0.75rem rgb(0 0 0 / 20%),
+		inset 0 1px 0 rgb(255 255 255 / 8%);
+	-webkit-backdrop-filter: blur(20px) saturate(160%);
+	backdrop-filter: blur(20px) saturate(160%);
+}
+
+.ownerAccountActionButton {
+	display: flex;
+	width: 100%;
+	min-height: 3.1rem;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.625rem 0.8rem;
+	border: 0;
+	background: transparent;
+	color: var(--text-primary);
+	text-align: start;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	transition: background-color 140ms ease;
+}
+
+.ownerAccountActionButton:hover,
+.ownerAccountActionButton:focus-visible {
+	background: rgb(255 255 255 / 8%);
+}
+
+.ownerAccountActionButton:active {
+	background: rgb(255 255 255 / 12%);
+}
+
+.ownerAccountActionButton:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: -2px;
+}
+
+.ownerAccountActionTitle,
+.ownerAccountActionValue {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+}
+
+.ownerAccountActionTitle {
+	font-weight: 500;
+}
+
+.ownerAccountActionValue {
+	color: var(--text-secondary);
+}
+
+.ownerAccountActionIcon {
+	width: 1rem;
+	height: 1rem;
+	flex: 0 0 auto;
+}
+
+.ownerAccountActionDivider {
+	height: 1px;
+	margin-inline: 0.75rem;
+	background: color-mix(in srgb, var(--text-primary) 14%, transparent);
+}
+
+.actionFooter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	margin-top: 0.85rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 20%, transparent);
+}
+
+.profileActionDock {
+	position: absolute;
+	z-index: 40;
+	bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+	left: 50%;
+	display: flex;
+	padding: 0.2rem;
+	transform: translateX(-50%);
+	border: 1px solid color-mix(in srgb, white 24%, transparent);
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--background-secondary) 60%, transparent);
+	box-shadow:
+		0 0.65rem 1.8rem color-mix(in srgb, var(--background-primary) 40%, transparent),
+		inset 0 1px 0 rgb(255 255 255 / 16%);
+	-webkit-backdrop-filter: blur(1.25rem) saturate(155%);
+	backdrop-filter: blur(1.25rem) saturate(155%);
+}
+
+.profileActionButton {
+	display: flex;
+	width: 2.75rem;
+	height: 2.75rem;
+	min-width: 2.75rem;
+	min-height: 2.75rem;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--text-primary);
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.profileActionButton:active {
+	transform: scale(0.97);
+}
+
+.profileActionButton:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
+}
+
+.profileActionIcon {
+	width: 1.2rem;
+	height: 1.2rem;
+}
+
+.editProfileButton,
+.actionCard {
+	display: flex;
+	min-height: 2.75rem;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 26%, transparent);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--background-secondary-alt) 72%, transparent);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+	cursor: pointer;
+}
+
+.editProfileButton {
+	width: calc(100% - 2rem);
+	margin: 0.35rem 1rem 0.65rem;
+	padding: 0 0.85rem;
+	border-color: color-mix(in srgb, var(--text-primary) 30%, transparent);
+	background: color-mix(in srgb, var(--background-primary) 24%, transparent);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 17%), 0 0.4rem 1.25rem rgb(0 0 0 / 16%);
+	backdrop-filter: blur(20px) saturate(155%);
+	-webkit-backdrop-filter: blur(20px) saturate(155%);
+	transition:
+		background-color 140ms ease,
+		border-color 140ms ease,
+		transform 140ms ease;
+}
+
+.editProfileButton:hover {
+	border-color: color-mix(in srgb, var(--text-primary) 48%, transparent);
+	background: color-mix(in srgb, var(--background-primary) 34%, transparent);
+}
+
+.editProfileButton:active {
+	transform: scale(0.985);
+}
+
+.editProfileIcon {
+	width: 1.1rem;
+	height: 1.1rem;
+	color: var(--text-primary);
+}
+
+.editProfileText {
+	color: var(--text-primary);
+	font-weight: 500;
+}
+
+.actionCard {
+	min-width: 0;
+	flex: 1 1 5.5rem;
+	padding: 0.5rem 0.7rem;
+}
+
+.actionIconContainer,
+.actionIconContainerSecondary {
+	display: flex;
+	width: 1.65rem;
+	height: 1.65rem;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	border-radius: 999rem;
+	background: color-mix(in srgb, var(--profile-sheet-accent) 24%, var(--background-tertiary));
+}
+
+.actionIcon,
+.actionIconSecondary {
+	width: 1rem;
+	height: 1rem;
+	color: var(--text-primary);
+}
+
+.actionLabel {
+	color: var(--text-primary-muted);
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-align: center;
+}
+
+.icon {
+	width: 1.2rem;
+	height: 1.2rem;
+}
+
+.actionButton:focus-visible,
+.editProfileButton:focus-visible,
+.actionCard:focus-visible,
+.noteButton:focus-visible,
+.mutualButton:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
+}
+
+@media (max-width: 360px) {
+	.mobileIdentity {
+		right: 0.65rem;
+	}
+
+	.mobileHeaderActions {
+		right: 0.65rem;
+	}
+
+	.username {
+		font-size: 1.18rem;
+	}
+}

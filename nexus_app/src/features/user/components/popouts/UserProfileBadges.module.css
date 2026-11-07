@@ -1,0 +1,96 @@
+/* SPDX-License-Identifier: Nebula */
+
+.containerModal {
+	display: flex;
+	align-items: center;
+}
+
+.containerModalMobile {
+	gap: 0.5rem;
+}
+
+.containerModalDesktop {
+	gap: 0.25rem;
+}
+
+.containerPopout {
+	position: relative;
+	margin: 0.5rem 1rem 0.25rem 1rem;
+	align-self: flex-start;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	border-radius: 9999px;
+	padding: 0.2rem 0.6rem;
+	background: rgba(255, 255, 255, 0.08) !important;
+	border: 1px solid rgba(255, 255, 255, 0.16) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+	-webkit-backdrop-filter: blur(14px) !important;
+	backdrop-filter: blur(14px) !important;
+}
+
+.badgeMobile {
+	height: 1.75rem;
+	width: 1.75rem;
+}
+
+.badgeDesktop {
+	height: 1.25rem;
+	width: 1.25rem;
+}
+
+.sequenceBadge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--brand-primary-light);
+	font-weight: 700;
+	font-family: var(--font-sans);
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+:global(.theme-light) .sequenceBadge {
+	color: var(--brand-primary);
+}
+
+.sequenceBadgeMobile {
+	height: 1.75rem;
+	font-size: 1.5rem;
+}
+
+.sequenceBadgeDesktop {
+	height: 1.25rem;
+	font-size: 1.0625rem;
+}
+
+.link {
+	place-self: anchor-center;
+	cursor: pointer;
+	touch-action: manipulation;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+}
+
+.link:active,
+:global(:where(html.window-focused, html.unfocused-fully-interactive):not(.window-focus-activation-guard)) .link:hover {
+	text-decoration: none;
+}
+
+.linkButton {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	color: inherit;
+}
+
+.link:focus-visible {
+	outline: 0.125rem solid rgba(255, 255, 255, 0.4);
+	outline-offset: 0.125rem;
+}

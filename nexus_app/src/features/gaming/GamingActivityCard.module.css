@@ -1,0 +1,69 @@
+.card {
+	background:
+		linear-gradient(125deg, rgba(17, 195, 176, 0.12), transparent 52%),
+		var(--background-secondary);
+	border: 1px solid rgba(17, 195, 176, 0.3);
+	border-radius: 14px;
+	display: grid;
+	gap: 12px;
+	grid-template-columns: minmax(0, 1.2fr) minmax(130px, 0.8fr);
+	margin: 14px 0;
+	overflow: hidden;
+	padding: 10px;
+}
+
+.artwork {
+	min-width: 0;
+}
+
+.details {
+	align-content: center;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+	padding: 8px 4px;
+}
+
+.liveLabel {
+	align-items: center;
+	color: var(--text-muted);
+	display: flex;
+	font-size: 0.64rem;
+	font-weight: 750;
+	gap: 7px;
+	letter-spacing: 0.08em;
+}
+
+.liveDot {
+	background: #14d9a5;
+	border-radius: 50%;
+	box-shadow: 0 0 10px rgba(20, 217, 165, 0.78);
+	height: 8px;
+	width: 8px;
+}
+
+.gameName {
+	font-size: 1.02rem;
+	overflow-wrap: anywhere;
+}
+
+.platform {
+	align-self: flex-start;
+	background: var(--background-tertiary);
+	border-radius: 999px;
+	color: var(--text-muted);
+	font-size: 0.75rem;
+	padding: 4px 9px;
+}
+
+@media (max-width: 520px) {
+	.card {
+		gap: 8px;
+		grid-template-columns: 1fr;
+	}
+
+	.details {
+		padding: 4px 5px 7px;
+	}
+}

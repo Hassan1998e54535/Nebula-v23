@@ -1,0 +1,889 @@
+name: nexus
+
+x-nexus-postgres-env: &nexus-postgres-env
+  NEXUS_DATABASE_BACKEND: postgres
+  NEXUS_POSTGRES_HOST: ${NEXUS_POSTGRES_HOST:-postgres}
+  NEXUS_POSTGRES_PORT: ${NEXUS_POSTGRES_PORT:-}
+  NEXUS_POSTGRES_DATABASE: ${NEXUS_POSTGRES_DATABASE:-}
+  NEXUS_POSTGRES_USERNAME: ${NEXUS_POSTGRES_USERNAME:-}
+  NEXUS_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  NEXUS_POSTGRES_URL: ${NEXUS_POSTGRES_URL:-}
+  NEXUS_POSTGRES_SSL: ${NEXUS_POSTGRES_SSL:-}
+  NEXUS_POSTGRES_SSL_CA: ${NEXUS_POSTGRES_SSL_CA:-}
+  NEXUS_POSTGRES_PREPARED_STATEMENTS: ${NEXUS_POSTGRES_PREPARED_STATEMENTS:-}
+  NEXUS_POSTGRES_KV_TABLE: ${NEXUS_POSTGRES_KV_TABLE:-}
+
+x-nexus-env: &nexus-env
+  <<: *nexus-postgres-env
+  NEXUS_ENV: production
+  LOG_LEVEL: ${LOG_LEVEL:-}
+  RUST_LOG: ${RUST_LOG:-}
+  NEXUS_SELF_HOSTED: "true"
+  NEXUS_BASE_DOMAIN: ${NEXUS_DOMAIN:?set NEXUS_DOMAIN in .env}
+  NEXUS_PUBLIC_SCHEME: ${NEXUS_PUBLIC_SCHEME:-https}
+  NEXUS_PUBLIC_PORT: ${NEXUS_PUBLIC_PORT:-443}
+  NEXUS_PUBLIC_ORIGIN: ${NEXUS_PUBLIC_ORIGIN:-}
+  NEXUS_TRUST_CLIENT_IP_HEADER: "${NEXUS_TRUST_CLIENT_IP_HEADER:-true}"
+  NEXUS_CLIENT_IP_HEADER_NAME: ${NEXUS_CLIENT_IP_HEADER_NAME:-}
+  NEXUS_API_HEADERS_TIMEOUT_MS: ${NEXUS_API_HEADERS_TIMEOUT_MS:-}
+  NEXUS_API_REQUEST_TIMEOUT_MS: ${NEXUS_API_REQUEST_TIMEOUT_MS:-}
+  NEXUS_API_MAX_INFLIGHT_REQUESTS: ${NEXUS_API_MAX_INFLIGHT_REQUESTS:-}
+  NEXUS_API_IP_BAN_EXEMPT_IPS: ${NEXUS_API_IP_BAN_EXEMPT_IPS:-}
+  NEXUS_IP_BAN_REFRESH_INTERVAL_MS: ${NEXUS_IP_BAN_REFRESH_INTERVAL_MS:-}
+  NEXUS_APP_ORIGIN_ALIASES: ${NEXUS_APP_ORIGIN_ALIASES:-}
+  NEXUS_BREACHED_PASSWORD_CHECK_ENABLED: ${NEXUS_BREACHED_PASSWORD_CHECK_ENABLED:-}
+  NEXUS_BLOCKLIST_FEEDS_ENABLED: ${NEXUS_BLOCKLIST_FEEDS_ENABLED:-}
+  NEXUS_GEOIP_DB_PATH: ${NEXUS_GEOIP_DB_PATH:-}
+
+  NEXUS_API_ENDPOINT: ${NEXUS_API_ENDPOINT:-}
+  NEXUS_API_CLIENT_ENDPOINT: ${NEXUS_API_CLIENT_ENDPOINT:-}
+  NEXUS_APP_ENDPOINT: ${NEXUS_APP_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}}
+  NEXUS_GATEWAY_ENDPOINT: ${NEXUS_GATEWAY_ENDPOINT:-}
+  NEXUS_MEDIA_ENDPOINT: ${NEXUS_MEDIA_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}/media}
+  NEXUS_MEDIA_PROXY_PUBLIC_ENDPOINT: ${NEXUS_MEDIA_PROXY_PUBLIC_ENDPOINT:-${NEXUS_MEDIA_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}/media}}
+  NEXUS_STATIC_CDN_ENDPOINT: ${NEXUS_STATIC_CDN_ENDPOINT:-}
+  NEXUS_ADMIN_ENDPOINT: ${NEXUS_ADMIN_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}${NEXUS_ADMIN_BASE_PATH:-/admin}}
+  NEXUS_MARKETING_ENDPOINT: ${NEXUS_MARKETING_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}}
+  NEXUS_INVITE_ENDPOINT: ${NEXUS_INVITE_ENDPOINT:-}
+  NEXUS_GIFT_ENDPOINT: ${NEXUS_GIFT_ENDPOINT:-}
+  NEXUS_STATIC_CDN_DOMAIN: ${NEXUS_STATIC_CDN_DOMAIN:-}
+  NEXUS_INVITE_DOMAIN: ${NEXUS_INVITE_DOMAIN:-}
+  NEXUS_GIFT_DOMAIN: ${NEXUS_GIFT_DOMAIN:-}
+
+  NEXUS_KV_URL: ${NEXUS_KV_URL:-redis://valkey:6379/0}
+  NEXUS_KV_MODE: ${NEXUS_KV_MODE:-}
+  NEXUS_NATS_URL: ${NEXUS_NATS_URL:-nats://nats:4222}
+  NEXUS_NATS_JETSTREAM_URL: ${NEXUS_NATS_JETSTREAM_URL:-${NEXUS_NATS_URL:-nats://nats:4222}}
+  NEXUS_NATS_AUTH_TOKEN: ${NEXUS_NATS_AUTH_TOKEN:-}
+  NEXUS_SVC_NATS_URL: ${NEXUS_SVC_NATS_URL:-${NEXUS_NATS_URL:-nats://nats:4222}}
+  NEXUS_SVC_SHARD_COUNT: "1"
+  NEXUS_SVC_MAX_CONCURRENT_REQUESTS: ${NEXUS_SVC_MAX_CONCURRENT_REQUESTS:-}
+  NEXUS_SVC_CACHE_MAX_ENTRIES: ${NEXUS_SVC_CACHE_MAX_ENTRIES:-}
+  NEXUS_SVC_CACHE_TTL_MS: ${NEXUS_SVC_CACHE_TTL_MS:-}
+  NEXUS_GIF_SERVICE_NATS_CLIENT_NAME: ${NEXUS_GIF_SERVICE_NATS_CLIENT_NAME:-}
+  NEXUS_GIF_SERVICE_TIMEOUT_MS: ${NEXUS_GIF_SERVICE_TIMEOUT_MS:-}
+  NEXUS_GIF_SERVICE_REGISTER_SHARE_TIMEOUT_MS: ${NEXUS_GIF_SERVICE_REGISTER_SHARE_TIMEOUT_MS:-}
+  NEXUS_USERS_SERVICE_NATS_CLIENT_NAME: ${NEXUS_USERS_SERVICE_NATS_CLIENT_NAME:-}
+  NEXUS_USERS_SERVICE_TIMEOUT_MS: ${NEXUS_USERS_SERVICE_TIMEOUT_MS:-}
+  NEXUS_USERS_SERVICE_INFLIGHT_MAX_ENTRIES: ${NEXUS_USERS_SERVICE_INFLIGHT_MAX_ENTRIES:-}
+  NEXUS_SNOWFLAKE_SERVICE_NATS_CLIENT_NAME: ${NEXUS_SNOWFLAKE_SERVICE_NATS_CLIENT_NAME:-}
+  NEXUS_SNOWFLAKE_SERVICE_BATCH_SIZE: ${NEXUS_SNOWFLAKE_SERVICE_BATCH_SIZE:-}
+  NEXUS_SNOWFLAKE_SERVICE_LOW_WATERMARK: ${NEXUS_SNOWFLAKE_SERVICE_LOW_WATERMARK:-}
+  NEXUS_SNOWFLAKE_SERVICE_MAX_BUFFER_AGE_MS: ${NEXUS_SNOWFLAKE_SERVICE_MAX_BUFFER_AGE_MS:-}
+  NEXUS_SNOWFLAKE_SERVICE_REQUEST_TIMEOUT_MS: ${NEXUS_SNOWFLAKE_SERVICE_REQUEST_TIMEOUT_MS:-}
+
+  NEXUS_SEARCH_ENGINE: ${NEXUS_SEARCH_ENGINE:-meilisearch}
+  NEXUS_SEARCH_URL: ${NEXUS_SEARCH_URL:-http://meilisearch:7700}
+  NEXUS_SEARCH_API_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY in .env}
+  NEXUS_SEARCH_USERNAME: ${NEXUS_SEARCH_USERNAME:-}
+  NEXUS_SEARCH_PASSWORD: ${NEXUS_SEARCH_PASSWORD:-}
+  NEXUS_SEARCH_TLS_REJECT_UNAUTHORIZED: ${NEXUS_SEARCH_TLS_REJECT_UNAUTHORIZED:-}
+
+  NEXUS_S3_ENDPOINT: ${NEXUS_S3_ENDPOINT:-http://seaweedfs:8333}
+  NEXUS_S3_PUBLIC_ENDPOINT: ${NEXUS_S3_PUBLIC_ENDPOINT:-${NEXUS_S3_ENDPOINT:-http://seaweedfs:8333}}
+  NEXUS_S3_REGION: ${NEXUS_S3_REGION:-us-east-1}
+  NEXUS_S3_ACCESS_KEY_ID: ${NEXUS_S3_ACCESS_KEY:?set NEXUS_S3_ACCESS_KEY in .env}
+  NEXUS_S3_SECRET_ACCESS_KEY: ${NEXUS_S3_SECRET_KEY:?set NEXUS_S3_SECRET_KEY in .env}
+  NEXUS_S3_FORCE_PATH_STYLE: "${NEXUS_S3_FORCE_PATH_STYLE:-true}"
+  NEXUS_S3_BUCKET_CDN: ${NEXUS_S3_BUCKET_CDN:-fluxer}
+  NEXUS_S3_BUCKET_UPLOADS: ${NEXUS_S3_BUCKET_UPLOADS:-fluxer-uploads}
+  NEXUS_S3_BUCKET_REPORTS: ${NEXUS_S3_BUCKET_REPORTS:-fluxer-reports}
+  NEXUS_S3_BUCKET_HARVESTS: ${NEXUS_S3_BUCKET_HARVESTS:-fluxer-harvests}
+  NEXUS_API_PRESIGNED_HARVEST_DOWNLOADS_ENABLED: "${NEXUS_API_PRESIGNED_HARVEST_DOWNLOADS_ENABLED:-false}"
+  NEXUS_API_STORAGE_CHANGE_FEED_ENABLED: ${NEXUS_API_STORAGE_CHANGE_FEED_ENABLED:-}
+  NEXUS_API_STORAGE_CHANGE_FEED_STREAM: ${NEXUS_API_STORAGE_CHANGE_FEED_STREAM:-}
+  NEXUS_API_STORAGE_CHANGE_FEED_SKIP_BUCKETS: ${NEXUS_API_STORAGE_CHANGE_FEED_SKIP_BUCKETS:-}
+  NEXUS_CACHE_PURGE_ADAPTER: ${NEXUS_CACHE_PURGE_ADAPTER:-}
+  NEXUS_CACHE_PURGE_HTTP_ENDPOINT: ${NEXUS_CACHE_PURGE_HTTP_ENDPOINT:-}
+  NEXUS_CACHE_PURGE_HTTP_TOKEN: ${NEXUS_CACHE_PURGE_HTTP_TOKEN:-}
+  NEXUS_CACHE_PURGE_HTTP_TIMEOUT_MS: ${NEXUS_CACHE_PURGE_HTTP_TIMEOUT_MS:-}
+
+  NEXUS_LIVEKIT_ENABLED: "${NEXUS_LIVEKIT_ENABLED:-true}"
+  NEXUS_LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?set LIVEKIT_API_KEY in .env}
+  NEXUS_LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?set LIVEKIT_API_SECRET in .env}
+  NEXUS_LIVEKIT_INTERNAL_URL: ${NEXUS_LIVEKIT_INTERNAL_URL:-http://livekit:7880}
+  NEXUS_LIVEKIT_DEFAULT_REGION: '${NEXUS_LIVEKIT_DEFAULT_REGION:-{"id":"default","name":"Default","emoji":"🌍","latitude":0,"longitude":0}}'
+  NEXUS_LIVEKIT_URL: ${NEXUS_LIVEKIT_URL:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}:${NEXUS_PUBLIC_PORT:-443}}/livekit}
+  NEXUS_VOICE_P2P_STUN_URLS: ${NEXUS_VOICE_P2P_STUN_URLS:-}
+
+  NEXUS_KLIPY_API_KEY: ${NEXUS_KLIPY_API_KEY:-}
+  NEXUS_YOUTUBE_API_KEY: ${NEXUS_YOUTUBE_API_KEY:-}
+  NEXUS_API_UNFURL_IGNORED_HOSTS: ${NEXUS_API_UNFURL_IGNORED_HOSTS:-}
+
+  NEXUS_EMAIL_ENABLED: ${NEXUS_EMAIL_ENABLED:-}
+  NEXUS_EMAIL_PROVIDER: ${NEXUS_EMAIL_PROVIDER:-}
+  NEXUS_EMAIL_FROM_EMAIL: ${NEXUS_EMAIL_FROM_EMAIL:-noreply@localhost}
+  NEXUS_EMAIL_FROM_NAME: ${NEXUS_EMAIL_FROM_NAME:-}
+  NEXUS_EMAIL_REPLY_TO_EMAIL: ${NEXUS_EMAIL_REPLY_TO_EMAIL:-}
+  NEXUS_EMAIL_APP_BASE_URL: ${NEXUS_EMAIL_APP_BASE_URL:-}
+  NEXUS_EMAIL_WEBHOOK_SECRET: ${NEXUS_EMAIL_WEBHOOK_SECRET:-}
+  NEXUS_EMAIL_SMTP_HOST: ${NEXUS_EMAIL_SMTP_HOST:-}
+  NEXUS_EMAIL_SMTP_PORT: ${NEXUS_EMAIL_SMTP_PORT:-}
+  NEXUS_EMAIL_SMTP_USERNAME: ${NEXUS_EMAIL_SMTP_USERNAME:-}
+  NEXUS_EMAIL_SMTP_PASSWORD: ${NEXUS_EMAIL_SMTP_PASSWORD:-}
+  NEXUS_EMAIL_SMTP_TLS_MODE: ${NEXUS_EMAIL_SMTP_TLS_MODE:-}
+  NEXUS_EMAIL_SMTP_SECURE: ${NEXUS_EMAIL_SMTP_SECURE:-}
+
+  NEXUS_STRIPE_ENABLED: ${NEXUS_STRIPE_ENABLED:-}
+  NEXUS_STRIPE_SECRET_KEY: ${NEXUS_STRIPE_SECRET_KEY:-}
+  NEXUS_STRIPE_WEBHOOK_SECRET: ${NEXUS_STRIPE_WEBHOOK_SECRET:-}
+  NEXUS_STRIPE_PRICES: ${NEXUS_STRIPE_PRICES:-}
+  NEXUS_STRIPE_LEGACY_PRICES: ${NEXUS_STRIPE_LEGACY_PRICES:-}
+  NEXUS_API_DONATION_PROXY_KEY: ${NEXUS_API_DONATION_PROXY_KEY:-}
+  NEXUS_API_TRUSTED_CALLERS: ${NEXUS_API_TRUSTED_CALLERS:-}
+  NEXUS_VISIONARIES_GUILD_ID: ${NEXUS_VISIONARIES_GUILD_ID:-}
+  NEXUS_VISIONARIES_GUILD_VISIONARY_ROLE_ID: ${NEXUS_VISIONARIES_GUILD_VISIONARY_ROLE_ID:-}
+
+  NEXUS_CLAMAV_ENABLED: ${NEXUS_CLAMAV_ENABLED:-}
+  NEXUS_CLAMAV_HOST: ${NEXUS_CLAMAV_HOST:-}
+  NEXUS_CLAMAV_PORT: ${NEXUS_CLAMAV_PORT:-}
+  NEXUS_CLAMAV_FAIL_OPEN: ${NEXUS_CLAMAV_FAIL_OPEN:-}
+
+  NEXUS_APP_PRODUCT_NAME: ${NEXUS_APP_PRODUCT_NAME:-}
+  NEXUS_APP_ICON_URL: ${NEXUS_APP_ICON_URL:-}
+  NEXUS_APP_SYMBOL_URL: ${NEXUS_APP_SYMBOL_URL:-}
+  NEXUS_APP_LOGO_URL: ${NEXUS_APP_LOGO_URL:-}
+  NEXUS_APP_WORDMARK_URL: ${NEXUS_APP_WORDMARK_URL:-}
+  NEXUS_APP_FAVICON_URL: ${NEXUS_APP_FAVICON_URL:-}
+  NEXUS_APP_THEME_COLOR: ${NEXUS_APP_THEME_COLOR:-}
+  NEXUS_APP_STATUS_PAGE_URL: ${NEXUS_APP_STATUS_PAGE_URL:-}
+  NEXUS_APP_STATUS_PAGE_INCIDENT_HISTORY_URL: ${NEXUS_APP_STATUS_PAGE_INCIDENT_HISTORY_URL:-}
+  NEXUS_INSTANCE_SETUP_CONFIGURED: ${NEXUS_INSTANCE_SETUP_CONFIGURED:-}
+  NEXUS_ACCOUNT_IDENTITY: ${NEXUS_ACCOUNT_IDENTITY:-}
+  NEXUS_TAG_STYLE: ${NEXUS_TAG_STYLE:-}
+  NEXUS_AUTO_JOIN_INVITE_CODE: ${NEXUS_AUTO_JOIN_INVITE_CODE:-}
+  NEXUS_DISCOVERY_ENABLED: ${NEXUS_DISCOVERY_ENABLED:-}
+  NEXUS_DISCOVERY_MIN_MEMBER_COUNT: ${NEXUS_DISCOVERY_MIN_MEMBER_COUNT:-}
+  NEXUS_DELETION_GRACE_PERIOD_HOURS: ${NEXUS_DELETION_GRACE_PERIOD_HOURS:-}
+  NEXUS_REPORT_RETENTION_DAYS: ${NEXUS_REPORT_RETENTION_DAYS:-}
+  NEXUS_RESOLVED_REPORT_RETENTION_DAYS: ${NEXUS_RESOLVED_REPORT_RETENTION_DAYS:-}
+  NEXUS_REPORT_RETENTION_DRY_RUN: ${NEXUS_REPORT_RETENTION_DRY_RUN:-}
+  NEXUS_API_WORKER_LANE_CONCURRENCY_OVERRIDES: ${NEXUS_API_WORKER_LANE_CONCURRENCY_OVERRIDES:-}
+
+  NEXUS_AUTH_BLUESKY_ENABLED: ${NEXUS_AUTH_BLUESKY_ENABLED:-}
+  NEXUS_AUTH_BLUESKY_CLIENT_NAME: ${NEXUS_AUTH_BLUESKY_CLIENT_NAME:-}
+  NEXUS_AUTH_BLUESKY_CLIENT_URI: ${NEXUS_AUTH_BLUESKY_CLIENT_URI:-}
+  NEXUS_AUTH_BLUESKY_LOGO_URI: ${NEXUS_AUTH_BLUESKY_LOGO_URI:-}
+  NEXUS_AUTH_BLUESKY_TOS_URI: ${NEXUS_AUTH_BLUESKY_TOS_URI:-}
+  NEXUS_AUTH_BLUESKY_POLICY_URI: ${NEXUS_AUTH_BLUESKY_POLICY_URI:-}
+  NEXUS_AUTH_BLUESKY_KEYS: ${NEXUS_AUTH_BLUESKY_KEYS:-}
+
+  NEXUS_PUSH_APNS_ENABLED: ${NEXUS_PUSH_APNS_ENABLED:-}
+  NEXUS_PUSH_APNS_TEAM_ID: ${NEXUS_PUSH_APNS_TEAM_ID:-}
+  NEXUS_PUSH_APNS_KEY_ID: ${NEXUS_PUSH_APNS_KEY_ID:-}
+  NEXUS_PUSH_APNS_PRIVATE_KEY: ${NEXUS_PUSH_APNS_PRIVATE_KEY:-}
+  NEXUS_PUSH_APNS_PRIVATE_KEY_PATH: ${NEXUS_PUSH_APNS_PRIVATE_KEY_PATH:-}
+  NEXUS_PUSH_APNS_APPS: ${NEXUS_PUSH_APNS_APPS:-}
+
+  NEXUS_SUDO_MODE_SECRET: ${NEXUS_SUDO_MODE_SECRET:?set NEXUS_SUDO_MODE_SECRET in .env}
+  NEXUS_CONNECTION_INITIATION_SECRET: ${NEXUS_CONNECTION_INITIATION_SECRET:?set NEXUS_CONNECTION_INITIATION_SECRET in .env}
+  NEXUS_PROFILE_PSEUDONYM_SECRET: ${NEXUS_PROFILE_PSEUDONYM_SECRET:?set NEXUS_PROFILE_PSEUDONYM_SECRET in .env}
+  NEXUS_SSO_ALLOW_PRIVATE_ADDRESSES: ${NEXUS_SSO_ALLOW_PRIVATE_ADDRESSES:-}
+  NEXUS_VAPID_PUBLIC_KEY: ${NEXUS_VAPID_PUBLIC_KEY:?set NEXUS_VAPID_PUBLIC_KEY in .env}
+  NEXUS_VAPID_PRIVATE_KEY: ${NEXUS_VAPID_PRIVATE_KEY:?set NEXUS_VAPID_PRIVATE_KEY in .env}
+  NEXUS_VAPID_EMAIL: ${NEXUS_VAPID_EMAIL:-admin@${NEXUS_DOMAIN}}
+  NEXUS_PASSKEY_RP_ID: ${NEXUS_PASSKEY_RP_ID:-${NEXUS_DOMAIN}}
+  NEXUS_PASSKEY_RP_NAME: ${NEXUS_PASSKEY_RP_NAME:-}
+  NEXUS_PASSKEY_ADDITIONAL_ALLOWED_ORIGINS: ${NEXUS_PASSKEY_ADDITIONAL_ALLOWED_ORIGINS:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}}
+  NEXUS_GATEWAY_RPC_AUTH_TOKEN: ${NEXUS_GATEWAY_RPC_AUTH_TOKEN:?set NEXUS_GATEWAY_RPC_AUTH_TOKEN in .env}
+  NEXUS_MEDIA_PROXY_SECRET_KEY: ${NEXUS_MEDIA_PROXY_SECRET_KEY:?set NEXUS_MEDIA_PROXY_SECRET_KEY in .env}
+  NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SECRET_BASE64: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SECRET_BASE64:?set NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SECRET_BASE64 in .env}
+  NEXUS_MEDIA_PROXY_ATTACHMENT_URL_SECRETS_BASE64: ${NEXUS_MEDIA_PROXY_ATTACHMENT_URL_SECRETS_BASE64:-}
+  NEXUS_ADMIN_SECRET_KEY_BASE: ${NEXUS_ADMIN_SECRET_KEY_BASE:?set NEXUS_ADMIN_SECRET_KEY_BASE in .env}
+  NEXUS_ADMIN_OAUTH_CLIENT_SECRET: ${NEXUS_ADMIN_OAUTH_CLIENT_SECRET:?set NEXUS_ADMIN_OAUTH_CLIENT_SECRET in .env}
+
+  NEXUS_INTERNAL_API_ENDPOINT: http://api:8080
+  NEXUS_INTERNAL_MEDIA_PROXY_ENDPOINT: http://media-proxy:8080
+  NEXUS_MEDIA_PROXY_UPLOAD_RELAY_ENDPOINT: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}/media}
+  NEXUS_MEDIA_PROXY_UPLOAD_RELAY_MAX_BODY_BYTES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_MAX_BODY_BYTES:-}
+  NEXUS_MEDIA_PROXY_UPLOAD_RELAY_TOKEN_TTL_SECS: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_TOKEN_TTL_SECS:-}
+  NEXUS_MEDIA_PROXY_UPLOAD_RELAY_KEEP_DIRECT_COUNTRIES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_KEEP_DIRECT_COUNTRIES:-}
+
+x-nexus-service: &nexus-service
+  restart: ${NEXUS_RESTART_POLICY:-unless-stopped}
+  networks: [fluxer]
+
+x-nexus-app-healthcheck: &nexus-app-healthcheck
+  interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+  timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+  retries: ${NEXUS_APP_HEALTHCHECK_RETRIES:-30}
+  start_period: ${NEXUS_APP_HEALTHCHECK_START_PERIOD:-90s}
+  start_interval: 1s
+
+x-nexus-svc-healthcheck: &nexus-svc-healthcheck
+  <<: *nexus-app-healthcheck
+  start_period: ${NEXUS_SVC_HEALTHCHECK_START_PERIOD:-60s}
+  test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8090 && printf 'GET /_health HTTP/1.0\\r\\n\\r\\n' >&3 && head -n 1 <&3 | grep -q ' 200 '"]
+
+services:
+  edge:
+    <<: *nexus-service
+    image: ${NEXUS_CADDY_IMAGE:-caddy:2.11-alpine}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_CADDY_MEMORY_LIMIT:-256mb}
+    ports:
+      - "${NEXUS_HTTP_PORT:-80}:80"
+      - "${NEXUS_HTTPS_PORT:-443}:443"
+      - "${NEXUS_HTTPS_PORT:-443}:443/udp"
+    environment:
+      NEXUS_EDGE_SITE_ADDRESS: ${NEXUS_EDGE_SITE_ADDRESS:-${NEXUS_CADDY_SITE_ADDRESS:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN:?set NEXUS_DOMAIN in .env}}}
+      NEXUS_EDGE_TRUSTED_PROXIES: ${NEXUS_EDGE_TRUSTED_PROXIES:-private_ranges}
+      NEXUS_EDGE_ENCODE: ${NEXUS_EDGE_ENCODE:-zstd gzip}
+      NEXUS_EDGE_GLOBAL_OPTIONS: ${NEXUS_EDGE_GLOBAL_OPTIONS:-}
+      NEXUS_ADMIN_BASE_PATH: ${NEXUS_ADMIN_BASE_PATH:-/admin}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - edge-data:/data
+      - edge-config:/config
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+    depends_on:
+      api: {condition: service_started}
+      gateway: {condition: service_healthy}
+      media-proxy: {condition: service_started}
+      static-proxy: {condition: service_started}
+      admin: {condition: service_started}
+
+  postgres:
+    <<: *nexus-service
+    image: ${NEXUS_POSTGRES_IMAGE:-postgres:16-alpine}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_POSTGRES_MEMORY_LIMIT:-5gb}
+        reservations:
+          memory: ${NEXUS_POSTGRES_MEMORY_RESERVATION:-3gb}
+    command: >
+      postgres
+      -c max_connections=${NEXUS_POSTGRES_SERVER_MAX_CONNECTIONS:-150}
+      -c shared_buffers=${NEXUS_POSTGRES_SHARED_BUFFERS:-512MB}
+      -c effective_cache_size=${NEXUS_POSTGRES_EFFECTIVE_CACHE_SIZE:-2GB}
+      -c work_mem=${NEXUS_POSTGRES_WORK_MEM:-8MB}
+      -c maintenance_work_mem=${NEXUS_POSTGRES_MAINTENANCE_WORK_MEM:-256MB}
+      -c autovacuum_work_mem=${NEXUS_POSTGRES_AUTOVACUUM_WORK_MEM:-128MB}
+      -c random_page_cost=${NEXUS_POSTGRES_RANDOM_PAGE_COST:-1.1}
+      -c effective_io_concurrency=${NEXUS_POSTGRES_EFFECTIVE_IO_CONCURRENCY:-200}
+      -c default_statistics_target=${NEXUS_POSTGRES_DEFAULT_STATISTICS_TARGET:-200}
+      -c jit=${NEXUS_POSTGRES_JIT:-off}
+      -c min_wal_size=${NEXUS_POSTGRES_MIN_WAL_SIZE:-512MB}
+      -c max_wal_size=${NEXUS_POSTGRES_MAX_WAL_SIZE:-2GB}
+      -c checkpoint_completion_target=${NEXUS_POSTGRES_CHECKPOINT_COMPLETION_TARGET:-0.9}
+      -c wal_buffers=${NEXUS_POSTGRES_WAL_BUFFERS:-16MB}
+      -c wal_compression=${NEXUS_POSTGRES_WAL_COMPRESSION:-zstd}
+      -c bgwriter_delay=${NEXUS_POSTGRES_BGWRITER_DELAY:-50ms}
+      -c bgwriter_lru_maxpages=${NEXUS_POSTGRES_BGWRITER_LRU_MAXPAGES:-1000}
+      -c autovacuum_vacuum_scale_factor=${NEXUS_POSTGRES_AUTOVACUUM_VACUUM_SCALE_FACTOR:-0.05}
+      -c autovacuum_analyze_scale_factor=${NEXUS_POSTGRES_AUTOVACUUM_ANALYZE_SCALE_FACTOR:-0.02}
+      -c autovacuum_vacuum_cost_limit=${NEXUS_POSTGRES_AUTOVACUUM_VACUUM_COST_LIMIT:-2000}
+      -c track_io_timing=${NEXUS_POSTGRES_TRACK_IO_TIMING:-on}
+      -c shared_preload_libraries=${NEXUS_POSTGRES_SHARED_PRELOAD_LIBRARIES:-pg_stat_statements}
+    shm_size: ${NEXUS_POSTGRES_SHM_SIZE:-1gb}
+    environment:
+      POSTGRES_DB: ${NEXUS_POSTGRES_DATABASE:-fluxer}
+      POSTGRES_USER: ${NEXUS_POSTGRES_USERNAME:-fluxer}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+
+  valkey:
+    <<: *nexus-service
+    image: ${NEXUS_VALKEY_IMAGE:-valkey/valkey:9.1-alpine}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_VALKEY_MEMORY_LIMIT:-256mb}
+    command: ["valkey-server", "--appendonly", "yes", "--appendfsync", "${NEXUS_VALKEY_APPENDFSYNC:-everysec}", "--dir", "/data",
+              "--maxmemory", "${NEXUS_VALKEY_MAXMEMORY:-192mb}",
+              "--maxmemory-policy", "${NEXUS_VALKEY_MAXMEMORY_POLICY:-noeviction}"]
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+
+  nats:
+    <<: *nexus-service
+    image: ${NEXUS_NATS_IMAGE:-nats:2.14-alpine}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_NATS_MEMORY_LIMIT:-256mb}
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    volumes:
+      - nats-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8222/healthz"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+
+  meilisearch:
+    <<: *nexus-service
+    image: ${NEXUS_MEILISEARCH_IMAGE:-getmeili/meilisearch:v1.53}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_MEILISEARCH_MEMORY_LIMIT:-1536mb}
+    environment:
+      MEILI_ENV: ${NEXUS_MEILISEARCH_ENV:-production}
+      MEILI_NO_ANALYTICS: "${NEXUS_MEILISEARCH_NO_ANALYTICS:-true}"
+      MEILI_UPGRADE_DB: "true"
+      MEILI_MAX_INDEXING_MEMORY: ${NEXUS_MEILISEARCH_MAX_INDEXING_MEMORY:-256mb}
+      MEILI_MAX_INDEXING_THREADS: ${NEXUS_MEILISEARCH_MAX_INDEXING_THREADS:-2}
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY in .env}
+    volumes:
+      - meilisearch-data:/meili_data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:7700/health"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+
+  seaweedfs:
+    <<: *nexus-service
+    image: ${NEXUS_SEAWEEDFS_IMAGE:-chrislusf/seaweedfs:4.47}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_SEAWEEDFS_MEMORY_LIMIT:-2gb}
+    environment:
+      GOMEMLIMIT: ${NEXUS_SEAWEEDFS_GOMEMLIMIT:-1536MiB}
+      WEED_MASTER_VOLUME_GROWTH_COPY_1: ${NEXUS_SEAWEEDFS_VOLUME_GROWTH:-1}
+    command: ["server", "-s3", "-dir=/data", "-master.telemetry=${NEXUS_SEAWEEDFS_TELEMETRY:-false}"]
+    volumes:
+      - seaweedfs-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8333/healthz"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_SEAWEEDFS_HEALTHCHECK_RETRIES:-20}
+      start_period: ${NEXUS_SEAWEEDFS_HEALTHCHECK_START_PERIOD:-60s}
+
+  seaweedfs-init:
+    image: ${NEXUS_SEAWEEDFS_IMAGE:-chrislusf/seaweedfs:4.47}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_SEAWEEDFS_INIT_MEMORY_LIMIT:-128mb}
+    networks: [fluxer]
+    depends_on:
+      seaweedfs: {condition: service_healthy}
+    restart: "no"
+    environment:
+      NEXUS_S3_ACCESS_KEY: ${NEXUS_S3_ACCESS_KEY:?set NEXUS_S3_ACCESS_KEY in .env}
+      NEXUS_S3_SECRET_KEY: ${NEXUS_S3_SECRET_KEY:?set NEXUS_S3_SECRET_KEY in .env}
+      NEXUS_S3_BUCKET_CDN: ${NEXUS_S3_BUCKET_CDN:-fluxer}
+      NEXUS_S3_BUCKET_UPLOADS: ${NEXUS_S3_BUCKET_UPLOADS:-fluxer-uploads}
+      NEXUS_S3_BUCKET_REPORTS: ${NEXUS_S3_BUCKET_REPORTS:-fluxer-reports}
+      NEXUS_S3_BUCKET_HARVESTS: ${NEXUS_S3_BUCKET_HARVESTS:-fluxer-harvests}
+      NEXUS_SEAWEEDFS_INIT_ATTEMPTS: ${NEXUS_SEAWEEDFS_INIT_ATTEMPTS:-60}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - >
+        buckets="$$NEXUS_S3_BUCKET_CDN $$NEXUS_S3_BUCKET_UPLOADS $$NEXUS_S3_BUCKET_REPORTS $$NEXUS_S3_BUCKET_HARVESTS";
+        missing="$$buckets";
+        for attempt in $$(seq 1 $$NEXUS_SEAWEEDFS_INIT_ATTEMPTS); do
+          if ! nc -z seaweedfs 9333 2>/dev/null; then
+            sleep 2;
+            continue;
+          fi;
+          listed=$$(echo "s3.bucket.list" | timeout 10 weed shell -master=seaweedfs:9333 2>&1);
+          missing="";
+          for b in $$buckets; do
+            echo "$$listed" | grep -q "^[[:space:]]*$$b[[:space:]]" || missing="$${missing:+$$missing }$$b";
+          done;
+          if [ -z "$$missing" ]; then
+            if ! echo "s3.configure -user=fluxer -access_key=$$NEXUS_S3_ACCESS_KEY -secret_key=$$NEXUS_S3_SECRET_KEY -actions=Admin,Read,Write,List,Tagging -apply" | timeout 10 weed shell -master=seaweedfs:9333 >/dev/null 2>&1; then
+              echo "seaweedfs-init could not configure the S3 identity" >&2;
+              exit 1;
+            fi;
+            echo "buckets ready";
+            exit 0;
+          fi;
+          for b in $$missing; do
+            echo "s3.bucket.create -name $$b" | timeout 10 weed shell -master=seaweedfs:9333 >/dev/null 2>&1;
+          done;
+          sleep 2;
+        done;
+        echo "seaweedfs-init could not verify buckets: $$missing" >&2;
+        exit 1;
+
+  livekit:
+    <<: *nexus-service
+    image: ${NEXUS_LIVEKIT_IMAGE:-livekit/livekit-server:v1.12.0}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_LIVEKIT_MEMORY_LIMIT:-512mb}
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY:?set LIVEKIT_API_KEY in .env}: ${LIVEKIT_API_SECRET:?set LIVEKIT_API_SECRET in .env}"
+      LIVEKIT_CONFIG: |
+        port: 7880
+        log_level: ${NEXUS_LIVEKIT_LOG_LEVEL:-info}
+        rtc:
+          tcp_port: ${NEXUS_LIVEKIT_TCP_PORT:-7881}
+          udp_port: ${NEXUS_LIVEKIT_UDP_PORT:-7882}
+          use_external_ip: ${NEXUS_LIVEKIT_USE_EXTERNAL_IP:-true}
+          node_ip: "${NEXUS_LIVEKIT_NODE_IP:-}"
+          stun_servers:
+            - ${NEXUS_LIVEKIT_STUN_PRIMARY:-stun.l.google.com:19302}
+            - ${NEXUS_LIVEKIT_STUN_SECONDARY:-stun1.l.google.com:19302}
+        webhook:
+          api_key: ${LIVEKIT_API_KEY:?set LIVEKIT_API_KEY in .env}
+          urls:
+            - http://api:8080/webhooks/livekit
+    ports:
+      - "${NEXUS_LIVEKIT_TCP_PORT:-7881}:${NEXUS_LIVEKIT_TCP_PORT:-7881}"
+      - "${NEXUS_LIVEKIT_UDP_PORT:-7882}:${NEXUS_LIVEKIT_UDP_PORT:-7882}/udp"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:7880/"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+
+  api:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_API_MEMORY_LIMIT:-2560mb}
+        reservations:
+          memory: ${NEXUS_API_MEMORY_RESERVATION:-1gb}
+    environment:
+      <<: *nexus-env
+      NEXUS_API_PORT: "8080"
+      NEXUS_SETUP_TOKEN: ${NEXUS_SETUP_TOKEN:-}
+      NODE_OPTIONS: --enable-source-maps${NEXUS_API_NODE_HEAP_MB:+ --max-old-space-size=$NEXUS_API_NODE_HEAP_MB}${NEXUS_API_NODE_OPTIONS:+ $NEXUS_API_NODE_OPTIONS}
+      NODE_EXTRA_CA_CERTS: ${NEXUS_NODE_EXTRA_CA_CERTS:-/etc/ssl/certs/ca-certificates.crt}
+      NEXUS_POSTGRES_MAX_CONNECTIONS: "${NEXUS_API_POSTGRES_MAX_CONNECTIONS:-25}"
+      NEXUS_API_PRESIGNED_ATTACHMENT_UPLOADS_ENABLED: "${NEXUS_API_PRESIGNED_ATTACHMENT_UPLOADS_ENABLED:-true}"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:8080/_health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      <<: *nexus-app-healthcheck
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+      nats: {condition: service_healthy}
+      meilisearch: {condition: service_healthy}
+      seaweedfs-init: {condition: service_completed_successfully}
+      gifs: {condition: service_healthy}
+      gifs-shard: {condition: service_healthy}
+      snowflakes: {condition: service_healthy}
+      snowflakes-shard: {condition: service_healthy}
+      messages: {condition: service_healthy}
+      messages-shard: {condition: service_healthy}
+      users: {condition: service_healthy}
+      users-shard: {condition: service_healthy}
+
+  worker:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-api:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_WORKER_MEMORY_LIMIT:-2560mb}
+        reservations:
+          memory: ${NEXUS_WORKER_MEMORY_RESERVATION:-1gb}
+    command: ["node", "dist/WorkerEntrypoint.js"]
+    environment:
+      <<: *nexus-env
+      NODE_OPTIONS: --enable-source-maps${NEXUS_WORKER_NODE_HEAP_MB:+ --max-old-space-size=$NEXUS_WORKER_NODE_HEAP_MB}${NEXUS_WORKER_NODE_OPTIONS:+ $NEXUS_WORKER_NODE_OPTIONS}
+      NODE_EXTRA_CA_CERTS: ${NEXUS_NODE_EXTRA_CA_CERTS:-/etc/ssl/certs/ca-certificates.crt}
+      NEXUS_API_WORKER_MODE: all_lanes
+      NEXUS_API_WORKER_ENABLE_CRON_SCHEDULER: "true"
+      NEXUS_POSTGRES_MAX_CONNECTIONS: "${NEXUS_WORKER_POSTGRES_MAX_CONNECTIONS:-25}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "const age=Date.now()-require('node:fs').statSync('/tmp/nexus-worker-heartbeat').mtimeMs;if(age>30000){console.error('worker heartbeat is '+Math.round(age)+'ms old');process.exit(1)}"]
+      <<: *nexus-app-healthcheck
+      retries: ${NEXUS_WORKER_HEALTHCHECK_RETRIES:-3}
+    depends_on:
+      postgres: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+      nats: {condition: service_healthy}
+      seaweedfs-init: {condition: service_completed_successfully}
+      snowflakes-shard: {condition: service_healthy}
+      messages-shard: {condition: service_healthy}
+      users-shard: {condition: service_healthy}
+
+  gateway:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gateway:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_GATEWAY_MEMORY_LIMIT:-1gb}
+        reservations:
+          memory: ${NEXUS_GATEWAY_MEMORY_RESERVATION:-384mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_GATEWAY_PORT: "8080"
+      NEXUS_GATEWAY_MEDIA_PROXY_ENDPOINT: ${NEXUS_GATEWAY_MEDIA_PROXY_ENDPOINT:-${NEXUS_MEDIA_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}/media}}
+      NEXUS_GATEWAY_STATIC_CDN_ENDPOINT: ${NEXUS_GATEWAY_STATIC_CDN_ENDPOINT:-${NEXUS_STATIC_CDN_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}}}
+      NEXUS_GATEWAY_LOGGER_LEVEL: ${NEXUS_GATEWAY_LOGGER_LEVEL:-}
+      LOGGER_LEVEL: ${LOGGER_LEVEL:-}
+      NEXUS_GATEWAY_PUSH_ENABLED: ${NEXUS_GATEWAY_PUSH_ENABLED:-}
+      NEXUS_GATEWAY_PUSH_ENROLLED_CLEAR_NOTIFICATIONS_ENABLED: ${NEXUS_GATEWAY_PUSH_ENROLLED_CLEAR_NOTIFICATIONS_ENABLED:-}
+      NEXUS_GATEWAY_PUSH_OUTBOX_REQUEST_TIMEOUT_MS: ${NEXUS_GATEWAY_PUSH_OUTBOX_REQUEST_TIMEOUT_MS:-}
+      NEXUS_GATEWAY_PRESENCE_PUSH_BUFFER_MAX_ENTRIES: ${NEXUS_GATEWAY_PRESENCE_PUSH_BUFFER_MAX_ENTRIES:-}
+      NEXUS_GATEWAY_PRESENCE_PUSH_BUFFER_MAX_BYTES: ${NEXUS_GATEWAY_PRESENCE_PUSH_BUFFER_MAX_BYTES:-}
+      NEXUS_GATEWAY_HTTP_RPC_MAX_CONCURRENCY: ${NEXUS_GATEWAY_HTTP_RPC_MAX_CONCURRENCY:-}
+      NEXUS_GATEWAY_NATS_RPC_MAX_HANDLERS: ${NEXUS_GATEWAY_NATS_RPC_MAX_HANDLERS:-}
+      NEXUS_GATEWAY_HTTP_FAILURE_THRESHOLD: ${NEXUS_GATEWAY_HTTP_FAILURE_THRESHOLD:-}
+      NEXUS_GATEWAY_HTTP_RECOVERY_TIMEOUT_MS: ${NEXUS_GATEWAY_HTTP_RECOVERY_TIMEOUT_MS:-}
+      NEXUS_ERLANG_COOKIE: ${NEXUS_ERLANG_COOKIE:?set NEXUS_ERLANG_COOKIE in .env}
+      NEXUS_ERLANG_SCHEDULERS: ${NEXUS_ERLANG_SCHEDULERS:-}
+      NEXUS_ERLANG_SCHEDULERS_MIN: ${NEXUS_ERLANG_SCHEDULERS_MIN:-}
+      NEXUS_ERLANG_SCHEDULERS_MAX: ${NEXUS_ERLANG_SCHEDULERS_MAX:-}
+      NEXUS_ERLANG_DIRTY_CPU_SCHEDULERS: ${NEXUS_ERLANG_DIRTY_CPU_SCHEDULERS:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:8080/_health/ready"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_APP_HEALTHCHECK_RETRIES:-30}
+      start_period: ${NEXUS_APP_HEALTHCHECK_START_PERIOD:-90s}
+    depends_on:
+      nats: {condition: service_healthy}
+      valkey: {condition: service_healthy}
+
+  media-proxy:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-media-proxy:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_MEDIA_PROXY_MEMORY_LIMIT:-512mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_MEDIA_PROXY_PORT: "8080"
+      NEXUS_MEDIA_PROXY_MODE: upload
+      NEXUS_MEDIA_PROXY_STORAGE_BACKEND: s3
+      NEXUS_MEDIA_PROXY_CORS_MODE: ${NEXUS_MEDIA_PROXY_CORS_MODE:-}
+      NEXUS_MEDIA_PROXY_CORS_ALLOWED_ORIGINS: ${NEXUS_MEDIA_PROXY_CORS_ALLOWED_ORIGINS:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}:${NEXUS_PUBLIC_PORT:-443}}}
+      NEXUS_MEDIA_PROXY_ATTACHMENT_SIGNATURE_MODE: ${NEXUS_MEDIA_PROXY_ATTACHMENT_SIGNATURE_MODE:-}
+      NEXUS_MEDIA_PROXY_READ_ONLY: ${NEXUS_MEDIA_PROXY_READ_ONLY:-}
+      NEXUS_MEDIA_PROXY_NSFW_THRESHOLD: ${NEXUS_MEDIA_PROXY_NSFW_THRESHOLD:-}
+      NEXUS_NSFW_SERVICE_ENDPOINT: ${NEXUS_NSFW_SERVICE_ENDPOINT:-}
+      NEXUS_MEDIA_PROXY_MAX_NATIVE_TRANSFORMS: ${NEXUS_MEDIA_PROXY_MAX_NATIVE_TRANSFORMS:-}
+      NEXUS_MEDIA_PROXY_WORKER_QUEUE_CAPACITY: ${NEXUS_MEDIA_PROXY_WORKER_QUEUE_CAPACITY:-}
+      NEXUS_MEDIA_PROXY_MAX_ENCODE_DURATION_MS: ${NEXUS_MEDIA_PROXY_MAX_ENCODE_DURATION_MS:-}
+      NEXUS_MEDIA_PROXY_MAX_ENCODE_FRAMES: ${NEXUS_MEDIA_PROXY_MAX_ENCODE_FRAMES:-}
+      NEXUS_MEDIA_PROXY_TRANSFORM_TIMEOUT_MS: ${NEXUS_MEDIA_PROXY_TRANSFORM_TIMEOUT_MS:-}
+      NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_BYTES: ${NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_BYTES:-}
+      NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_MAX_ENTRY_BYTES: ${NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_MAX_ENTRY_BYTES:-}
+      NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_TTL_MS: ${NEXUS_MEDIA_PROXY_TRANSFORM_CACHE_TTL_MS:-}
+      NEXUS_MEDIA_PROXY_SOCKET_IO_TIMEOUT_MS: ${NEXUS_MEDIA_PROXY_SOCKET_IO_TIMEOUT_MS:-}
+      NEXUS_MEDIA_PROXY_SHUTDOWN_GRACE_MS: ${NEXUS_MEDIA_PROXY_SHUTDOWN_GRACE_MS:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_S3_TIMEOUT_MS: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_S3_TIMEOUT_MS:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_BUFFERED_RETRY_BYTES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_BUFFERED_RETRY_BYTES:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_BUFFERED_RETRY_TOTAL_BYTES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_BUFFERED_RETRY_TOTAL_BYTES:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_DIR: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_DIR:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_CHUNK_BYTES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_CHUNK_BYTES:-}
+      NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_MAX_TOTAL_BYTES: ${NEXUS_MEDIA_PROXY_UPLOAD_RELAY_SPOOL_MAX_TOTAL_BYTES:-}
+      NEXUS_S3_SESSION_TOKEN: ${NEXUS_S3_SESSION_TOKEN:-}
+      NEXUS_S3_READ_ENDPOINT: ${NEXUS_S3_READ_ENDPOINT:-}
+      NEXUS_S3_READ_BUCKET: ${NEXUS_S3_READ_BUCKET:-}
+      NEXUS_S3_READ_BUCKET_STYLE: ${NEXUS_S3_READ_BUCKET_STYLE:-}
+      NEXUS_S3_READ_SIGNED: "${NEXUS_S3_READ_SIGNED:-true}"
+    depends_on:
+      seaweedfs-init: {condition: service_completed_successfully}
+      nats: {condition: service_healthy}
+
+  push:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-push:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_PUSH_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_PUSH_SERVICE_QUEUE_CAPACITY: ${NEXUS_PUSH_SERVICE_QUEUE_CAPACITY:-}
+      NEXUS_PUSH_SERVICE_SEND_CONCURRENCY: ${NEXUS_PUSH_SERVICE_SEND_CONCURRENCY:-}
+      NEXUS_PUSH_SERVICE_APNS_BASE_URL: ${NEXUS_PUSH_SERVICE_APNS_BASE_URL:-}
+      NEXUS_PUSH_SERVICE_FCM_BASE_URL: ${NEXUS_PUSH_SERVICE_FCM_BASE_URL:-}
+      NEXUS_PUSH_SERVICE_MANAGED_RELAY_HOSTS: ${NEXUS_PUSH_SERVICE_MANAGED_RELAY_HOSTS:-}
+      NEXUS_PUSH_SERVICE_OWN_RELAY_HOSTS: ${NEXUS_PUSH_SERVICE_OWN_RELAY_HOSTS:-}
+      NEXUS_PUSH_SERVICE_PRIVATE_HOSTS: ${NEXUS_PUSH_SERVICE_PRIVATE_HOSTS:-}
+      NEXUS_PUSH_SERVICE_RELAY_CONSENT_ACCEPTED: ${NEXUS_PUSH_SERVICE_RELAY_CONSENT_ACCEPTED:-}
+      NEXUS_PUSH_APNS_DEFAULT_ENVIRONMENT: ${NEXUS_PUSH_APNS_DEFAULT_ENVIRONMENT:-}
+      NEXUS_PUSH_FCM_ENABLED: ${NEXUS_PUSH_FCM_ENABLED:-}
+      NEXUS_PUSH_FCM_PROJECT_ID: ${NEXUS_PUSH_FCM_PROJECT_ID:-}
+      NEXUS_PUSH_FCM_CLIENT_EMAIL: ${NEXUS_PUSH_FCM_CLIENT_EMAIL:-}
+      NEXUS_PUSH_FCM_PRIVATE_KEY: ${NEXUS_PUSH_FCM_PRIVATE_KEY:-}
+      NEXUS_PUSH_FCM_PRIVATE_KEY_PATH: ${NEXUS_PUSH_FCM_PRIVATE_KEY_PATH:-}
+      NEXUS_PUSH_FCM_SERVICE_ACCOUNT_JSON_PATH: ${NEXUS_PUSH_FCM_SERVICE_ACCOUNT_JSON_PATH:-}
+      NEXUS_PUSH_FCM_TOKEN_URI: ${NEXUS_PUSH_FCM_TOKEN_URI:-}
+      NEXUS_PUSH_FCM_APPS: ${NEXUS_PUSH_FCM_APPS:-}
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/nexus-push", "healthcheck"]
+      <<: *nexus-app-healthcheck
+      start_period: ${NEXUS_SVC_HEALTHCHECK_START_PERIOD:-60s}
+    depends_on:
+      nats: {condition: service_healthy}
+      api: {condition: service_healthy}
+
+  static-proxy:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-static:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_STATIC_PROXY_MEMORY_LIMIT:-256mb}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/avatars/0.png"]
+      interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${NEXUS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${NEXUS_HEALTHCHECK_RETRIES:-10}
+    volumes:
+      - ../../nexus_static:/srv/nexus-static:ro
+
+  app-proxy:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-app-proxy-self-hosted:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_APP_PROXY_MEMORY_LIMIT:-256mb}
+    environment:
+      RUST_LOG: ${RUST_LOG:-}
+      NEXUS_APP_PROXY_PORT: "8080"
+      NEXUS_S3_PUBLIC_ENDPOINT: ${NEXUS_S3_PUBLIC_ENDPOINT:-}
+      NEXUS_S3_BUCKET_UPLOADS: ${NEXUS_S3_BUCKET_UPLOADS:-}
+      NEXUS_STATIC_CDN_ENDPOINT: ${NEXUS_STATIC_CDN_ENDPOINT:-}
+      NEXUS_MEDIA_ENDPOINT: ${NEXUS_MEDIA_ENDPOINT:-}
+      NEXUS_APP_PRODUCT_NAME: ${NEXUS_APP_PRODUCT_NAME:-}
+      NEXUS_APP_ICON_URL: ${NEXUS_APP_ICON_URL:-}
+      NEXUS_APP_SYMBOL_URL: ${NEXUS_APP_SYMBOL_URL:-}
+      NEXUS_APP_LOGO_URL: ${NEXUS_APP_LOGO_URL:-}
+      NEXUS_APP_WORDMARK_URL: ${NEXUS_APP_WORDMARK_URL:-}
+      NEXUS_APP_FAVICON_URL: ${NEXUS_APP_FAVICON_URL:-}
+      NEXUS_APP_THEME_COLOR: ${NEXUS_APP_THEME_COLOR:-}
+      DISCOVERY_UPSTREAM_URL: http://edge:8088/.well-known/nexus
+      DISCOVERY_REFRESH_INTERVAL_MS: ${DISCOVERY_REFRESH_INTERVAL_MS:-}
+      NEXUS_APP_PROXY_INDEX_UPSTREAM_URL: ${NEXUS_APP_PROXY_INDEX_UPSTREAM_URL:-}
+      NEXUS_APP_PROXY_SAME_ORIGIN_HOSTS: ${NEXUS_APP_PROXY_SAME_ORIGIN_HOSTS:-}
+      NEXUS_APP_PROXY_MANIFEST_SCOPE_EXTENSIONS: ${NEXUS_APP_PROXY_MANIFEST_SCOPE_EXTENSIONS:-}
+      NEXUS_CSP_EXTRA_DEFAULT_SRC: ${NEXUS_CSP_EXTRA_DEFAULT_SRC:-}
+      NEXUS_CSP_EXTRA_CONNECT_SRC: ${NEXUS_CSP_EXTRA_CONNECT_SRC:-}
+      NEXUS_CSP_EXTRA_IMG_SRC: ${NEXUS_CSP_EXTRA_IMG_SRC:-}
+      NEXUS_CSP_EXTRA_MEDIA_SRC: ${NEXUS_CSP_EXTRA_MEDIA_SRC:-}
+      NEXUS_CSP_EXTRA_FONT_SRC: ${NEXUS_CSP_EXTRA_FONT_SRC:-}
+      NEXUS_CSP_EXTRA_SCRIPT_SRC: ${NEXUS_CSP_EXTRA_SCRIPT_SRC:-}
+      NEXUS_CSP_EXTRA_STYLE_SRC: ${NEXUS_CSP_EXTRA_STYLE_SRC:-}
+      NEXUS_CSP_EXTRA_FRAME_SRC: ${NEXUS_CSP_EXTRA_FRAME_SRC:-}
+      NEXUS_CSP_EXTRA_WORKER_SRC: ${NEXUS_CSP_EXTRA_WORKER_SRC:-}
+      NEXUS_CSP_EXTRA_MANIFEST_SRC: ${NEXUS_CSP_EXTRA_MANIFEST_SRC:-}
+      NEXUS_CSP_REPORT_URI: ${NEXUS_CSP_REPORT_URI:-}
+    volumes:
+      - ./app-static:/srv/app/static:ro
+    depends_on:
+      api: {condition: service_healthy}
+      edge: {condition: service_healthy}
+
+  snowflakes:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_SNOWFLAKES_MEMORY_LIMIT:-128mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: snowflakes
+      NEXUS_SVC_MODE: router
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  snowflakes-shard:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-snowflakes:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_SNOWFLAKES_SHARD_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: snowflakes
+      NEXUS_SVC_MODE: shard
+      NEXUS_SVC_SHARD_ID: "0"
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  users:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_USERS_MEMORY_LIMIT:-128mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: users
+      NEXUS_SVC_MODE: router
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  users-shard:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-users:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_USERS_SHARD_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: users
+      NEXUS_SVC_MODE: shard
+      NEXUS_SVC_SHARD_ID: "0"
+      NEXUS_POSTGRES_MAX_CONNECTIONS: "${NEXUS_USERS_SHARD_POSTGRES_MAX_CONNECTIONS:-20}"
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+
+  gifs:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_GIFS_MEMORY_LIMIT:-128mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: gifs
+      NEXUS_SVC_MODE: router
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  gifs-shard:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-gifs:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_GIFS_SHARD_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: gifs
+      NEXUS_SVC_MODE: shard
+      NEXUS_SVC_SHARD_ID: "0"
+      NEXUS_GIFS_SHARD_CACHE_MAX_BYTES: ${NEXUS_GIFS_SHARD_CACHE_MAX_BYTES:-}
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  messages:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_MESSAGES_MEMORY_LIMIT:-128mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: messages
+      NEXUS_SVC_MODE: router
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  messages-shard:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-messages:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_MESSAGES_SHARD_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: messages
+      NEXUS_SVC_MODE: shard
+      NEXUS_SVC_SHARD_ID: "0"
+      NEXUS_POSTGRES_MAX_CONNECTIONS: "${NEXUS_MESSAGES_SHARD_POSTGRES_MAX_CONNECTIONS:-20}"
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+
+  unfurl:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_UNFURL_MEMORY_LIMIT:-128mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: unfurl
+      NEXUS_SVC_MODE: router
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  unfurl-shard:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-unfurl:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_UNFURL_SHARD_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_SVC_NAME: unfurl
+      NEXUS_SVC_MODE: shard
+      NEXUS_SVC_SHARD_ID: "0"
+      NEXUS_MEDIA_PROXY_ENDPOINT: http://media-proxy:8080
+    healthcheck: *nexus-svc-healthcheck
+    depends_on:
+      nats: {condition: service_healthy}
+
+  admin:
+    <<: *nexus-service
+    image: ${NEXUS_REGISTRY:-ghcr.io/${NEXUS_REGISTRY_OWNER:-hasoon7}}/nexus-admin:${NEXUS_IMAGE_TAG:-v1}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEXUS_ADMIN_MEMORY_LIMIT:-256mb}
+    environment:
+      <<: *nexus-env
+      NEXUS_ADMIN_PORT: "8080"
+      NEXUS_ADMIN_BASE_PATH: ${NEXUS_ADMIN_BASE_PATH:-/admin}
+      NEXUS_API_ENDPOINT: http://api:8080
+      NEXUS_STATIC_CDN_ENDPOINT: ${NEXUS_STATIC_CDN_ENDPOINT:-${NEXUS_PUBLIC_ORIGIN:-${NEXUS_PUBLIC_SCHEME:-https}://${NEXUS_DOMAIN}}}
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /_health HTTP/1.0\\r\\n\\r\\n' >&3 && head -n 1 <&3 | grep -q ' 200 '"]
+      <<: *nexus-app-healthcheck
+      start_period: ${NEXUS_SVC_HEALTHCHECK_START_PERIOD:-60s}
+    depends_on:
+      api: {condition: service_healthy}
+
+networks:
+  fluxer:
+    driver: bridge
+
+volumes:
+  edge-data:
+  edge-config:
+  postgres-data:
+  valkey-data:
+  nats-data:
+  meilisearch-data:
+  seaweedfs-data:

@@ -1,0 +1,122 @@
+/* SPDX-License-Identifier: Nebula */
+
+.previewLabel {
+	margin-bottom: 1rem;
+	text-align: center;
+	font-weight: 500;
+	font-size: 0.875rem;
+	color: var(--text-primary-muted);
+}
+
+.profileCard {
+	--profile-card-radius: 1rem;
+	--profile-card-glass-shadow: 0 1.125rem 2.75rem rgb(0 0 0 / 42%), inset 0 1px 0 rgb(255 255 255 / 9%);
+
+	position: relative;
+	display: flex;
+	width: var(--profile-card-width, 18.75rem);
+	flex-direction: column;
+	gap: 0.25rem;
+	overflow: visible;
+	border-radius: var(--profile-card-radius);
+	border-style: solid;
+	border-width: var(--profile-card-border-width, 0.15625rem);
+	background-color: var(--profile-background-primary, var(--background-primary));
+	background-image: linear-gradient(
+		145deg,
+		var(--profile-background-primary, var(--background-primary)),
+		var(--profile-background-secondary, var(--background-secondary-alt))
+	);
+	-webkit-backdrop-filter: blur(22px) saturate(145%);
+	backdrop-filter: blur(22px) saturate(145%);
+	padding-bottom: 0.75rem;
+}
+
+.profileCard {
+	border-color: color-mix(in srgb, var(--brand-primary) 74%, var(--background-modifier-accent));
+	box-shadow: var(--profile-card-glass-shadow);
+}
+.profileCardEffects {
+	--profile-card-glass-shadow: 0 1.125rem 2.75rem rgb(0 0 0 / 42%), inset 0 1px 0 rgb(255 255 255 / 9%);
+}
+
+.profileCard[data-frame='fox'],
+.profileCard[data-frame='orbit'],
+.profileCardEffects[data-frame='fox'],
+.profileCardEffects[data-frame='orbit'] {
+	outline: none !important;
+}
+.profileCard[data-frame='lion'],
+.profileCard[data-frame='snake'],
+.profileCardEffects[data-frame='lion'],
+.profileCardEffects[data-frame='snake'] {
+	box-shadow: var(--profile-card-glass-shadow) !important;
+}
+.profileCard[data-card-effect='aurora']::after,
+.profileCard[data-card-effect='particles']::after,
+.profileCard[data-card-effect='scan']::after,
+.profileCardEffects[data-card-effect='aurora']::after,
+.profileCardEffects[data-card-effect='particles']::after,
+.profileCardEffects[data-card-effect='scan']::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	border-radius: inherit;
+	background:
+		radial-gradient(ellipse at 85% 0%, #48e6d033, transparent 42%), linear-gradient(125deg, transparent 45%, #7b8cff10);
+}
+.profileCard[data-card-effect='particles']::after,
+.profileCardEffects[data-card-effect='particles']::after {
+	background-image: radial-gradient(#48e6d0aa 0.75px, transparent 0.9px);
+	background-size: 14px 14px;
+	opacity: 0.22;
+}
+.profileCard[data-card-effect='scan']::after,
+.profileCardEffects[data-card-effect='scan']::after {
+	background-image: repeating-linear-gradient(0deg, transparent 0 5px, #48e6d014 6px 7px);
+	opacity: 0.55;
+}
+.profileDivider {
+	position: absolute;
+	z-index: 2;
+	right: 1rem;
+	bottom: 3.35rem;
+	left: 1rem;
+	height: 1px;
+	pointer-events: none;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--brand-primary) 28%, transparent), transparent);
+}
+.profileDivider[data-mode='custom'] {
+	background: linear-gradient(90deg, var(--profile-divider-color), transparent);
+}
+.profileCard[data-open-effect]:not([data-open-effect='none'])::before,
+.profileCardEffects[data-open-effect]:not([data-open-effect='none'])::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	pointer-events: none;
+	border-radius: inherit;
+	opacity: 0.22;
+	background:
+		radial-gradient(ellipse at 80% 12%, #63dfcd55, transparent 45%), linear-gradient(135deg, #7b8cff16, transparent 62%);
+}
+.profileCard[data-open-effect='nexus-pulse']::before,
+.profileCardEffects[data-open-effect='nexus-pulse']::before {
+	background: radial-gradient(circle at 50% 48%, transparent 22%, #62e6d740 48%, transparent 72%);
+}
+.profileCard[data-open-effect='ocean-life']::before,
+.profileCard[data-open-effect='swimming-fish']::before,
+.profileCardEffects[data-open-effect='ocean-life']::before,
+.profileCardEffects[data-open-effect='swimming-fish']::before {
+	background:
+		radial-gradient(ellipse at 35% 76%, #5ac8dd55, transparent 48%),
+		linear-gradient(155deg, transparent 35%, #5ac8dd22 70%, transparent);
+}
+.profileCard[data-open-effect='a-sassy-crocodile']::before,
+.profileCardEffects[data-open-effect='a-sassy-crocodile']::before {
+	background:
+		radial-gradient(ellipse at 72% 35%, #a8d86855, transparent 40%), linear-gradient(120deg, transparent, #a8d86818);
+}

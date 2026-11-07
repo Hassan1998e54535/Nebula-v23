@@ -1,0 +1,2 @@
+# Only for converting the existing licensed NEXUS WOFF2 fonts to native TTF.
+fonttools[woff]==4.68.0

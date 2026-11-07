@@ -1,0 +1,1132 @@
+{
+  "schema": 1,
+  "purpose": "temporary rendering build inputs, not a backend address",
+  "assetOrigin": "https://6dbde50f-e8cf-421d-81c2-a8c42304db17-00-16iddqo2emwoi.pike.replit.dev",
+  "files": [
+    {
+      "path": "avatar-decorations/a_363732b221f45aa7e81b3be945c6e072.png",
+      "bytes": 1576231,
+      "sha256": "9aaed3ffed3e5d8a78e6529b5bd847abdf15412c5346f89371ecc91bc7cbcc89"
+    },
+    {
+      "path": "avatar-decorations/a_3bc2102f59a5b25882200da18b4e7b12.png",
+      "bytes": 1571816,
+      "sha256": "46a17d53e0cb211bd825278efdaa3bfb577f5c49f6d1f6aa4193251de1ef97a0"
+    },
+    {
+      "path": "avatar-decorations/a_3cf1ad31f0c0c77a90319c13632d808e.png",
+      "bytes": 670340,
+      "sha256": "8b5a28fa5ca6e1bdc5569369e2a727a9383932142c4c8b83ff58b892de50eae8"
+    },
+    {
+      "path": "avatar-decorations/a_445566ed965b2c1632a5b45c92f32d11.png",
+      "bytes": 965137,
+      "sha256": "a87e6afa86ae19037320ba9d7601be0bc6222e6696272a9b857bc546210abffa"
+    },
+    {
+      "path": "avatar-decorations/a_47202ff223e839a2ecf14a8b0f3ce7a1.png",
+      "bytes": 1132377,
+      "sha256": "97bbdc7c4d48e6de3d02549135a995fd34cd1f8a30e8a956fc269e5c034c994d"
+    },
+    {
+      "path": "avatar-decorations/a_50b440810b1bbd89f6284f36d40ad0af.png",
+      "bytes": 962810,
+      "sha256": "4009a2bc35c1152ed6841f9a0e04890af5c579e703817e860a34781978ae382b"
+    },
+    {
+      "path": "avatar-decorations/a_59cc4926ae2483fa7c714bd36cc5acd9.png",
+      "bytes": 1219039,
+      "sha256": "1ff68fdf5331d1e718df69cfbdbabdd716ac105e78efc8f7302828f3f9dc19ee"
+    },
+    {
+      "path": "avatar-decorations/a_60cb281fac6d8f558efaf6dd9fe4dbe4.png",
+      "bytes": 569187,
+      "sha256": "5df29ec84f74720ccb5f2695b2f4f22ebc8db9fd0f2e21dbc18be4bfd2e9d1ad"
+    },
+    {
+      "path": "avatar-decorations/a_657d2766be35a27a8239f98c60e414c0.png",
+      "bytes": 417775,
+      "sha256": "24bf2e405a84088e46e7edf5e3cb0566b3fa81a3ba8a8a0fd93e1c1660e70b27"
+    },
+    {
+      "path": "avatar-decorations/a_6ce16e08392fd882eef1b568f3c4d3d3.png",
+      "bytes": 1419203,
+      "sha256": "ec27e67af73360d61d15e48bc04aa69c4a0ee3b70e11478a2074fddb1682cf4e"
+    },
+    {
+      "path": "avatar-decorations/a_78f326d95c0193c317470e3e81db81e7.png",
+      "bytes": 798545,
+      "sha256": "f58ca5b6d1d8893f493f2c75d4578e2a98abbdf132252aafef86331125183188"
+    },
+    {
+      "path": "avatar-decorations/a_798a5bcbb11067e4d9ab339e51d2a16c.png",
+      "bytes": 1269941,
+      "sha256": "890572ee9ad00e61488e0eb93ce4cc34baa4885e5ff0c04518fcf75d2eaf5773"
+    },
+    {
+      "path": "avatar-decorations/a_904b1989077c91fca1168d39bfcaa0a4.png",
+      "bytes": 599489,
+      "sha256": "c1a961503f798d13afbbfac294a5d5505dc8e03a02cf7885d92dbf07a0b8132a"
+    },
+    {
+      "path": "avatar-decorations/a_9cc1c1426ea5478aac7be6cdefdbc568.png",
+      "bytes": 952591,
+      "sha256": "a2ab1a26d367267cba0969f437130e3373a264d50231373fff69e5d783163eb5"
+    },
+    {
+      "path": "avatar-decorations/a_c45abe8c7585fdb41b8d8d4d666f1588.png",
+      "bytes": 1073911,
+      "sha256": "0c17bfb16601a3d97affa95834100dfba100882b921c6bb68a45c0a13bf84060"
+    },
+    {
+      "path": "avatar-decorations/a_c899a523b33e54210c0d5577a35907b4.png",
+      "bytes": 937449,
+      "sha256": "c76846a081eeb1d2b83d61f04a3aac18d4b51cd4207d694b1e725ebe33d8ac4a"
+    },
+    {
+      "path": "avatar-decorations/a_db9baf0ba7cf449d2b027c06309dbe8d.png",
+      "bytes": 1583239,
+      "sha256": "4fccb0504740f5d6a86718764d236df05a10c9d10defd5b20197059fb094f1fc"
+    },
+    {
+      "path": "avatar-decorations/a_e22f8023a51155d8d47012797f20d98c.png",
+      "bytes": 3199037,
+      "sha256": "37b6fba22dd2448812add5fd16ac94f7ef8f895db703d18e249f495a050fef8c"
+    },
+    {
+      "path": "avatar-decorations/a_e73462eef71738e4e478a55ccea7823d.png",
+      "bytes": 1246438,
+      "sha256": "ee292304a8ff61f593928c7949d0bce3475d01dd761d9a68e03c22cc65402232"
+    },
+    {
+      "path": "avatar-decorations/a_ea9e485919a47373eb2f05cc4a1d0c0c.png",
+      "bytes": 807402,
+      "sha256": "c53ad6e1e51fa39afbe3ee8ed6a0079d1a6b25cb69af9cc70dbb8a74b917f91c"
+    },
+    {
+      "path": "avatar-decorations/a_f1c2e3a6005a8bfc3bec150569f7baca.png",
+      "bytes": 570062,
+      "sha256": "1487424079aa7a2ed4e891979f81fa24407012f9c821a267fa5525fcb7939631"
+    },
+    {
+      "path": "avatar-decorations/a_f2cea6597b77a277ff458099d051ba62.png",
+      "bytes": 255408,
+      "sha256": "45ba6ab62728122c677ba08bbbff76a84571b7739712593f12253155adc7b408"
+    },
+    {
+      "path": "fonts/DMSans-Variable-Italic.woff2",
+      "bytes": 112528,
+      "sha256": "67124d60978184941d24f900c0f8dd632fd494bf50cb3ea39d0cd3534a7c3206"
+    },
+    {
+      "path": "fonts/DMSans-Variable.woff2",
+      "bytes": 88708,
+      "sha256": "71cf5768e7c1fcbb54358a5fbd09528f717101938d4d9a0844c4077cb83f4d95"
+    },
+    {
+      "path": "models/profile-frames/lion-profile-emerge.png",
+      "bytes": 4832285,
+      "sha256": "82baf08a701717d78c81ba3547f050414dfc4a8293f0b77f1349be733998019f"
+    },
+    {
+      "path": "models/profile-frames/lion-profile-emerge.webm",
+      "bytes": 613563,
+      "sha256": "b782a3b6d657c2f592d4271375f0a6533bf1ecac036d5d3c127b108aaad1e55b"
+    },
+    {
+      "path": "models/profile-frames/lion-profile-seated.png",
+      "bytes": 39051,
+      "sha256": "caecb959e76b2676255c6a8a3c5f7e29348f178373de46a29d0279e1aba2de9d"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-01.animated.webp",
+      "bytes": 421684,
+      "sha256": "d206ed7e6ea86d65b490d8b46326824676892df32f1ad8cc2dbf7d58ce31b45e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-01.poster.webp",
+      "bytes": 19972,
+      "sha256": "15ebd74954a989a318c41e0e6a8debedfdfc4bc7d9e84c3e20e1d76808be8609"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-01.webm",
+      "bytes": 70658,
+      "sha256": "0d92a320991c7ecba658b4e8882ed4bb3e4ed33d3feca514476e5a971f0debd8"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-02.animated.webp",
+      "bytes": 412254,
+      "sha256": "aa277c617d7cf413ec00f53cb25da3bfea69f63bdd8b43b0dd76d392adbb6d31"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-02.poster.webp",
+      "bytes": 19458,
+      "sha256": "630d55411335f7eaaf9362cea3668aa6d00aaa70cf9593efdd79f6d512c00ab9"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-02.webm",
+      "bytes": 83955,
+      "sha256": "d088acabbfb611840e926dd8f971b47d05bfc2a8833e25977d7fbb4d79035226"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-03.animated.webp",
+      "bytes": 421684,
+      "sha256": "d206ed7e6ea86d65b490d8b46326824676892df32f1ad8cc2dbf7d58ce31b45e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-03.poster.webp",
+      "bytes": 19972,
+      "sha256": "15ebd74954a989a318c41e0e6a8debedfdfc4bc7d9e84c3e20e1d76808be8609"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-03.webm",
+      "bytes": 70658,
+      "sha256": "0d92a320991c7ecba658b4e8882ed4bb3e4ed33d3feca514476e5a971f0debd8"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-04.animated.webp",
+      "bytes": 1132566,
+      "sha256": "546c5ccac7e42165382e62e16829b1d7f2798d308cdca912141ed23a368ab4cd"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-04.poster.webp",
+      "bytes": 33110,
+      "sha256": "80ead2884a79556e44dacdf5a36e40c2cb08c335c4db41042590c4059339260f"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-04.webm",
+      "bytes": 325248,
+      "sha256": "7dd9d768b2cdf19bb8050466011bd8a9d485e34326aaed278673b5bedf7071c4"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-05.animated.webp",
+      "bytes": 251428,
+      "sha256": "87527b3a9c87d95d0ad515251ddf26dc81d0aa7caeee81e972c0a749bb7e4d43"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-05.poster.webp",
+      "bytes": 34206,
+      "sha256": "6c6288f2e8ebd8c479c456211c1012952d02d47127fda043ce9fbd09e2768228"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-05.webm",
+      "bytes": 28604,
+      "sha256": "33a9db79fabe45ee96f6ba90b2df3613469adb3fc21f0b8d8c4fd1530c0149a2"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-06.animated.webp",
+      "bytes": 338056,
+      "sha256": "c4b74e89f548b97092c2c81ce9f71eea342c727909d3e990957d66591aa098a4"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-06.poster.webp",
+      "bytes": 24448,
+      "sha256": "5d0d078c4ce08cb16faef6996cd1bd5efd8236fd9703113fda34dec332ca94ad"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-06.webm",
+      "bytes": 99274,
+      "sha256": "1a8d6a3a442ac84be2cca0c73c81cc93dc756ed54e7b55a04489e6a73cef52b5"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-07.animated.webp",
+      "bytes": 755028,
+      "sha256": "adc7bdd24c8a861b017bc27c8feb39f4f6cc3c94a99fa619bc80bdbc88d90771"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-07.poster.webp",
+      "bytes": 36666,
+      "sha256": "b228dde9b44483b5fcb8b945947a78c61532579eafb851e8647b94c9172f9902"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-07.webm",
+      "bytes": 191185,
+      "sha256": "f88861962fcdccae95810ff4afb7dbac003c362f95637debd6e0c102dae21602"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-08.animated.webp",
+      "bytes": 576136,
+      "sha256": "e25e937eef9efaa4461f844eea7b396772a8011209f247bdae01e68769bcdedf"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-08.poster.webp",
+      "bytes": 34170,
+      "sha256": "c2b58939abb6c827238bc2bf962a587d2945084c7a239979fd96bb634fced11a"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-08.webm",
+      "bytes": 215351,
+      "sha256": "5d72aea8c9996aa15bdbeff86b66168cea4082560b4d6e1a3df1a0492c4050de"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-09.animated.webp",
+      "bytes": 506364,
+      "sha256": "46da6908f37f95cae38edb83c41afd6bc3cece103ff8f21778614a02837814f8"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-09.poster.webp",
+      "bytes": 32536,
+      "sha256": "04a84cff3ce386adf6f0a7c88d0442fef91d5270d69bfe34ddeafd0461cb77c0"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-09.webm",
+      "bytes": 205824,
+      "sha256": "967773e65217584d9d440c2cf9ef7ec01a2d56c281485b1e904ae846ca80cf02"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-10.animated.webp",
+      "bytes": 551248,
+      "sha256": "7b26a66829e7a917c1f1326f76f54e39c4f254a210c3a018c7c79dceb231c76e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-10.poster.webp",
+      "bytes": 31326,
+      "sha256": "4afb960c0629e18268a9625b56df1f7f7e3d22b1017eb03271a734243055ba21"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-10.webm",
+      "bytes": 179262,
+      "sha256": "6b61079e211216a3f1544158684f6174c6330f84f2fd70af17bf3e1c8ec9ca01"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-11.animated.webp",
+      "bytes": 490440,
+      "sha256": "25ac5acca899ccdaac22a2a15bed48e3f9d2ec849d61ebdb34edcb88e346c73c"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-11.poster.webp",
+      "bytes": 30548,
+      "sha256": "82486158012120cd084b85c7008356b945f30e3092afda28c046cb31c8703786"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-11.webm",
+      "bytes": 121519,
+      "sha256": "d78efbd321a8cad3e4968ae97432d883e7d18d50777c79e69624a06bdd1b7e71"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-12.animated.webp",
+      "bytes": 275028,
+      "sha256": "3fd759bdc5ddc32a2e60e6f3a2915d5bc3b00b146feb6c3b8aa47ec554912ac1"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-12.poster.webp",
+      "bytes": 47916,
+      "sha256": "f98d75d8f7c62ca95898381c54d07935dc4831e9e221cb7e601c2e15a857724f"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-12.webm",
+      "bytes": 49029,
+      "sha256": "f1260cc6b207697395bf41ce79dc0a87433e992b8e7759540a9fff6b41543c96"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-13.animated.webp",
+      "bytes": 701140,
+      "sha256": "6ee326b31c142084487446d396220ea83e3b44684d584b9502f22bc787a6836a"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-13.poster.webp",
+      "bytes": 28058,
+      "sha256": "997300cd3e7c4b4c10a502fecb554cf43b7cabadef0d6cddfcfeee86351a4126"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-13.webm",
+      "bytes": 268409,
+      "sha256": "67e4b8d19e619720b2585f93358159ce33aa784a4bc04e6091479526cb991d8e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-14.animated.webp",
+      "bytes": 131454,
+      "sha256": "e233b9fd222bdefe79c82e65cfd35206e07051ce20c295416a1b9fd673b7b146"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-14.poster.webp",
+      "bytes": 10888,
+      "sha256": "2dc88a4cfffa0e341d12a2c1a72935aacb3a6475f3e5016395e8e85f26128859"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-14.webm",
+      "bytes": 25806,
+      "sha256": "a9b9f3ae7f9dc41c5c8db6b27e786effb20f8cff50847cd4dd4b36db6d579c57"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-15.animated.webp",
+      "bytes": 271386,
+      "sha256": "dbd05334eca44d68b4ce296f1c3ac9a21a06cc83232e7fcda0c9e6e6d71764ad"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-15.poster.webp",
+      "bytes": 20874,
+      "sha256": "9518d9605318f9903e58af03d560be8a56fbede1bb0ebff2c760b719c0a5e4ff"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-15.webm",
+      "bytes": 102722,
+      "sha256": "5a6a04d9ed8b5a31c80d91e6bb628d47417920cfb7567ff20764ec5eed6a3166"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-16.animated.webp",
+      "bytes": 397336,
+      "sha256": "79f9f85c250031a6c9297eb233a322be17dc1bea950e3a8e0b51ef42014d5d36"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-16.poster.webp",
+      "bytes": 48372,
+      "sha256": "054a45f838a3a2ce3df595b46a80cccfa40c26cf26efde55a0a332ae3c419451"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-16.webm",
+      "bytes": 147847,
+      "sha256": "06343ef776b710cf13bcb5ed9fc2d6b177415e5df4aeef0659b17fa39b55d2fc"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-17.animated.webp",
+      "bytes": 347518,
+      "sha256": "d7a7c37b2754c011d3abda820e86735ec7651d8e0170ee2fd8cd393d23035a1e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-17.poster.webp",
+      "bytes": 42706,
+      "sha256": "8832ccf6fa021921495dda9f4d3ab3b5f94340ae9babd3bc5aa63453db2eea71"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-17.webm",
+      "bytes": 124773,
+      "sha256": "0690b4eae2b81b9cea835beab78b2081d816364a59bbebde76329425b9904577"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-18.animated.webp",
+      "bytes": 428306,
+      "sha256": "af22eadd131c2be993960a7c3110b484834eecbfdb0d8346aab0ec57ae42d89e"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-18.poster.webp",
+      "bytes": 24514,
+      "sha256": "a54ef22081d845565aeafb8652b427a22ca734da22f010f34f94f71ddddb14c0"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-18.webm",
+      "bytes": 114009,
+      "sha256": "1622352e07f822205daac8feb4c14f659fd35e5254be69fbc921dca9a5efd58b"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-19.animated.webp",
+      "bytes": 830928,
+      "sha256": "593504775d0d085b14d9694b430b8d5d94fdf22c0c44cdfc9e4287af2d2bcb94"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-19.poster.webp",
+      "bytes": 46148,
+      "sha256": "3dc5e6f35438e43c88762e3f277f632a1797f418ef75c28a0bfb8afb9c94f0d5"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-19.webm",
+      "bytes": 174200,
+      "sha256": "5eb3e49db877792d9cedeb69584d9ec337413779a816febf8e133f33c06aa204"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-20.animated.webp",
+      "bytes": 449498,
+      "sha256": "a13792eba81310e7eeb46b2379c8a740f4ffd27fd03bb114d9f625b9655a0bf3"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-20.poster.webp",
+      "bytes": 27858,
+      "sha256": "7acd78caed63d0fa8de0b03d7c84d919f62227af2b233005afbea6b9c370e177"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-20.webm",
+      "bytes": 145191,
+      "sha256": "de915b783c8b49ea289a8dc1833efe130d285ff41a844d1216b0f2e7b20657fd"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-21.animated.webp",
+      "bytes": 329884,
+      "sha256": "01d334bd1abad5160fb5e74fc90b4a3d83bd436bc93ce9fd6603310daa5ee66c"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-21.poster.webp",
+      "bytes": 19444,
+      "sha256": "d7b431a5b4688dbf1f1ec11088b74a36756bd1a0543eb05b2148da8c7cfdeffc"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-21.webm",
+      "bytes": 84001,
+      "sha256": "c207923d66fcbebe480d032a812a16b1a2831ba4267b15942a7691465d5ffa06"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-22.animated.webp",
+      "bytes": 646814,
+      "sha256": "9b051fab7351029974141bbcc80d5b4554903508b4f79ecdb66d7915085bfc73"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-22.poster.webp",
+      "bytes": 36898,
+      "sha256": "bc42ad4b766c0cfc16f1a2f7c9e831f696307376b56260bd80c99dc0cc196c4b"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-22.webm",
+      "bytes": 146297,
+      "sha256": "8b2b78cb3f90452661cd5750d8da35588358b3ca9b4f86dec22988edbd0a1d89"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-23.animated.webp",
+      "bytes": 734912,
+      "sha256": "8c25b2f22f60b3ec9bff95648b758fb64354a63d9d31efe3d1e4734f73ed891d"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-23.poster.webp",
+      "bytes": 50194,
+      "sha256": "3d08118778f60a91e74cdfba61876ad223678c6297ede8ff200442847f37406b"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-23.webm",
+      "bytes": 245123,
+      "sha256": "5713f504d25ad3d45e28afc5f17bfd2a099d7044434b7ae2df60092ab02bb27a"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-24.animated.webp",
+      "bytes": 334566,
+      "sha256": "49907966ae6be4d4207d33f27db72c134b2afd072fa95e29f9fe0bbf77d30cc9"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-24.poster.webp",
+      "bytes": 33910,
+      "sha256": "2e8b190ef7e8398314ebf96a03ca713ab85f94a7cb023ffbb19d15327070e927"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-24.webm",
+      "bytes": 114338,
+      "sha256": "054f4de2d0bb2a20ff71b8def53c7b314526a9b18ec1bb05dd87d4540cd723ee"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-25.animated.webp",
+      "bytes": 318202,
+      "sha256": "c414d1d5c48a03937448fd221c0f7a1cffef82f23fdfe48d5917074aac38291f"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-25.poster.webp",
+      "bytes": 33606,
+      "sha256": "8bd5ef4541ec09c32eecdb7e91cd6b45145e247990c37d3ce93c64e033dba8f1"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-25.webm",
+      "bytes": 35328,
+      "sha256": "d4e748591b5d32e0b4987576ed6680ba61c59c6dada5e8dfde574df8bacab9d9"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-26.animated.webp",
+      "bytes": 412254,
+      "sha256": "aa277c617d7cf413ec00f53cb25da3bfea69f63bdd8b43b0dd76d392adbb6d31"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-26.poster.webp",
+      "bytes": 19458,
+      "sha256": "630d55411335f7eaaf9362cea3668aa6d00aaa70cf9593efdd79f6d512c00ab9"
+    },
+    {
+      "path": "nameplates/community-pack/nameplate-26.webm",
+      "bytes": 83955,
+      "sha256": "d088acabbfb611840e926dd8f971b47d05bfc2a8833e25977d7fbb4d79035226"
+    },
+    {
+      "path": "nameplates/nameplate-aurora.jpg",
+      "bytes": 106315,
+      "sha256": "c08c465a8a611b007ed7f06087a08e574fe21dfd19caca1b5d090714b5cfe9c3"
+    },
+    {
+      "path": "nameplates/nameplate-black-birds.jpg",
+      "bytes": 73122,
+      "sha256": "494c936265200d89de6c662375cd8fd670551154305b0954fe44d2988b4b482c"
+    },
+    {
+      "path": "nameplates/nameplate-eclipse.jpg",
+      "bytes": 86608,
+      "sha256": "78cb5e474dc3d4c1eda0796f6121eb643649268ba72d508357f50403d8563686"
+    },
+    {
+      "path": "nameplates/nameplate-falling-stars.jpg",
+      "bytes": 130772,
+      "sha256": "2492e69b67ae771bf3a66d5bd04450a4f9bd4c293aad14ec0dd2bc8b2808f6ec"
+    },
+    {
+      "path": "nameplates/nameplate-golden-dust.jpg",
+      "bytes": 118748,
+      "sha256": "ffe2c415547c381d2ff69ed9154b67545fc62b2c1fd2e08cc9797ffd02881e8f"
+    },
+    {
+      "path": "nameplates/nameplate-moonlight.jpg",
+      "bytes": 86644,
+      "sha256": "60debf9a89c379208e3e8c84036d88609c808f1bcc0ebd900c987bf7d50c171b"
+    },
+    {
+      "path": "nameplates/nameplate-neon-city.jpg",
+      "bytes": 146578,
+      "sha256": "94b6259d4be45adf4e9df411199c0693d36d192b7735b9a9152546c15c77412b"
+    },
+    {
+      "path": "nameplates/nameplate-ocean.jpg",
+      "bytes": 130175,
+      "sha256": "5df8ab0905e5285c6730a3b3a0da478e57823012d58c215142cecb16358dc0f0"
+    },
+    {
+      "path": "nameplates/nameplate-purple-flame.jpg",
+      "bytes": 103908,
+      "sha256": "e0535a5b7b9e1475d53df8e8efd6394e373c5f0428d3b26d23bfec8e30da44ce"
+    },
+    {
+      "path": "nameplates/nameplate-raven-ascent.mp4",
+      "bytes": 109359,
+      "sha256": "e2eb759a0b27a4c8738e21497d3f1c89f8ac5a42eb7b7e7a4febb90d55477c0f"
+    },
+    {
+      "path": "nameplates/nameplate-raven-ascent.png",
+      "bytes": 2999177,
+      "sha256": "69b7be139ce7d9a92d5a2e1bd3c8773c76224c8c8c4fa15d06a5a1478b625cd9"
+    },
+    {
+      "path": "nameplates/nameplate-snow-forest.jpg",
+      "bytes": 110246,
+      "sha256": "19d12039bf1b92b2897bda80832fa66004f08827fe2b93b957ec33d22fc26163"
+    },
+    {
+      "path": "profile-effects/a-sassy-crocodile/CREDITS.md",
+      "bytes": 249,
+      "sha256": "d366c0d0f59b3d4325b58153bebcb3353344a315a0e6f451209d28b7ca6eff18"
+    },
+    {
+      "path": "profile-effects/a-sassy-crocodile/a-sassy-crocodile.riv",
+      "bytes": 18815,
+      "sha256": "1e642b8d8c7065cdacabdbac1e69811104d456e65c6defb61fd597b6ad57b49a"
+    },
+    {
+      "path": "profile-effects/a-sassy-crocodile/thumbnail.png",
+      "bytes": 18728,
+      "sha256": "08c7e423eca6c4163c4670f4b8ed5fa00b76e5596b70a92e0d428aacee6b54af"
+    },
+    {
+      "path": "profile-effects/discord-pack/CREDITS.md",
+      "bytes": 601,
+      "sha256": "0fd902775d9ec100ee82e06c2677942326fabde76b000f48efcbbb13d7c490ca"
+    },
+    {
+      "path": "profile-effects/discord-pack/boost-relic/intro.png",
+      "bytes": 1918262,
+      "sha256": "8bd2234206e32420299b813c5a7d174970226c600f71334021463cf56cfac278"
+    },
+    {
+      "path": "profile-effects/discord-pack/boost-relic/loop.png",
+      "bytes": 789022,
+      "sha256": "9d52596d0562415b21f32b1d3845f97942700ae72604a7e7c942646894885789"
+    },
+    {
+      "path": "profile-effects/discord-pack/boost-relic/thumbnail.png",
+      "bytes": 560804,
+      "sha256": "5699f6cc98b986d671478ca70c5942b8d7fa22f41d366f7d60cccea92ef91b4f"
+    },
+    {
+      "path": "profile-effects/discord-pack/cereal/intro.png",
+      "bytes": 953057,
+      "sha256": "b0ee81af557045c51e14cca2f7c705a0a1a546a8b0f71c77a910e417c0d9861c"
+    },
+    {
+      "path": "profile-effects/discord-pack/cereal/loop.png",
+      "bytes": 164531,
+      "sha256": "75fe55e06cc2bedee04ce17cf2a8b3c57db5ba31f4d05a4e4d7e40a62005a461"
+    },
+    {
+      "path": "profile-effects/discord-pack/cereal/thumbnail.png",
+      "bytes": 205721,
+      "sha256": "f71f971bb3c17ce0abdb8ccc5ffe27de933d7cbeb48a15da91ccc7c5f4dc0ab0"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-nightrunner/idle.png",
+      "bytes": 1474899,
+      "sha256": "3e8867c3b30af12b463f3b81e833c82b97df23bf299739e74f81ba2e6fc4029c"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-nightrunner/intro.png",
+      "bytes": 2306262,
+      "sha256": "c21b1af5b38d7ffc2a4a5eab914469c7f9044cfb0cff34448684fc1613dc6e26"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-nightrunner/thumbnail.png",
+      "bytes": 110792,
+      "sha256": "cf464852a7e91f198b93be8459670022d8b0a0dc3406459e666f89d48dbfa732"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-uplinkerror/idle.png",
+      "bytes": 1697991,
+      "sha256": "49284a71656503bffd29ae4c747e8138fd76c612f1912243ad311de640591ced"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-uplinkerror/intro.png",
+      "bytes": 3376173,
+      "sha256": "11b96fbc030261641fa438fda748c6a8fa8a1af7c19629c5067971579af9faf7"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberpunk-uplinkerror/thumbnail.png",
+      "bytes": 293864,
+      "sha256": "fe43e8e15722d8846124f51875caf1182ce261066023c39ea1574b9a390831db"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberspace/intro.png",
+      "bytes": 1123588,
+      "sha256": "f092c109fadbd6fcffe08f0144650f26190f3d13a180de173e68ea334976eb7f"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberspace/loop.png",
+      "bytes": 623454,
+      "sha256": "31fe6e737fc1773afa379d0933c4d7fd53bb0222c418c450c845fc8a272f2664"
+    },
+    {
+      "path": "profile-effects/discord-pack/cyberspace/thumbnail.png",
+      "bytes": 393565,
+      "sha256": "3f62a90f9288e62fbffb7181fb5ee1c0d72feeae389da03a59cc001985e8750f"
+    },
+    {
+      "path": "profile-effects/discord-pack/deck-the-halls/intro.png",
+      "bytes": 524282,
+      "sha256": "2817b3062ba73ba7720bda6bf591afabac39fd6f48bb843067622f244d1fd93a"
+    },
+    {
+      "path": "profile-effects/discord-pack/deck-the-halls/loop.png",
+      "bytes": 304848,
+      "sha256": "73a39b919088a2d5cc96a3b4a637e23040a9b06c73083639b268c5735d495828"
+    },
+    {
+      "path": "profile-effects/discord-pack/deck-the-halls/thumbnail.png",
+      "bytes": 137927,
+      "sha256": "cd81f81d205ccdc12c06fb3de0f4e1668dbf36f28773514546ca2082f3f5b2fb"
+    },
+    {
+      "path": "profile-effects/discord-pack/dragon-dance/intro.png",
+      "bytes": 2035546,
+      "sha256": "aa00466f97347086e0b38a9a734d75927162cd9dfc3cb7b97dc7d076074b51e3"
+    },
+    {
+      "path": "profile-effects/discord-pack/dragon-dance/loop.png",
+      "bytes": 651368,
+      "sha256": "137c3b8b314d2923b5962e49c00df4207d758702b3163816ae01f51a7797b529"
+    },
+    {
+      "path": "profile-effects/discord-pack/dragon-dance/thumbnail.png",
+      "bytes": 91381,
+      "sha256": "4ab8c8bb4b8a921e6350c019fbf21f0b92452139d8d4447834e3b92b99b83108"
+    },
+    {
+      "path": "profile-effects/discord-pack/earthquake/intro.png",
+      "bytes": 1696739,
+      "sha256": "c93575dd9a2a00cf104eec382ffc49d57dcd579b243e95ba2748317939849ef4"
+    },
+    {
+      "path": "profile-effects/discord-pack/earthquake/loop.png",
+      "bytes": 328772,
+      "sha256": "687176aaa012950414024d87da153e57fa95a0dcd1ce57db580f6ad8e90d6b0b"
+    },
+    {
+      "path": "profile-effects/discord-pack/earthquake/thumbnail.png",
+      "bytes": 62808,
+      "sha256": "aaef2ab628a692aed494a23d4f4b0d536948ed39b690101a173f7deb9833d7a3"
+    },
+    {
+      "path": "profile-effects/discord-pack/fairy/loop.png",
+      "bytes": 984762,
+      "sha256": "b6e06cb80adb3100f31af4650eb7aaf577080f7a341905979944ac4819ad180c"
+    },
+    {
+      "path": "profile-effects/discord-pack/fairy/thumbnail.png",
+      "bytes": 33216,
+      "sha256": "4d839bffa9c4b9cbfb2066bdb2e2b7008b052565fd7b7680ec61d983aeab7de2"
+    },
+    {
+      "path": "profile-effects/discord-pack/fortune-flurry/frame.png",
+      "bytes": 618114,
+      "sha256": "c0aa06e5fa9b12bfeecda872345d523c96f71090528c8dd06c07a5ae7259f5ef"
+    },
+    {
+      "path": "profile-effects/discord-pack/fortune-flurry/intro.png",
+      "bytes": 1062613,
+      "sha256": "a116d87917ff0f4e0ba0e8d62ab81a38efce14c623af6b99fe0b90eecf8fad5c"
+    },
+    {
+      "path": "profile-effects/discord-pack/fortune-flurry/loop.png",
+      "bytes": 262628,
+      "sha256": "d272764ec27716175937fd0fdc5554b2e3024514ecd820a8b72d1cad71ee68c7"
+    },
+    {
+      "path": "profile-effects/discord-pack/fortune-flurry/thumbnail.png",
+      "bytes": 56110,
+      "sha256": "5d2d8dd5dce77024c73a8bb7e988f2b8df363abdf644ca2f61e9fe757f261f59"
+    },
+    {
+      "path": "profile-effects/discord-pack/ghost-skull/intro.png",
+      "bytes": 2238894,
+      "sha256": "633eac31fef9582c637b652f207b17c392d043a9716fef2bdcc54260a81815f5"
+    },
+    {
+      "path": "profile-effects/discord-pack/ghost-skull/loop.png",
+      "bytes": 748803,
+      "sha256": "028bfe11c1d9c7a3a8d961faeda9d7ac8792a738bc6c459e6832618fbacd98e0"
+    },
+    {
+      "path": "profile-effects/discord-pack/ghost-skull/thumbnail.png",
+      "bytes": 82667,
+      "sha256": "3a970802619b7aca295954b25b59fca524a8871b731a04eb842788099308d037"
+    },
+    {
+      "path": "profile-effects/discord-pack/goozilla/intro-claw.png",
+      "bytes": 497920,
+      "sha256": "641c3efe59d834ba66adf801de183d694bc576fdf036eb6da24b8337d1208ac5"
+    },
+    {
+      "path": "profile-effects/discord-pack/goozilla/intro-slime.png",
+      "bytes": 299168,
+      "sha256": "69a185748a3f842803359fc40f1401fd4c811461299813d4379cfcdf5e5230fd"
+    },
+    {
+      "path": "profile-effects/discord-pack/goozilla/loop.png",
+      "bytes": 28704,
+      "sha256": "afca53a6a1b2bd633322a07538dd8af10968514491971d059e5127af397974a8"
+    },
+    {
+      "path": "profile-effects/discord-pack/goozilla/thumbnail.png",
+      "bytes": 25961,
+      "sha256": "6eb15e61a2a997e1d262cd9d872da61102cc56045ccbb200c640677138cc3d28"
+    },
+    {
+      "path": "profile-effects/discord-pack/heartzilla/intro.png",
+      "bytes": 555598,
+      "sha256": "e9de5174125f7d437d2c1c73fcd744c04d6a1f04518e3d64a30ca96d6d36f713"
+    },
+    {
+      "path": "profile-effects/discord-pack/heartzilla/loop.png",
+      "bytes": 7078,
+      "sha256": "714730fc42e7bbba7c25854363caec56b5fb6372d30ae8d2bf0c50c1b7afc912"
+    },
+    {
+      "path": "profile-effects/discord-pack/heartzilla/thumbnail.png",
+      "bytes": 25168,
+      "sha256": "85ac033f31523d304563872c3ea3160d668535cf5d24d0835c1b6df4b2b74541"
+    },
+    {
+      "path": "profile-effects/discord-pack/leaves/intro-branch.png",
+      "bytes": 1230341,
+      "sha256": "011caa102d9a4e83949ced7b8f0323ef0d5ceedf1c90f61a48ac2c627f87dd26"
+    },
+    {
+      "path": "profile-effects/discord-pack/leaves/intro-leaves.png",
+      "bytes": 471879,
+      "sha256": "dadd38f68aabe5661cf29d9e43da10379be0be9f95a9fe3dbf503e882a5e0875"
+    },
+    {
+      "path": "profile-effects/discord-pack/leaves/loop.png",
+      "bytes": 174397,
+      "sha256": "077eab79bb4795d9d542256a705cca34d062e15738295ce4e27575c3ed1d0361"
+    },
+    {
+      "path": "profile-effects/discord-pack/leaves/thumbnail.png",
+      "bytes": 24584,
+      "sha256": "f9fe0fb73a2ff7956f11981da1c28d6bbce40d8c4c9b7bb588e3d8fad4526b6d"
+    },
+    {
+      "path": "profile-effects/discord-pack/magic-girl/intro.png",
+      "bytes": 2757685,
+      "sha256": "a38447d7d6931f50944f1f5acdca34f20bf086e6da4362f59aac27e38fedbd21"
+    },
+    {
+      "path": "profile-effects/discord-pack/magic-girl/loop.png",
+      "bytes": 942906,
+      "sha256": "6f7444d87e28d7ce011398eee37f637c597d1cf1bad2e90580dbad8b6eba3ca4"
+    },
+    {
+      "path": "profile-effects/discord-pack/magic-girl/thumbnail.png",
+      "bytes": 66963,
+      "sha256": "21f6a1bd12d3f80fc379f4426ec1f64c8c85cfdf8af118cf4393dedcc9a8bea3"
+    },
+    {
+      "path": "profile-effects/discord-pack/mastery/idle.png",
+      "bytes": 323547,
+      "sha256": "fc1796419d2bbc4e8d6ce7bed2b9d5d0e5c2bd09f9e53aaeb7510702755e9312"
+    },
+    {
+      "path": "profile-effects/discord-pack/mastery/intro.png",
+      "bytes": 2270775,
+      "sha256": "108b9ea6e4a65689a1f0e1257ad7e9b4c52c6a44a5e18c4f1c5015d00d087a09"
+    },
+    {
+      "path": "profile-effects/discord-pack/mastery/thumbnail.png",
+      "bytes": 95882,
+      "sha256": "31700e03b6f4b30e9d7ef6459a04161883b0ccb743b45aafdab47b7abf31e11b"
+    },
+    {
+      "path": "profile-effects/discord-pack/midnight-celebration/fireworks.png",
+      "bytes": 773751,
+      "sha256": "cb8a1346782f94d33b2fd4475f86ceae8747f6ee18c3109fcba6c1cce507516a"
+    },
+    {
+      "path": "profile-effects/discord-pack/midnight-celebration/frame.png",
+      "bytes": 481563,
+      "sha256": "268be9a2e7cf1f94c0fe8929b1ea5cb8f53bfda9bc191dc5ba254108602a0e39"
+    },
+    {
+      "path": "profile-effects/discord-pack/midnight-celebration/intro.png",
+      "bytes": 1078005,
+      "sha256": "74390d5af1917c273c46c36ec87218f9041ac5418a544814ca88ee37755d10bc"
+    },
+    {
+      "path": "profile-effects/discord-pack/midnight-celebration/thumbnail.png",
+      "bytes": 60997,
+      "sha256": "4a504ab06ae55248904bf3213825d9a30d74905ab771d23cfbf83b1c801610df"
+    },
+    {
+      "path": "profile-effects/discord-pack/monster-pop/intro-glass.png",
+      "bytes": 135779,
+      "sha256": "928732cee08dd7816ba7d67c20fb39329b4724df68cb7b881f7ef3501e6a7078"
+    },
+    {
+      "path": "profile-effects/discord-pack/monster-pop/intro-monster.png",
+      "bytes": 328622,
+      "sha256": "25b87d84a4e7018a1c5098f6ebf9716dad7eb7e99d35e54df7dab942e85ca7f8"
+    },
+    {
+      "path": "profile-effects/discord-pack/monster-pop/loop.png",
+      "bytes": 146845,
+      "sha256": "5c12507e2307f00d836f6aceb9115a29bfa9380b55483687fdf268fa64fe2cb5"
+    },
+    {
+      "path": "profile-effects/discord-pack/monster-pop/thumbnail.png",
+      "bytes": 18567,
+      "sha256": "1941cb05b5af5d9b69042bc023823beb621bb3610995ee6808ac6eaad7fbaf65"
+    },
+    {
+      "path": "profile-effects/discord-pack/plate/intro.png",
+      "bytes": 1261204,
+      "sha256": "a50d560f66b77554e2c720e2dfe9ab5164ea79ff6542ff6bb8c8863da657ae03"
+    },
+    {
+      "path": "profile-effects/discord-pack/plate/loop.png",
+      "bytes": 231402,
+      "sha256": "8c69133a90cfd756bbec61d6b4184d3b2b3a6d08b003e697f0a54ebf9e040fdb"
+    },
+    {
+      "path": "profile-effects/discord-pack/plate/thumbnail.png",
+      "bytes": 282249,
+      "sha256": "aee5a90d150a07b4470ee02d62bb0110d52e5c2d38c3b34fd7cd7b6e8918b431"
+    },
+    {
+      "path": "profile-effects/discord-pack/punk-girl/intro.png",
+      "bytes": 2838756,
+      "sha256": "0a1c28bead3953cc15588c2655c4aa592b9ffafc1470c20138672f307000f01f"
+    },
+    {
+      "path": "profile-effects/discord-pack/punk-girl/loop.png",
+      "bytes": 1134131,
+      "sha256": "149abd61a0e8a52895ef4e06e05dcba352a11fb76089554b3d726cec8bc1c981"
+    },
+    {
+      "path": "profile-effects/discord-pack/punk-girl/thumbnail.png",
+      "bytes": 143732,
+      "sha256": "2c5df2f62741bfeef51b2b88c6a15ce9542c7b09f99cd437de568e4c161ca698"
+    },
+    {
+      "path": "profile-effects/discord-pack/rain/intro.png",
+      "bytes": 1858356,
+      "sha256": "5faa262242fabd5d1fce82bccd39f8bdbc9da8a0f28f6690508e2151c5c69094"
+    },
+    {
+      "path": "profile-effects/discord-pack/rain/loop.png",
+      "bytes": 211471,
+      "sha256": "f692ddb725bd6d176a01537844822d873f00b697b1b54fdd2cfcb585c7916b7b"
+    },
+    {
+      "path": "profile-effects/discord-pack/rain/thumbnail.png",
+      "bytes": 55640,
+      "sha256": "9705b8150bc24d3552ea8b53986f7b78d55e1d1e2efd53343ac1820096ebab18"
+    },
+    {
+      "path": "profile-effects/discord-pack/rock-slide/idle.png",
+      "bytes": 173385,
+      "sha256": "aff72571b0c7ea4e082de0970801e5ac7e24b6281cfdca70ba831b8880489fc9"
+    },
+    {
+      "path": "profile-effects/discord-pack/rock-slide/intro.png",
+      "bytes": 1429289,
+      "sha256": "c8480b8dd385a8277d6fc5d7ff1170154f64c82c80254b8938945315bb40a67b"
+    },
+    {
+      "path": "profile-effects/discord-pack/rock-slide/thumbnail.png",
+      "bytes": 75392,
+      "sha256": "77989deacec6fe3ac69205ed4c756f35a5700bebeaf48bf529362953bc69da83"
+    },
+    {
+      "path": "profile-effects/discord-pack/sakura/intro.png",
+      "bytes": 2122918,
+      "sha256": "4d89d846e27e98e767e31222a16adb13cdf0fa8e55431827fb728a38b230d229"
+    },
+    {
+      "path": "profile-effects/discord-pack/sakura/loop.png",
+      "bytes": 84480,
+      "sha256": "865386444cad732750a74e393e3c3e14ccd5de4a5a2905e91e546e58b2603180"
+    },
+    {
+      "path": "profile-effects/discord-pack/sakura/thumbnail.png",
+      "bytes": 75158,
+      "sha256": "7765f6bbd3a7e9e8c3e113a85b58887935bd0c9dd7947e8fde6ea953a6c5ab3c"
+    },
+    {
+      "path": "profile-effects/discord-pack/sayan/intro.png",
+      "bytes": 2471617,
+      "sha256": "21d9c2a0ee4424c314885baa8bdf332b24c504642fb684d86c9d384c2170f207"
+    },
+    {
+      "path": "profile-effects/discord-pack/sayan/loop.png",
+      "bytes": 756517,
+      "sha256": "747cc89046b974675acf2e2197c6b2752573440bbe78bcac4a4224cf3009df68"
+    },
+    {
+      "path": "profile-effects/discord-pack/sayan/thumbnail.png",
+      "bytes": 74122,
+      "sha256": "5329f4566ae65b9c3481b0145df8e6595c9836ade6768c98f44503b8c57766ce"
+    },
+    {
+      "path": "profile-effects/discord-pack/shuriken/intro3.png",
+      "bytes": 1446745,
+      "sha256": "50626cd180e5d41f9ee0bc8fddd298d4b1c54e603ea60d2afcacdf8aca516b02"
+    },
+    {
+      "path": "profile-effects/discord-pack/shuriken/loop3.png",
+      "bytes": 107841,
+      "sha256": "ec2998d88f22ab5568d49ae87c61633140faf867b5f6d289d4506967e2a37ecb"
+    },
+    {
+      "path": "profile-effects/discord-pack/shuriken/thumbnail.png",
+      "bytes": 22186,
+      "sha256": "243d4fe281e83b6f7193c56322607cd4ba6c87c63b0fb9642adf2cb91da5a791"
+    },
+    {
+      "path": "profile-effects/discord-pack/snowy-shenanigans/intro.png",
+      "bytes": 1454884,
+      "sha256": "bbc89e6dc536ecb7277c0ca0cec673c497296fa76cf50bc0bcc3a90ee6fc3e92"
+    },
+    {
+      "path": "profile-effects/discord-pack/snowy-shenanigans/loop.png",
+      "bytes": 130152,
+      "sha256": "38dd00c7feab58c0a23347427065994b5e163a740773068557e359ea30c9c6db"
+    },
+    {
+      "path": "profile-effects/discord-pack/snowy-shenanigans/thumbnail.png",
+      "bytes": 749036,
+      "sha256": "78072d0016bd2d083c81ad84aa50e2e69912783eb1aba0d81d51e730a4904a5d"
+    },
+    {
+      "path": "profile-effects/discord-pack/splash/intro.png",
+      "bytes": 2013803,
+      "sha256": "4ac1e335752c22fa30db78f7c506d02470dab4ba377e9669a7e1e3d5f5e88e0d"
+    },
+    {
+      "path": "profile-effects/discord-pack/splash/loop.png",
+      "bytes": 534626,
+      "sha256": "f9e45320cadd1ca5541d1f102f97157ae56d355117db1eb8187c51ea935432c7"
+    },
+    {
+      "path": "profile-effects/discord-pack/splash/thumbnail.png",
+      "bytes": 66716,
+      "sha256": "ecb46ee798c59a66d2b563cf60bac49aa1e07bda5a676813d7508a07ba5cc909"
+    },
+    {
+      "path": "profile-effects/discord-pack/vines/intro-glow.png",
+      "bytes": 1169387,
+      "sha256": "55c7f92ca202193b82118d7c7d639de58bb37ebc4343d3bf9402ed46d2acab67"
+    },
+    {
+      "path": "profile-effects/discord-pack/vines/intro.png",
+      "bytes": 1153028,
+      "sha256": "7123e7f29242b87d0fe16727b410641c527918f56139bb604754594aed6f2cea"
+    },
+    {
+      "path": "profile-effects/discord-pack/vines/loop.png",
+      "bytes": 459769,
+      "sha256": "dbf44ce2f69443dd588fe47e1f228ba7b29b3ce35b18c46e3c13afef54d749bf"
+    },
+    {
+      "path": "profile-effects/discord-pack/vines/thumbnail.png",
+      "bytes": 35730,
+      "sha256": "9ad07da5d8973a4574b1ed474f66c81a1d6eb27edc6df83c694b2310da489c0c"
+    },
+    {
+      "path": "profile-effects/discord-pack/vortex/idle.png",
+      "bytes": 199860,
+      "sha256": "5f176ff876f99e3831f4bc779a7389fb7350765ec252c0b430e97fc639a822cc"
+    },
+    {
+      "path": "profile-effects/discord-pack/vortex/intro.png",
+      "bytes": 1292417,
+      "sha256": "81747b6a80c5f16142dffca4ace7affb042ab13052cb5b4e677a043f8a176e75"
+    },
+    {
+      "path": "profile-effects/discord-pack/vortex/thumbnail.png",
+      "bytes": 91336,
+      "sha256": "cb6f8b593ddc63147b7d12d74e37a09d6e276e7db40ed330c3351f3132b0e3ce"
+    },
+    {
+      "path": "profile-effects/discord-pack/zombie-slime/intro.png",
+      "bytes": 2108389,
+      "sha256": "9ab2b1b57abfd06f17107ed7585aed6b2574244e2b82d0c67358a817795b8491"
+    },
+    {
+      "path": "profile-effects/discord-pack/zombie-slime/loop.png",
+      "bytes": 451035,
+      "sha256": "79bba86457cf97f2b80eede46ad412c5773763116c5278eeb588b910d52623e6"
+    },
+    {
+      "path": "profile-effects/discord-pack/zombie-slime/thumbnail.png",
+      "bytes": 88641,
+      "sha256": "7e13efff408c74e0b480debbd78e982e2756ac4f315d0240ab4548371cb5f765"
+    },
+    {
+      "path": "profile-effects/nexus-pulse/effect.webm",
+      "bytes": 425305,
+      "sha256": "c3b9b22e7ac12916c2dffb822a08517cfba6aaa3c2db9053996da1786a221379"
+    },
+    {
+      "path": "profile-effects/nexus-pulse/poster.webp",
+      "bytes": 44220,
+      "sha256": "7d200815bc81429465f1e6a8cad297305952f5561ab64f55927493b5d605dbf7"
+    },
+    {
+      "path": "profile-effects/nexus-pulse/thumbnail.webp",
+      "bytes": 10222,
+      "sha256": "d671bf2e3483417b07e91348fad81ca47f6cbde778025615084f378b5d25f995"
+    },
+    {
+      "path": "profile-effects/ocean-life/CREDITS.md",
+      "bytes": 389,
+      "sha256": "7be6179f8fb0e23f5f238bec590c5aebddd7ff2785dc5a953068f4a5442b38e7"
+    },
+    {
+      "path": "profile-effects/ocean-life/ocean-life.riv",
+      "bytes": 27342671,
+      "sha256": "ed69b3e589823b56c3ed8536df5ed141ea8197d1895fb01d3280f41aa40f3026"
+    },
+    {
+      "path": "profile-effects/ocean-life/thumbnail.png",
+      "bytes": 118076,
+      "sha256": "6bb85f767d77140b3e494a8042a5a23c1685c37d85747637819c49559fc27a7e"
+    },
+    {
+      "path": "profile-effects/swimming-fish/CREDITS.md",
+      "bytes": 426,
+      "sha256": "6474ea9144f74387d5091e3abbde9a9f258ab6ddffe5885817e0e69d4ef43a37"
+    },
+    {
+      "path": "profile-effects/swimming-fish/swimming-fish.riv",
+      "bytes": 286861,
+      "sha256": "3a80743693f508d9dfe88a286d2b6621e91d738d425103b5dc7b10805e32e11e"
+    },
+    {
+      "path": "profile-effects/swimming-fish/thumbnail.png",
+      "bytes": 8792,
+      "sha256": "ea24a0de087d8fea0640be99f7495c64b228e85ffe6e71f3323b0129dceef815"
+    }
+  ]
+}

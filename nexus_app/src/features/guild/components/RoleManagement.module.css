@@ -1,0 +1,169 @@
+/* SPDX-License-Identifier: Nebula */
+
+.roleIndicator {
+	display: flex;
+	height: 0.75rem;
+	width: 0.75rem;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border-radius: 624.9375rem;
+	padding: 0;
+}
+
+.roleBadge {
+	display: flex;
+	height: 1.5rem;
+	min-width: 0;
+	max-width: 16.75rem;
+	align-items: center;
+	border-radius: 0.25rem;
+	border: 0.0625rem solid var(--background-header-secondary);
+	background-color: var(--background-primary);
+	padding: 0.25rem;
+	font-weight: 600;
+	font-size: 0.75rem;
+	line-height: 1rem;
+}
+
+.roleRemoveButtonContainer {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.roleRemoveButton {
+	position: relative;
+	flex-shrink: 0;
+	cursor: pointer;
+}
+
+.roleRemoveIconContainer {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: 0.625rem;
+	width: 0.625rem;
+	opacity: 0;
+}
+
+.roleName {
+	margin-right: 0.125rem;
+	min-width: 0;
+	max-width: 12.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+	font-size: 0.75rem;
+	line-height: 1.33;
+	max-height: 1.33em;
+	color: var(--text-primary);
+}
+
+.roleListContainer {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+}
+
+.roleOverflowButton {
+	display: inline-flex;
+	height: 1.5rem;
+	min-width: 1.5rem;
+	align-items: center;
+	justify-content: center;
+	border: 0.0625rem solid var(--background-header-secondary);
+	border-radius: 0.25rem;
+	background-color: var(--background-primary);
+	padding: 0 0.375rem;
+	color: var(--text-secondary);
+	font: inherit;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+	transition:
+		background-color 150ms ease,
+		color 150ms ease,
+		border-color 150ms ease;
+}
+
+.roleOverflowButton:hover {
+	border-color: var(--background-modifier-hover);
+	background-color: var(--background-modifier-hover);
+	color: var(--text-primary);
+}
+
+.roleOverflowButton:focus-visible {
+	outline: 2px solid var(--text-link);
+	outline-offset: 2px;
+}
+
+.roleCollapseIcon {
+	height: 1rem;
+	width: 1rem;
+}
+
+.roleBadgeReveal {
+	animation: roleBadgeReveal 180ms ease-out both;
+}
+
+@keyframes roleBadgeReveal {
+	from {
+		opacity: 0;
+		transform: translateY(-0.125rem) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.roleBadgeReveal {
+		animation: none;
+	}
+}
+
+.assignRoleButton {
+	cursor: pointer;
+	transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.assignRoleButtonIcon {
+	display: flex;
+	height: 1rem;
+	width: 1rem;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-tertiary);
+	cursor: pointer;
+}
+
+.assignRoleButtonIcon:hover,
+.assignRoleButtonIcon[data-context-menu-open='true'] {
+	color: var(--text-primary);
+}
+
+.iconSize {
+	height: 1rem;
+	width: 1rem;
+}
+
+.noRolesLink {
+	color: var(--text-link);
+	cursor: pointer;
+}
+
+.noRolesLink:hover {
+	text-decoration: underline;
+}
+
+.roleColorIndicator {
+	height: 0.75rem;
+	width: 0.75rem;
+	border-radius: 624.9375rem;
+	flex-shrink: 0;
+}

@@ -1,0 +1,28 @@
+{
+	"name": "@nexus/errors",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./*": "./*"
+	},
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@nexus/constants": "workspace:*",
+		"@nexus/i18n": "workspace:*",
+		"@nexus/logger": "workspace:*",
+		"@nexus/record_utils": "workspace:*",
+		"@nexus/schema": "workspace:*",
+		"hono": "catalog:"
+	},
+	"devDependencies": {
+		"@messageformat/parser": "catalog:",
+		"@types/node": "catalog:",
+		"typescript": "catalog:ts7",
+		"vitest": "catalog:"
+	}
+}

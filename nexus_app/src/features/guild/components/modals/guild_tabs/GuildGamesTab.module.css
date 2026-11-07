@@ -1,0 +1,277 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 20px;
+}
+
+.header,
+.panel {
+	background: var(--background-secondary);
+	border: 1px solid var(--border-subtle);
+	border-radius: 12px;
+	padding: 16px;
+}
+
+.header h2,
+.panel h3 {
+	margin: 0 0 8px;
+}
+
+.muted {
+	color: var(--text-muted);
+	margin: 0;
+}
+
+.addGame,
+.filters,
+.playerList {
+	display: flex;
+	gap: 9px;
+}
+
+.addGame {
+	margin-top: 14px;
+}
+
+.playerList {
+	flex-direction: column;
+	margin-top: 12px;
+}
+
+.sectionHeading {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.sectionHeading h3 {
+	margin-bottom: 4px;
+}
+
+.catalogMark {
+	background: rgba(16, 200, 179, 0.11);
+	border: 1px solid rgba(16, 200, 179, 0.26);
+	border-radius: 999px;
+	color: #37d8c2;
+	flex: 0 0 auto;
+	font-size: 0.61rem;
+	font-weight: 750;
+	letter-spacing: 0.09em;
+	padding: 5px 9px;
+}
+
+.addGame input,
+.filters input,
+.addGame select,
+.filters select,
+.catalogSearch {
+	background: var(--background-primary);
+	border: 1px solid var(--border-subtle);
+	border-radius: 8px;
+	color: var(--text-normal);
+	min-height: 40px;
+	padding: 8px 12px;
+}
+
+.addGame input,
+.filters input,
+.catalogSearch {
+	flex: 1;
+	min-width: 0;
+}
+
+.addGame select,
+.filters select {
+min-width: 145px;
+}
+
+.playerRow {
+	align-items: center;
+	background: var(--background-primary);
+	border-radius: 9px;
+	display: flex;
+	gap: 10px;
+	justify-content: space-between;
+	padding: 11px 12px;
+}
+
+.gameGrid,
+.catalogGrid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	margin-top: 14px;
+}
+
+.serverGameCard,
+.catalogCard {
+	background: var(--background-primary);
+	border: 1px solid var(--border-subtle);
+	border-radius: 12px;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.serverGameCard {
+	padding: 7px;
+	position: relative;
+}
+
+.gameSelect {
+	background: transparent;
+	border: 0;
+	color: var(--text-normal);
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	font: inherit;
+	gap: 7px;
+	padding: 0;
+	text-align: start;
+	width: 100%;
+}
+
+.gameSelect[aria-pressed='true'] {
+	border-radius: 8px;
+	outline: 2px solid #10c8b3;
+	outline-offset: 2px;
+}
+
+.serverGameName {
+	font-size: 0.87rem;
+	font-weight: 650;
+	overflow-wrap: anywhere;
+}
+
+.serverGamePlatform {
+	color: var(--text-muted);
+	font-size: 0.74rem;
+}
+
+.serverGameCard > .button {
+	margin-top: 8px;
+	width: 100%;
+}
+
+.catalogCard {
+	transition:
+		border-color 150ms ease,
+		transform 150ms ease;
+}
+
+.catalogCard:hover {
+	border-color: rgba(16, 200, 179, 0.48);
+	transform: translateY(-2px);
+}
+
+.catalogCardBody {
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+	padding: 10px;
+}
+
+.catalogCardBody .button {
+	width: 100%;
+}
+
+.emptyState {
+	align-self: center;
+	border: 1px dashed var(--border-subtle);
+	border-radius: 10px;
+	grid-column: 1 / -1;
+	padding: 14px;
+	text-align: center;
+}
+
+.playerInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.playerName {
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.button {
+	background: var(--background-tertiary);
+	border: 0;
+	border-radius: 8px;
+	color: var(--text-normal);
+	cursor: pointer;
+	font: inherit;
+	min-height: 36px;
+	padding: 7px 12px;
+}
+
+.buttonPrimary {
+	background: var(--brand-experiment);
+	color: var(--text-on-brand, #fff);
+	font-weight: 600;
+}
+
+.gameSelect[aria-pressed='true'] {
+	background: var(--brand-experiment);
+	color: var(--text-on-brand, #fff);
+}
+
+.button:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+.button:focus-visible,
+.gameSelect:focus-visible {
+	outline: 2px solid #10c8b3;
+	outline-offset: 2px;
+}
+
+.error {
+	color: var(--status-danger, #ed4245);
+	margin: 0;
+}
+
+.srOnly {
+border: 0;
+clip: rect(0, 0, 0, 0);
+height: 1px;
+margin: -1px;
+overflow: hidden;
+padding: 0;
+position: absolute;
+white-space: nowrap;
+width: 1px;
+}
+
+@media (max-width: 600px) {
+	.root {
+		gap: 12px;
+		padding: 12px;
+	}
+
+	.addGame,
+	.filters {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.playerRow {
+		align-items: flex-start;
+	}
+
+	.gameGrid,
+	.catalogGrid {
+		gap: 9px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.playerRow {
+		flex-wrap: wrap;
+	}
+}

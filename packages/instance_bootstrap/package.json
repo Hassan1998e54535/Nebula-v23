@@ -1,0 +1,23 @@
+{
+	"name": "@nexus/instance_bootstrap",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./src/*": "./src/*",
+		"./*": "./*"
+	},
+	"scripts": {
+		"test": "node --test 'src/**/*.test.mjs'",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@nexus/constants": "workspace:*",
+		"@nexus/limits": "workspace:*",
+		"@nexus/schema": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "catalog:",
+		"typescript": "catalog:ts7"
+	}
+}

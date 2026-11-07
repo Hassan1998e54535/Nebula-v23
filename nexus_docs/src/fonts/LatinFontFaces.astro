@@ -1,0 +1,14 @@
+---
+// SPDX-License-Identifier: Nebula
+import {Font} from 'astro:assets';
+
+interface Props {
+	readonly preloadFallback: boolean;
+}
+
+const {preloadFallback} = Astro.props;
+---
+
+<Font cssVariable="--font-radio-canada-big" preload />
+<Font cssVariable="--font-jetbrains-mono" preload />
+<Font cssVariable="--font-noto-sans" preload={preloadFallback} />

@@ -1,0 +1,462 @@
+name: private Windows test build
+
+on:
+  push:
+    branches:
+      - windows-test
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: windows-private-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  meta:
+    name: Resolve test build metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      pub_date: ${{ steps.meta.outputs.pub_date }}
+      channel: ${{ steps.meta.outputs.channel }}
+      build_channel: ${{ steps.meta.outputs.build_channel }}
+      source_sha: ${{ steps.meta.outputs.source_sha }}
+      private_release: ${{ steps.private_release.outputs.tag }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Record metadata runner
+        run: node tools/ci/report-progress.mjs metadata-started in_progress
+
+      - name: Set up Rust toolchain (CI helpers)
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: "1.98.1"
+
+      - name: Resolve build metadata
+        id: meta
+        run: >-
+          cargo run --locked --quiet --manifest-path tools/ci/Cargo.toml -- build-desktop
+          --step set_metadata
+          --channel canary
+
+      - name: Prepare a private draft for this run only
+        id: private_release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
+          tag="nexus-private-test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --draft --prerelease --title "NEXUS private Windows test ${GITHUB_RUN_ID}" \
+            --notes "Private, unsigned test only. Owner server configuration and external connectivity are separate requirements. Do not treat this as a public customer release."
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Record metadata result
+        if: always()
+        run: node tools/ci/report-progress.mjs metadata-completed '${{ job.status }}'
+
+  shared_assets:
+    name: Build shared renderer assets
+    needs: meta
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      CHANNEL: ${{ needs.meta.outputs.channel }}
+      BUILD_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      RELEASE_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      PUBLIC_RELEASE_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_VERSION: ${{ needs.meta.outputs.version }}
+      PUBLIC_BUILD_VERSION: ${{ needs.meta.outputs.version }}
+      PUB_DATE: ${{ needs.meta.outputs.pub_date }}
+      SOURCE_SHA: ${{ needs.meta.outputs.source_sha }}
+    steps:
+      - name: Check out CI helpers
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.meta.outputs.source_sha }}
+          path: _ci
+
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.meta.outputs.source_sha }}
+          path: source
+
+      - name: Record renderer runner
+        working-directory: source
+        run: node tools/ci/report-progress.mjs renderer-started in_progress
+
+      # A fresh private build repository does not contain the old upload history.
+      # Only existing public rendering assets are fetched; source ZIPs stay local.
+      - name: Restore SHA-256-locked original profile rendering assets
+        working-directory: source
+        run: python3 tools/replit/profile_media_inputs.py
+
+      - name: Set up Rust toolchain (renderer WebAssembly)
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: "1.98.1"
+          targets: wasm32-unknown-unknown
+
+      - name: Set work directory
+        env:
+          SUBST_TARGET: ${{ github.workspace }}/source
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step set_workdir_unix
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 26
+
+      - name: Set up pnpm
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step setup_pnpm
+
+      - name: Resolve pnpm store path
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step resolve_pnpm_store_unix
+
+      - name: Cache pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-private-renderer-pnpm-${{ hashFiles('source/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-private-renderer-pnpm-
+
+      - name: Cache Cargo registry
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-private-renderer-cargo-${{ hashFiles('source/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-private-renderer-cargo-
+
+      - name: Install dependencies
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step install_dependencies
+
+      - name: Update desktop version
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step update_version
+
+      - name: Set canary build channel
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step set_build_channel
+
+      - name: Build shared renderer assets
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        env:
+          NEXUS_I18N_ALLOW_ENGLISH_FALLBACK: "1"
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --locked --quiet --manifest-path "${{ github.workspace }}/_ci/tools/ci/Cargo.toml" -- build-desktop \
+            --step build_shared_assets 2>&1 | tee "$RUNNER_TEMP/shared-renderer-build.log"
+
+      - name: Summarize shared renderer failure
+        if: failure()
+        shell: bash
+        run: |
+          log="$RUNNER_TEMP/shared-renderer-build.log"
+          {
+            echo "### Shared renderer build failure"
+            echo
+            echo "The English fallback setting was: \`NEXUS_I18N_ALLOW_ENGLISH_FALLBACK=1\`."
+            echo
+            if [[ -f "$log" ]]; then
+              grep -Ein -C 3 'Lingui compile:|Failed to compile|Missing [0-9]+ translations|error:|Error:|ERR_PNPM|ELIFECYCLE|failed' "$log" | tail -n 100 || tail -n 60 "$log"
+            else
+              echo "The build log was not captured."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Prepare shared renderer artifact
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step prepare_shared_assets
+
+      - name: Transfer temporary renderer through this run's private draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
+          tar -czf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source desktop-shared-assets
+          gh release upload "$PRIVATE_RELEASE" "$RUNNER_TEMP/shared-renderer.tar.gz" --repo "$GITHUB_REPOSITORY"
+
+      - name: Record renderer result
+        if: always()
+        working-directory: source
+        run: node tools/ci/report-progress.mjs renderer-completed '${{ job.status }}'
+
+  build_windows_x64:
+    name: Build unsigned Windows x64 test app
+    needs:
+      - meta
+      - shared_assets
+    runs-on: windows-2025
+    timeout-minutes: 180
+    permissions:
+      actions: read
+      contents: write
+    env:
+      CHANNEL: ${{ needs.meta.outputs.channel }}
+      BUILD_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      RELEASE_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      PUBLIC_RELEASE_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_VERSION: ${{ needs.meta.outputs.version }}
+      PUBLIC_BUILD_VERSION: ${{ needs.meta.outputs.version }}
+      PUB_DATE: ${{ needs.meta.outputs.pub_date }}
+      SOURCE_SHA: ${{ needs.meta.outputs.source_sha }}
+      DESKTOP_PLATFORM: windows
+      DESKTOP_ARCH: x64
+      NEXUS_MODULES: "1"
+      PLATFORM: windows
+      ARCH: x64
+      ELECTRON_ARCH: x64
+    steps:
+      - name: Check out CI helpers
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.meta.outputs.source_sha }}
+          path: _ci
+
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.meta.outputs.source_sha }}
+          path: source
+
+      - name: Record Windows compilation runner
+        working-directory: source
+        shell: bash
+        run: node tools/ci/report-progress.mjs windows-build-started in_progress
+
+      - name: Set up Rust toolchain (CI helpers)
+        uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
+        with:
+          toolchain: "1.98.1"
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.14"
+
+      - name: Ensure python3 command
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step ensure_python3_windows
+
+      - name: Shorten Windows paths and pin pnpm store
+        env:
+          SUBST_TARGET: ${{ github.workspace }}/source
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step windows_paths
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 26
+
+      - name: Set up pnpm
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step setup_pnpm
+
+      - name: Resolve pnpm store path
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step resolve_pnpm_store_windows
+
+      - name: Cache pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-x64-private-pnpm-${{ hashFiles('source/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-x64-private-pnpm-
+
+      - name: Set up MSVC environment
+        uses: TheMrMilchmann/setup-msvc-dev@368ef7d1ee4d1171b31d4a7f67f4d954f903f5a9
+        with:
+          arch: amd64
+
+      - name: Install Rust Windows target
+        env:
+          ARCH: x64
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step install_rust_windows_targets
+
+      - name: Install dependencies
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step install_dependencies
+
+      - name: Update desktop version
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step update_version
+
+      - name: Set canary build channel
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step set_build_channel
+
+      - name: Download and remove this run's temporary renderer
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
+        run: |
+          set -euo pipefail
+          gh release download "$PRIVATE_RELEASE" --pattern shared-renderer.tar.gz \
+            --dir "$RUNNER_TEMP" --repo "$GITHUB_REPOSITORY"
+          tar -xzf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source
+          gh release delete-asset "$PRIVATE_RELEASE" shared-renderer.tar.gz --yes --repo "$GITHUB_REPOSITORY"
+
+      - name: Restore shared renderer assets
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step restore_shared_assets
+
+      - name: Build Electron main process
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step build_electron_main
+
+      - name: Build Windows app
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        env:
+          TEMP: C:\t
+          TMP: C:\t
+          ELECTRON_BUILDER_CACHE: C:\ebcache
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          NEXUS_WINDOWS_TEST_INSTALLER: "1"
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step build_app_windows
+
+      - name: Verify app boots its bundled renderer
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        env:
+          BUILD_VERSION: ${{ env.VERSION }}
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step verify_bundled_renderer_windows
+
+      - name: Create portable ZIP
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: >-
+          cargo run --locked --quiet --manifest-path ${{ github.workspace }}/_ci/tools/ci/Cargo.toml -- build-desktop
+          --step create_portable_zip_windows
+
+      - name: Verify portable artifact and write checksum
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dist = Join-Path $env:WORKDIR 'nexus_desktop\dist-electron'
+          $zip = Get-ChildItem -Path $dist -Filter '*-portable-win-x64.zip' | Select-Object -First 1
+          if ($null -eq $zip) { throw "The Windows portable ZIP was not created in $dist" }
+          $hash = (Get-FileHash -Path $zip.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $($zip.Name)" | Set-Content -Path "$($zip.FullName).sha256" -Encoding ascii
+          Write-Host "Created unsigned private test artifact: $($zip.Name)"
+
+      - name: Verify Windows test installer and write checksum
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dist = Join-Path $env:WORKDIR 'nexus_desktop\dist-electron'
+          $installer = Get-ChildItem -Path $dist -File -Filter '*.exe' |
+            Select-Object -First 1
+          if ($null -eq $installer) { throw "The Windows test installer was not created in $dist" }
+          $hash = (Get-FileHash -Path $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $($installer.Name)" | Set-Content -Path "$($installer.FullName).sha256" -Encoding ascii
+          $signature = Get-AuthenticodeSignature -FilePath $installer.FullName
+          Write-Host "Created private test installer: $($installer.Name) (signature: $($signature.Status))"
+
+      - name: Install, open, and uninstall the actual NSIS installer
+        shell: pwsh
+        working-directory: ${{ env.WORKDIR }}/nexus_desktop
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Get-ChildItem dist-electron -File -Filter '*.exe' | Select-Object -First 1
+          if (!$installer) { throw 'No NSIS installer was produced.' }
+          $target = Join-Path $env:RUNNER_TEMP 'nexus-installed-private-test'
+          $setup = Start-Process $installer.FullName -ArgumentList "/S /D=$target" -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "Installer exited with $($setup.ExitCode)." }
+          Get-Process | Where-Object { $_.Path -like "$target\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+          $exe = Get-ChildItem $target -File -Filter 'NEXUS*.exe' | Select-Object -First 1
+          if (!$exe) { throw 'Installed application was not found.' }
+          node scripts/release-check.mjs --app $target --channel canary --expect-renderer $env:VERSION --expect-source bundled --app-arg=--disable-gpu --workdir (Join-Path $env:RUNNER_TEMP 'nexus-installed-check') --timeout-seconds 180
+          if ($LASTEXITCODE -ne 0) { throw 'The installed application did not boot its bundled renderer.' }
+          Get-Process | Where-Object { $_.Path -like "$target\*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+          $uninstaller = Get-ChildItem $target -File -Filter 'Uninstall*.exe' | Select-Object -First 1
+          if (!$uninstaller) { throw 'The uninstall program was not found.' }
+          $removed = Start-Process $uninstaller.FullName -ArgumentList '/S' -Wait -PassThru
+          if ($removed.ExitCode -ne 0) { throw "Uninstaller exited with $($removed.ExitCode)." }
+          $deadline = (Get-Date).AddSeconds(30)
+          while ((Test-Path $exe.FullName) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
+          if (Test-Path $exe.FullName) { throw 'The installed executable remains after uninstall.' }
+
+      - name: Attach the tested installer to the private draft
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $private = gh api "repos/$env:GITHUB_REPOSITORY" --jq '.private'
+          if ($LASTEXITCODE -ne 0 -or $private -ne 'true') { throw 'Refusing to attach binaries outside the authorized private repository.' }
+          $dist = Join-Path $env:WORKDIR 'nexus_desktop\dist-electron'
+          $installer = Get-ChildItem $dist -File -Filter '*.exe' | Select-Object -First 1
+          gh release upload $env:PRIVATE_RELEASE $installer.FullName "$($installer.FullName).sha256" --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw 'Private installer upload failed.' }
+          $url = gh release view $env:PRIVATE_RELEASE --repo $env:GITHUB_REPOSITORY --json url --jq '.url'
+          if ($LASTEXITCODE -ne 0) { throw 'Private download page could not be resolved.' }
+          @{
+            filename = $installer.Name
+            sha256 = (Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            bytes = $installer.Length
+            releaseUrl = $url
+          } | ConvertTo-Json | Set-Content -Encoding utf8 (Join-Path $env:RUNNER_TEMP 'nexus-installer-evidence.json')
+
+      - name: Record verified installer evidence
+        shell: bash
+        working-directory: source
+        run: node tools/ci/report-progress.mjs windows-installer-verified success "$RUNNER_TEMP/nexus-installer-evidence.json"
+
+      - name: Record a Windows build failure without claiming a download exists
+        if: failure()
+        working-directory: source
+        shell: bash
+        run: node tools/ci/report-progress.mjs windows-build-completed failure

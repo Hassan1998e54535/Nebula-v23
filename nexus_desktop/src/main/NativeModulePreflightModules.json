@@ -1,0 +1,97 @@
+[
+	{
+		"name": "@nexus/webauthn",
+		"platforms": ["darwin", "linux", "win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/platform-info",
+		"platforms": ["darwin", "linux", "win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/mac-app-audio",
+		"platforms": ["darwin"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/mac-clipboard",
+		"platforms": ["darwin"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/mac-sysctl",
+		"platforms": ["darwin"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/mac-tcc",
+		"platforms": ["darwin"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/macos-input-hook",
+		"platforms": ["darwin"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/linux-audio-capture",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/linux-evdev",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/linux-input-hook",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/linux-notifications",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/linux-portals",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/system-hunspell",
+		"platforms": ["linux"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/win-clipboard",
+		"platforms": ["win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/win-process-loopback",
+		"platforms": ["win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/win-shell",
+		"platforms": ["win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/windows-input-hook",
+		"platforms": ["win32"],
+		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/app-store",
+		"platforms": ["darwin", "linux", "win32"],
+		"severity": "degraded"
+	},
+	{
+		"name": "@nexus/gateway-socket",
+		"platforms": ["darwin", "linux", "win32"],
+		"severity": "degraded"
+	}
+]

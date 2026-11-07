@@ -1,0 +1,13 @@
+* text=auto
+nexus_static/** -text -diff
+nexus_static/**/*.md text diff
+nexus_static/*.sh text eol=lf diff
+nexus_static/*.sha256 text eol=lf diff
+packages/fonts/files/** -text -diff
+nexus_app/src/features/voice/utils/noise_suppression/deepfilternet3/*.wasm -text -diff
+nexus_app/src/features/voice/utils/noise_suppression/deepfilternet3/*.tar.gz -text -diff
+nexus_app/src/features/i18n/locales/** linguist-generated
+**/weblate/locales/** linguist-generated
+nexus_api/src/api/openapi/openapi.json linguist-generated
+nexus_admin/openapi-admin.json linguist-generated
+attached_assets/NEXUS-profile-effects-assets_1792005791909.zip -text -diff

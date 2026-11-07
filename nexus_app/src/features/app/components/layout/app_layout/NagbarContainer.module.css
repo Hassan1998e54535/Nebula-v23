@@ -1,0 +1,7 @@
+/* SPDX-License-Identifier: Nebula */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}

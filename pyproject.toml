@@ -1,0 +1,9 @@
+[project]
+name = "nexus-native-tooling"
+version = "0.1.0"
+description = "Font conversion for the independently built NEXUS Flutter client"
+requires-python = ">=3.11"
+dependencies = [
+    "fonttools[woff]==4.68.0",
+]
+

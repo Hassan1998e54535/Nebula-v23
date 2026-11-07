@@ -1,0 +1,184 @@
+/* SPDX-License-Identifier: Nebula */
+
+.userInfoContainer {
+	user-select: text;
+	-webkit-user-select: text;
+}
+
+.nameRow {
+	display: flex;
+	align-items: center;
+	gap: 0.125rem;
+	min-width: 0;
+}
+
+.nameButton {
+	display: block;
+	flex: 0 1 auto;
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border: none;
+	background: transparent;
+	padding: 0;
+	text-align: left;
+	vertical-align: middle;
+	font-weight: 700;
+	color: var(--text-primary);
+	font-size: 1.25rem;
+	line-height: 1.5rem;
+	max-height: 1.5rem;
+	letter-spacing: -0.01em;
+}
+
+.nameButtonClickable {
+	cursor: pointer;
+}
+
+.nameButtonClickable:hover {
+	text-decoration: underline;
+}
+.userInfoContainer { position: relative; }
+.nameplate { position: absolute; top: -0.45rem; right: 0; max-width: 35%; overflow: hidden; padding: .18rem .35rem; border: 1px solid color-mix(in srgb, var(--brand-primary) 38%, transparent); border-radius: .2rem; background: linear-gradient(110deg, color-mix(in srgb, var(--brand-primary) 12%, var(--background-primary)), var(--background-primary)); color: var(--text-primary-muted); font: 700 .5rem/1.2 var(--font-mono, monospace); letter-spacing: .08em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
+
+.badgeContainer {
+	display: inline-flex;
+	flex-shrink: 0;
+}
+
+.userTagWrapper {
+	margin-left: 0.25rem;
+}
+
+.actionsContainer {
+	margin-top: 0.25rem;
+	display: flex;
+}
+
+.usernameRow {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	min-width: 0;
+	overflow: hidden;
+	font-size: 0.875rem;
+	color: var(--text-tertiary);
+	line-height: 1.125rem;
+}
+
+.usernameButton {
+	display: block;
+	flex: 0 1 auto;
+	min-width: 0;
+	max-width: 100%;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border: none;
+	background: transparent;
+	padding: 0;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	line-height: 1.125rem;
+	max-height: 1.125rem;
+}
+
+.usernameButton:hover {
+	text-decoration: underline;
+}
+
+.pronouns {
+	margin-top: 0.25rem;
+	font-size: 0.8125rem;
+	color: var(--text-tertiary);
+}
+
+.srOnly {
+	position: absolute;
+	width: 0.0625rem;
+	height: 0.0625rem;
+	padding: 0;
+	margin: -0.0625rem;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.nameButton {
+	font-family: var(--font-sans);
+	font-weight: 600;
+}
+.nameButton[data-name-font='editorial'] { font-family: Georgia, serif; font-style: italic; }
+.nameButton[data-name-font='terminal'] { font-family: ui-monospace, monospace; letter-spacing: 0; }
+.nameButton[data-name-font='rounded'] { font-family: "Trebuchet MS", system-ui, sans-serif; }
+.nameButton[data-name-font='display'] { font-family: Impact, sans-serif; font-weight: 400; letter-spacing: .01em; }
+.nameButton[data-name-font='classic'] { font-family: "Times New Roman", Times, serif; font-weight: 700; }
+.nameButton[data-name-font='wide'] { font-family: "Arial Black", Arial, sans-serif; font-weight: 900; letter-spacing: .07em; }
+.nameButton[data-name-font='stencil'] { font-family: Impact, sans-serif; text-transform: uppercase; letter-spacing: .12em; }
+.nameButton[data-name-font='typewriter'] { font-family: "Courier New", Courier, monospace; font-weight: 700; letter-spacing: -.025em; }
+.nameButton[data-name-font='humanist'] { font-family: Verdana, Geneva, sans-serif; font-weight: 600; letter-spacing: -.04em; }
+.nameButton[data-name-font='compact'] { font-family: Tahoma, Arial, sans-serif; font-weight: 700; letter-spacing: -.045em; }
+.nameButton[data-name-font='refined'] { font-family: Garamond, "Palatino Linotype", serif; font-style: italic; font-weight: 600; letter-spacing: .01em; }
+.nameButton[data-name-font='handwritten'] { font-family: cursive; font-style: italic; font-weight: 600; }
+.nameButton[data-name-font='geometric'] { font-family: "Century Gothic", "Trebuchet MS", sans-serif; font-weight: 600; letter-spacing: .04em; }
+.nameButton[data-name-effect='solid'],
+.nameButton[data-name-effect='neon'],
+.nameButton[data-name-effect='outline'],
+.nameButton[data-name-effect='wave'],
+.nameButton[data-name-effect='bounce'] { color: var(--profile-name-start); }
+.nameButton[data-name-effect='gradient'],
+.nameButton[data-name-effect='prism'],
+.nameButton[data-name-effect='aurora'],
+.nameButton[data-name-effect='spectrum'],
+.nameButton[data-name-effect='flow'],
+.nameButton[data-name-effect='shimmer'],
+.nameButton[data-name-effect='comet'],
+.nameButton[data-name-effect='orbit'],
+.nameButton[data-name-effect='ember'],
+.nameButton[data-name-effect='frost'],
+.nameButton[data-name-effect='pulse'],
+.nameButton[data-name-effect='flicker'],
+.nameButton[data-name-effect='ripple'],
+.nameButton[data-name-effect='echo'],
+.nameButton[data-name-effect='glass'] { color: transparent; background: var(--profile-name-gradient); background-clip: text; -webkit-background-clip: text; }
+.nameButton[data-name-effect='neon'] { color: var(--profile-name-start); text-shadow: 0 0 8px color-mix(in srgb, var(--profile-name-end) 50%, transparent); }
+.nameButton[data-name-effect='outline'] { color: transparent; -webkit-text-stroke: 1px var(--profile-name-start); }
+.nameButton[data-name-effect='echo'] { text-shadow: 1px 1px 0 color-mix(in srgb, var(--profile-name-end) 58%, transparent), 2px 2px 0 color-mix(in srgb, var(--profile-name-start) 42%, transparent); }
+.nameButton[data-name-effect='glass'] { filter: drop-shadow(0 1px 0 rgba(255,255,255,.35)); }
+.nameButton[data-name-effect='shimmer'],
+.nameButton[data-name-effect='flow'],
+.nameButton[data-name-effect='pulse'],
+.nameButton[data-name-effect='spectrum'],
+.nameButton[data-name-effect='flicker'],
+.nameButton[data-name-effect='comet'],
+.nameButton[data-name-effect='ripple'],
+.nameButton[data-name-effect='orbit'],
+.nameButton[data-name-effect='ember'],
+.nameButton[data-name-effect='frost'],
+.nameButton[data-name-motion='shimmer'],
+.nameButton[data-name-motion='pulse'],
+.nameButton[data-name-motion='spectrum'] { animation: profile-name-flow var(--profile-name-duration, 2.8s) ease-in-out infinite alternate; }
+.nameButton[data-name-effect='wave'],
+.nameButton[data-name-motion='wave'] { animation: profile-name-wave var(--profile-name-duration, 2.8s) ease-in-out infinite alternate; }
+.nameButton[data-name-effect='bounce'],
+.nameButton[data-name-motion='bounce'] { animation: profile-name-bounce var(--profile-name-duration, 2.8s) ease-in-out infinite alternate; }
+@keyframes profile-name-flow { to { opacity: .66; background-position: 100% 50%; } }
+@keyframes profile-name-wave { to { transform: translateY(calc(var(--profile-name-intensity, 70%) / -18)); } }
+@keyframes profile-name-bounce { to { transform: translateY(calc(var(--profile-name-intensity, 70%) / -12)); } }
+@media (prefers-reduced-motion: reduce) { .nameButton[data-name-effect], .nameButton[data-name-motion] { animation: none !important; } }
+
+.usernameRow,
+.pronouns {
+	color: var(--text-primary-muted);
+}
+
+.nameButtonClickable:focus-visible,
+.usernameButton:focus-visible {
+	outline: 0.125rem solid var(--brand-primary);
+	outline-offset: 0.125rem;
+}

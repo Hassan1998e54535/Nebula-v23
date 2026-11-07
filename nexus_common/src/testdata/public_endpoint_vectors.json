@@ -1,0 +1,440 @@
+[
+	{
+		"url": "https://nexus.example",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "https://nexus.example"
+	},
+	{
+		"url": "https://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "https://nexus.example/media"
+	},
+	{
+		"url": "https://nexus.example/admin",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "https://nexus.example/admin"
+	},
+	{
+		"url": "https://nexus.example/admin/oauth2_callback",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "https://nexus.example/admin/oauth2_callback"
+	},
+	{
+		"url": "wss://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "wss://nexus.example/gateway"
+	},
+	{
+		"url": "http://nexus.example",
+		"base_domain": "nexus.example",
+		"public_port": 80,
+		"normalized": "http://nexus.example"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 80,
+		"normalized": "http://nexus.example/media"
+	},
+	{
+		"url": "ws://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 80,
+		"normalized": "ws://nexus.example/gateway"
+	},
+	{
+		"url": "http://nexus.example",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080"
+	},
+	{
+		"url": "http://nexus.example/",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/media"
+	},
+	{
+		"url": "http://nexus.example/api",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/api"
+	},
+	{
+		"url": "http://nexus.example/admin",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/admin"
+	},
+	{
+		"url": "http://nexus.example/admin/oauth2_callback",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/admin/oauth2_callback"
+	},
+	{
+		"url": "ws://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "ws://nexus.example:19080/gateway"
+	},
+	{
+		"url": "https://nexus.example/admin/oauth2_callback",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https://nexus.example:8443/admin/oauth2_callback"
+	},
+	{
+		"url": "wss://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "wss://nexus.example:8443/gateway"
+	},
+	{
+		"url": "https://nexus.example",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https://nexus.example:8443"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "http://nexus.example:443/media"
+	},
+	{
+		"url": "https://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 80,
+		"normalized": "https://nexus.example:80/media"
+	},
+	{
+		"url": "ws://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 443,
+		"normalized": "ws://nexus.example:443/gateway"
+	},
+	{
+		"url": "wss://nexus.example/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 80,
+		"normalized": "wss://nexus.example:80/gateway"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": null,
+		"normalized": "http://nexus.example/media"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 0,
+		"normalized": "http://nexus.example/media"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "",
+		"public_port": 19080,
+		"normalized": "http://nexus.example/media"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "   ",
+		"public_port": 19080,
+		"normalized": "http://nexus.example/media"
+	},
+	{
+		"url": "http://nexus.example:19080/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/media"
+	},
+	{
+		"url": "http://nexus.example:8080/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:8080/media"
+	},
+	{
+		"url": "https://nexus.example:443/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "https://nexus.example:443/media"
+	},
+	{
+		"url": "http://nexus.example:80/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:80/media"
+	},
+	{
+		"url": "https://nexus.example:8443/admin/oauth2_callback",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https://nexus.example:8443/admin/oauth2_callback"
+	},
+	{
+		"url": "ws://nexus.example:19080/gateway",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "ws://nexus.example:19080/gateway"
+	},
+	{
+		"url": "http://nexus.example:8080?a=1",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:8080?a=1"
+	},
+	{
+		"url": "https://cdn.example.net/assets",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "https://cdn.example.net/assets"
+	},
+	{
+		"url": "https://media.example.net",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "https://media.example.net"
+	},
+	{
+		"url": "https://sub.nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "https://sub.nexus.example/media"
+	},
+	{
+		"url": "https://nexus.example/media",
+		"base_domain": "example",
+		"public_port": 19080,
+		"normalized": "https://nexus.example/media"
+	},
+	{
+		"url": "https://nexus.example.evil.net/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "https://nexus.example.evil.net/media"
+	},
+	{
+		"url": "http://api:8080",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://api:8080"
+	},
+	{
+		"url": "http://media-proxy:8080",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://media-proxy:8080"
+	},
+	{
+		"url": "http://NEXUS.example/Media",
+		"base_domain": "NEXUS.Example",
+		"public_port": 19080,
+		"normalized": "http://NEXUS.example:19080/Media"
+	},
+	{
+		"url": "HTTPS://nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "HTTPS://nexus.example:8443/media"
+	},
+	{
+		"url": "http://nexus.example./media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example.:19080/media"
+	},
+	{
+		"url": "http://nexus.example/media",
+		"base_domain": "nexus.example.",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/media"
+	},
+	{
+		"url": "http://nexus.example./media",
+		"base_domain": "nexus.example.",
+		"public_port": 19080,
+		"normalized": "http://nexus.example.:19080/media"
+	},
+	{
+		"url": "http://nexus.example?a=1",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080?a=1"
+	},
+	{
+		"url": "http://nexus.example#top",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080#top"
+	},
+	{
+		"url": "http://nexus.example/media/x.png?v=1#frag",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/media/x.png?v=1#frag"
+	},
+	{
+		"url": "http://nexus.example/media/",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/media/"
+	},
+	{
+		"url": "http://nexus.example/a%20b",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080/a%20b"
+	},
+	{
+		"url": "http://nexus.example#/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080#/media"
+	},
+	{
+		"url": "http://user:pass@nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://user:pass@nexus.example:19080/media"
+	},
+	{
+		"url": "http://user:pass@nexus.example:19080/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://user:pass@nexus.example:19080/media"
+	},
+	{
+		"url": "http://user:p@ss@nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://user:p@ss@nexus.example:19080/media"
+	},
+	{
+		"url": "http://[::1]/media",
+		"base_domain": "[::1]",
+		"public_port": 19080,
+		"normalized": "http://[::1]:19080/media"
+	},
+	{
+		"url": "http://[::1]:8080/media",
+		"base_domain": "[::1]",
+		"public_port": 19080,
+		"normalized": "http://[::1]:8080/media"
+	},
+	{
+		"url": "http://127.0.0.1/media",
+		"base_domain": "127.0.0.1",
+		"public_port": 19080,
+		"normalized": "http://127.0.0.1:19080/media"
+	},
+	{
+		"url": "http://[2001:db8::1]/media",
+		"base_domain": "[2001:db8::1]",
+		"public_port": 19080,
+		"normalized": "http://[2001:db8::1]:19080/media"
+	},
+	{
+		"url": "http://[2001:DB8::1]/media",
+		"base_domain": "[2001:db8::1]",
+		"public_port": 19080,
+		"normalized": "http://[2001:DB8::1]:19080/media"
+	},
+	{
+		"url": "",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": ""
+	},
+	{
+		"url": "/api",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "/api"
+	},
+	{
+		"url": "nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "nexus.example/media"
+	},
+	{
+		"url": "not a url",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "not a url"
+	},
+	{
+		"url": "://x",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "://x"
+	},
+	{
+		"url": "file:///x",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "file:///x"
+	},
+	{
+		"url": "mailto:a@nexus.example",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "mailto:a@nexus.example"
+	},
+	{
+		"url": "http://nexus.example\\evil",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "http://nexus.example:19080\\evil"
+	},
+	{
+		"url": "https://nexus.example:/media",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https://nexus.example:/media"
+	},
+	{
+		"url": "//nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 19080,
+		"normalized": "//nexus.example/media"
+	},
+	{
+		"url": "https:nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https:nexus.example/media"
+	},
+	{
+		"url": "https:/nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https:/nexus.example/media"
+	},
+	{
+		"url": "https:////nexus.example/media",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "https:////nexus.example/media"
+	},
+	{
+		"url": "android:apk-key-hash:9NrCFDLVR8_ObZC-EWzaRA",
+		"base_domain": "nexus.example",
+		"public_port": 8443,
+		"normalized": "android:apk-key-hash:9NrCFDLVR8_ObZC-EWzaRA"
+	}
+]

@@ -1,0 +1,6 @@
+**/Cargo.lock
+**/pnpm-lock.yaml
+**/rebar.lock
+
+/nexus_static/
+/packages/fonts/files/

@@ -1,0 +1,11 @@
+/.velopack/
+/dist-electron/
+
+/native/**/*.node
+/native/webauthn/*.so*
+/native/win-game-capture/nexus-game-hook.*.dll
+/native/win-game-capture/nexus-inject-helper.*.exe
+/native/win-game-capture/nexus-vulkan-layer.*.dll
+/native/win-game-capture/nexus-vulkan-layer.*.json
+
+/src/common/BuildChannel.ts

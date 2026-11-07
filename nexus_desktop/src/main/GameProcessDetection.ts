@@ -1,0 +1,356 @@
+// SPDX-License-Identifier: Nebula
+
+import {execFile} from 'node:child_process';
+import {existsSync, readdirSync, readFileSync, readlinkSync} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {promisify} from 'node:util';
+
+const execFileAsync = promisify(execFile);
+const MAX_PROCESS_OUTPUT_BYTES = 1024 * 1024;
+const MAX_PROCESS_NAMES = 1000;
+const MAX_PROCESS_PATH_OUTPUT_BYTES = 4 * 1024 * 1024;
+const STEAM_LIBRARY_CACHE_MS = 30_000;
+const IGNORED_PROCESS_NAMES = new Set([
+	'crashpad_handler',
+	'crashpad_handler.exe',
+	'electron',
+	'electron.exe',
+	'nexus',
+	'nexus.exe',
+]);
+
+export interface SteamInstallation {
+	appId: string;
+	name: string;
+	installDirectory: string;
+}
+
+export interface RunningSteamGame {
+	id: string;
+	name: string;
+	platform: 'computer';
+}
+
+type VdfValue = string | {[key: string]: VdfValue};
+
+let steamInstallationsCache: {expiresAt: number; installations: Array<SteamInstallation>} | null = null;
+let steamInstallationsInFlight: Promise<Array<SteamInstallation>> | null = null;
+
+function normalizeProcessName(value: string): string {
+	return path.basename(value.trim().replace(/^"|"$/g, '')).toLocaleLowerCase();
+}
+
+function decodeVdfToken(token: string): string {
+	if (!token.startsWith('"')) return token;
+	try {
+		return JSON.parse(token) as string;
+	} catch {
+		return token.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+	}
+}
+
+function parseVdfObject(tokens: Array<string>, startIndex: number): [Record<string, VdfValue>, number] {
+	const object: Record<string, VdfValue> = {};
+	let index = startIndex;
+
+	while (index < tokens.length) {
+		const keyToken = tokens[index++];
+		if (keyToken === '}') return [object, index];
+		if (keyToken === '{') continue;
+
+		const valueToken = tokens[index++];
+		if (valueToken == null || valueToken === '}') break;
+		const key = decodeVdfToken(keyToken);
+		if (valueToken === '{') {
+			const [child, nextIndex] = parseVdfObject(tokens, index);
+			object[key] = child;
+			index = nextIndex;
+		} else {
+			object[key] = decodeVdfToken(valueToken);
+		}
+	}
+
+	return [object, index];
+}
+
+function parseVdf(content: string): Record<string, VdfValue> {
+	const tokens = content.replace(/^\s*\/\/.*$/gm, '').match(/"(?:\\.|[^"\\])*"|[{}]|[^\s{}]+/gu);
+	if (!tokens) return {};
+	return parseVdfObject(tokens, 0)[0];
+}
+
+export function parseSteamLibraryPaths(content: string, mainSteamPath: string): Array<string> {
+	const parsed = parseVdf(content);
+	const libraryFolders = parsed.libraryfolders ?? parsed.LibraryFolders ?? parsed;
+	if (typeof libraryFolders !== 'object') return mainSteamPath ? [mainSteamPath] : [];
+
+	const paths = new Set<string>();
+	if (mainSteamPath.trim()) paths.add(path.normalize(mainSteamPath.trim()));
+	for (const [key, value] of Object.entries(libraryFolders)) {
+		if (/^\d+$/u.test(key) && typeof value === 'string' && value.trim()) {
+			paths.add(path.normalize(value.trim()));
+			continue;
+		}
+		if (typeof value === 'object' && typeof value.path === 'string' && value.path.trim()) {
+			paths.add(path.normalize(value.path.trim()));
+		}
+	}
+	return [...paths];
+}
+
+export function parseSteamAppManifest(content: string): {name: string; installDir: string} | null {
+	const parsed = parseVdf(content);
+	const appState = parsed.AppState ?? parsed.appstate;
+	if (typeof appState !== 'object') return null;
+	const rawName = appState.name;
+	const rawInstallDir = appState.installdir;
+	if (typeof rawName !== 'string' || typeof rawInstallDir !== 'string') return null;
+	const name = rawName.trim();
+	const installDir = rawInstallDir.trim();
+	if (!name || !installDir || /\p{Cc}/u.test(name) || /\p{Cc}/u.test(installDir)) return null;
+	return {name, installDir};
+}
+
+function isPathWithinDirectory(directory: string, candidatePath: string): boolean {
+	const relativePath = path.relative(path.resolve(directory), path.resolve(candidatePath));
+	const comparable = process.platform === 'win32' ? relativePath.toLocaleLowerCase() : relativePath;
+	return (
+		relativePath.length > 0 &&
+		comparable !== '..' &&
+		!comparable.startsWith(`..${path.sep}`) &&
+		!path.isAbsolute(relativePath)
+	);
+}
+
+export function findSteamInstallationForExecutable(
+	executablePath: string,
+	installations: Array<SteamInstallation>,
+): SteamInstallation | null {
+	return (
+		installations
+			.filter((installation) => isPathWithinDirectory(installation.installDirectory, executablePath))
+			.sort((left, right) => right.installDirectory.length - left.installDirectory.length)[0] ?? null
+	);
+}
+
+function parseWindowsCsvLine(line: string): string | null {
+	let imageName = '';
+	let inQuotes = false;
+
+	for (let index = 0; index < line.length; index += 1) {
+		const character = line[index];
+		if (character === '"') {
+			if (inQuotes && line[index + 1] === '"') {
+				imageName += '"';
+				index += 1;
+			} else {
+				inQuotes = !inQuotes;
+			}
+			continue;
+		}
+		if (character === ',' && !inQuotes) break;
+		imageName += character;
+	}
+
+	const normalized = normalizeProcessName(imageName);
+	return normalized && !IGNORED_PROCESS_NAMES.has(normalized) ? normalized : null;
+}
+
+function uniqueProcessNames(names: Array<string>): Array<string> {
+	return [...new Set(names.map(normalizeProcessName).filter((name) => name && !IGNORED_PROCESS_NAMES.has(name)))]
+		.sort((left, right) => left.localeCompare(right))
+		.slice(0, MAX_PROCESS_NAMES);
+}
+
+export async function getRunningGameProcessNames(): Promise<Array<string>> {
+	if (process.platform === 'win32') {
+		const {stdout} = await execFileAsync('tasklist', ['/fo', 'csv', '/nh'], {
+			windowsHide: true,
+			maxBuffer: MAX_PROCESS_OUTPUT_BYTES,
+		});
+		return uniqueProcessNames(
+			stdout
+				.split(/\r?\n/)
+				.map(parseWindowsCsvLine)
+				.filter((name): name is string => name != null),
+		);
+	}
+
+	const {stdout} = await execFileAsync('ps', ['-A', '-o', 'comm='], {
+		maxBuffer: MAX_PROCESS_OUTPUT_BYTES,
+	});
+	return uniqueProcessNames(stdout.split(/\r?\n/));
+}
+
+async function getWindowsSteamRootFromRegistry(): Promise<string | null> {
+	for (const key of ['HKCU\\Software\\Valve\\Steam', 'HKLM\\SOFTWARE\\WOW6432Node\\Valve\\Steam']) {
+		try {
+			const {stdout} = await execFileAsync('reg.exe', ['query', key, '/v', 'SteamPath'], {
+				windowsHide: true,
+				maxBuffer: 64 * 1024,
+				timeout: 5000,
+			});
+			const match = stdout.match(/^\s*SteamPath\s+REG_\w+\s+(.+?)\s*$/imu);
+			if (match?.[1]) return match[1].trim();
+		} catch {
+			// Steam may be installed under the other registry hive or a default location.
+		}
+	}
+	return null;
+}
+
+async function getSteamRootCandidates(): Promise<Array<string>> {
+	const home = os.homedir();
+	const candidates = new Set<string>();
+	if (process.env.STEAM_PATH) candidates.add(process.env.STEAM_PATH);
+
+	if (process.platform === 'win32') {
+		const programFilesX86 = process.env['ProgramFiles(x86)'] ?? 'C:\\Program Files (x86)';
+		const programFiles = process.env.ProgramFiles ?? 'C:\\Program Files';
+		candidates.add(path.join(programFilesX86, 'Steam'));
+		candidates.add(path.join(programFiles, 'Steam'));
+		const registryRoot = await getWindowsSteamRootFromRegistry();
+		if (registryRoot) candidates.add(registryRoot);
+	} else if (process.platform === 'linux') {
+		candidates.add(path.join(home, '.steam', 'steam'));
+		candidates.add(path.join(home, '.local', 'share', 'Steam'));
+		candidates.add(path.join(home, '.var', 'app', 'com.valvesoftware.Steam', '.local', 'share', 'Steam'));
+	} else if (process.platform === 'darwin') {
+		candidates.add(path.join(home, 'Library', 'Application Support', 'Steam'));
+	}
+
+	return [...candidates].filter((candidate) => existsSync(candidate));
+}
+
+async function loadSteamInstallations(): Promise<Array<SteamInstallation>> {
+	const steamRoots = await getSteamRootCandidates();
+	const libraryRoots = new Set<string>();
+
+	for (const steamRoot of steamRoots) {
+		const libraryFoldersPath = path.join(steamRoot, 'steamapps', 'libraryfolders.vdf');
+		if (existsSync(libraryFoldersPath)) {
+			try {
+				for (const libraryPath of parseSteamLibraryPaths(readFileSync(libraryFoldersPath, 'utf8'), steamRoot)) {
+					if (existsSync(libraryPath)) libraryRoots.add(path.resolve(libraryPath));
+				}
+			} catch {
+				libraryRoots.add(path.resolve(steamRoot));
+			}
+		} else {
+			libraryRoots.add(path.resolve(steamRoot));
+		}
+	}
+
+	const installations: Array<SteamInstallation> = [];
+	for (const libraryRoot of libraryRoots) {
+		const steamAppsDirectory = path.join(libraryRoot, 'steamapps');
+		const commonDirectory = path.join(steamAppsDirectory, 'common');
+		if (!existsSync(steamAppsDirectory) || !existsSync(commonDirectory)) continue;
+
+		let manifestNames: Array<string>;
+		try {
+			manifestNames = readdirSync(steamAppsDirectory);
+		} catch {
+			continue;
+		}
+
+		for (const manifestName of manifestNames) {
+			const appId = manifestName.match(/^appmanifest_(\d+)\.acf$/iu)?.[1];
+			if (!appId) continue;
+			try {
+				const manifest = parseSteamAppManifest(readFileSync(path.join(steamAppsDirectory, manifestName), 'utf8'));
+				if (!manifest) continue;
+				const installDirectory = path.resolve(commonDirectory, manifest.installDir);
+				if (!isPathWithinDirectory(commonDirectory, installDirectory) || !existsSync(installDirectory)) {
+					continue;
+				}
+				installations.push({appId, name: manifest.name, installDirectory});
+			} catch {
+				// Ignore malformed manifests; other installed games remain detectable.
+			}
+		}
+	}
+
+	return installations;
+}
+
+async function getSteamInstallations(): Promise<Array<SteamInstallation>> {
+	if (steamInstallationsCache && steamInstallationsCache.expiresAt > Date.now()) {
+		return steamInstallationsCache.installations;
+	}
+	if (steamInstallationsInFlight) return steamInstallationsInFlight;
+
+	steamInstallationsInFlight = loadSteamInstallations()
+		.then((installations) => {
+			steamInstallationsCache = {expiresAt: Date.now() + STEAM_LIBRARY_CACHE_MS, installations};
+			return installations;
+		})
+		.finally(() => {
+			steamInstallationsInFlight = null;
+		});
+	return steamInstallationsInFlight;
+}
+
+async function getRunningExecutablePaths(): Promise<Array<string>> {
+	if (process.platform === 'win32') {
+		const command =
+			"$ErrorActionPreference='SilentlyContinue'; Get-CimInstance Win32_Process -Property ExecutablePath | ForEach-Object { if ($_.ExecutablePath) { $_.ExecutablePath } }";
+		const {stdout} = await execFileAsync(
+			'powershell.exe',
+			['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', command],
+			{
+				windowsHide: true,
+				maxBuffer: MAX_PROCESS_PATH_OUTPUT_BYTES,
+				timeout: 8000,
+			},
+		);
+		return [
+			...new Set(
+				stdout
+					.split(/\r?\n/u)
+					.map((value) => value.trim())
+					.filter((value) => path.isAbsolute(value)),
+			),
+		];
+	}
+
+	if (process.platform === 'linux') {
+		const executablePaths = new Set<string>();
+		for (const processId of readdirSync('/proc').filter((entry) => /^\d+$/u.test(entry))) {
+			try {
+				const executablePath = readlinkSync(path.join('/proc', processId, 'exe'));
+				if (path.isAbsolute(executablePath) && !executablePath.endsWith(' (deleted)')) {
+					executablePaths.add(executablePath);
+				}
+			} catch {
+				// Processes may exit between enumeration and reading their executable link.
+			}
+		}
+		return [...executablePaths];
+	}
+
+	return [];
+}
+
+export async function getRunningSteamGames(): Promise<Array<RunningSteamGame>> {
+	if (process.platform !== 'win32' && process.platform !== 'linux') return [];
+
+	const [installations, executablePaths] = await Promise.all([getSteamInstallations(), getRunningExecutablePaths()]);
+	const runningGames = new Map<string, RunningSteamGame>();
+
+	for (const executablePath of executablePaths) {
+		const installation = findSteamInstallationForExecutable(executablePath, installations);
+		if (!installation) continue;
+		if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {
+			continue;
+		}
+		runningGames.set(installation.appId, {
+			id: `steam:${installation.appId}`,
+			name: installation.name,
+			platform: 'computer',
+		});
+	}
+
+	return [...runningGames.values()].sort((left, right) => left.name.localeCompare(right.name));
+}

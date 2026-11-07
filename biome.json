@@ -1,0 +1,193 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"lineWidth": 120,
+		"lineEnding": "lf",
+		"bracketSpacing": false,
+		"includes": ["**", "!**/nexus_app/src/features/theme/variables/ThemeVariableManifest.ts"]
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"trailingCommas": "all",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"bracketSpacing": false,
+			"bracketSameLine": false
+		},
+		"globals": ["React", "__webpack_base_uri__"]
+	},
+	"json": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"lineWidth": 120
+		},
+		"parser": {
+			"allowComments": true,
+			"allowTrailingCommas": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"lineWidth": 120,
+			"quoteStyle": "single"
+		},
+		"parser": {
+			"cssModules": true,
+			"tailwindDirectives": true
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"complexity": {
+				"noForEach": "off",
+				"noImportantStyles": "off",
+				"useLiteralKeys": "off"
+			},
+			"correctness": {
+				"noUndeclaredVariables": "error",
+				"noUnusedVariables": "error",
+				"noInvalidUseBeforeDeclaration": "off",
+				"useExhaustiveDependencies": "off"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "off",
+				"noAssignInExpressions": "off",
+				"noExplicitAny": "off",
+				"noThenProperty": "off",
+				"noDoubleEquals": {
+					"level": "error",
+					"options": {
+						"ignoreNull": true
+					}
+				},
+				"noVar": "error",
+				"useAdjacentOverloadSignatures": "off",
+				"useIterableCallbackReturn": "off"
+			},
+			"style": {
+				"useConsistentArrayType": {
+					"level": "error",
+					"options": {
+						"syntax": "generic"
+					}
+				},
+				"useConst": "error",
+				"noDescendingSpecificity": "off",
+				"noNonNullAssertion": "off",
+				"noParameterAssign": "off",
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"@lingui/react": {
+								"importNames": ["I18nProvider"],
+								"message": "Use AppI18nProvider from @app/features/i18n/components/AppI18nProvider so <Trans> output stays safe under page translation."
+							}
+						}
+					}
+				}
+			},
+			"a11y": {
+				"preset": "recommended",
+				"useAriaPropsForRole": "error",
+				"useValidAriaRole": "error",
+				"useValidAriaValues": "error",
+				"useValidAriaProps": "error",
+				"useAltText": "error",
+				"useAnchorContent": "error",
+				"useButtonType": "error",
+				"useKeyWithClickEvents": "error",
+				"useKeyWithMouseEvents": "error",
+				"useSemanticElements": "off",
+				"noAriaUnsupportedElements": "error",
+				"noNoninteractiveElementToInteractiveRole": "error",
+				"noNoninteractiveTabindex": "error",
+				"noRedundantAlt": "error",
+				"noRedundantRoles": "error",
+				"noInteractiveElementToNoninteractiveRole": "error",
+				"noAutofocus": "warn",
+				"noAccessKey": "warn",
+				"useAriaActivedescendantWithTabindex": "error",
+				"noSvgWithoutTitle": "off"
+			},
+			"nursery": {
+				"useSortedClasses": "error"
+			}
+		}
+	},
+	"assist": {"actions": {"source": {"organizeImports": "on"}}},
+	"overrides": [
+		{
+			"includes": ["nexus_app/src/**/*.tsx"],
+			"plugins": ["./tools/lint/no-adjacent-jsx-text.grit"]
+		},
+		{
+			"includes": ["nexus_docs/scripts/VerifyDocsCoverage.ts"],
+			"linter": {"rules": {"suspicious": {"noTemplateCurlyInString": "off"}}}
+		},
+		{
+			"includes": [
+				"nexus_app/src/features/i18n/components/AppI18nProvider.tsx",
+				"nexus_app/src/features/i18n/components/AppI18nProvider.test.tsx"
+			],
+			"linter": {"rules": {"style": {"noRestrictedImports": "off"}}}
+		},
+		{
+			"includes": ["nexus_app/src/**/*.worklet.js"],
+			"javascript": {"globals": ["AudioWorkletProcessor", "registerProcessor", "sampleRate", "currentTime"]}
+		},
+		{
+			"includes": ["**/*.astro"],
+			"linter": {"rules": {"correctness": {"noUnusedImports": "off", "noUnusedVariables": "off"}}},
+			"assist": {"actions": {"source": {"organizeImports": "off"}}}
+		}
+	],
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!**/.git",
+			"!**/app.css",
+			"!**/build",
+			"nexus_app/scripts/build",
+			"!**/dist",
+			"!**/nexus_app/src/media/data/emojis.json",
+			"!**/nexus_app/src/features/i18n/locales/*/messages.js",
+			"!**/nexus_app/src/features/i18n/locales/*/messages.mjs",
+			"!**/nexus_app/src/env.d.ts",
+			"!**/*.generated.*",
+			"!**/*.pb.*",
+			"!**/*_pb.*",
+			"!**/node_modules",
+			"!packages/schema/src/gen",
+			"!**/tailwind.css",
+			"!**/*.html",
+			"!**/*.module.css.d.ts",
+			"!**/nexus_app/src/features/ui/components/SVGMasks.tsx",
+			"!nexus_static",
+			"!packages/fonts",
+			"!nexus_admin/static/htmx.min.js",
+			"!nexus_api/src/api/openapi/openapi.json",
+			"!nexus_api/pkgs/email/src/email_i18n/weblate",
+			"!nexus_api/src/api/content_i18n/weblate",
+			"!packages/errors/src/i18n/weblate",
+			"!**/auto-i18n-reviewed-unchanged.json"
+		],
+		"ignoreUnknown": true
+	}
+}

@@ -1,0 +1,12 @@
+/* SPDX-License-Identifier: Nebula */
+
+.label {
+	line-height: inherit;
+	vertical-align: baseline;
+	white-space: normal;
+}
+
+.channelIcon {
+	margin-inline-end: var(--mention-gap);
+	color: currentColor;
+}

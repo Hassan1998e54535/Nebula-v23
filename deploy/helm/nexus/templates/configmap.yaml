@@ -1,0 +1,20 @@
+{{- include "nexus.validate" . }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nexus.labels" (dict "root" . "name" "nexus-config" "component" "config") | nindent 4 }}
+data:
+  {{- include "nexus.configData" . | nindent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-app-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nexus.labels" (dict "root" . "name" "nexus-app-proxy" "component" "config") | nindent 4 }}
+data:
+  {{- include "nexus.appProxyConfigData" . | nindent 2 }}

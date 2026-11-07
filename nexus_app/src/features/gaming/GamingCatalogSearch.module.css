@@ -1,0 +1,95 @@
+.root {
+	border-top: 1px solid var(--border-subtle);
+	margin-top: 18px;
+	padding-top: 16px;
+}
+
+.heading {
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 14px;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.heading h4 {
+	font-size: 0.92rem;
+	margin: 0;
+}
+
+.heading a,
+.cardBody > a {
+	color: var(--text-link);
+	font-size: 0.76rem;
+}
+
+.status,
+.error {
+	font-size: 0.85rem;
+	margin: 8px 0;
+}
+
+.status {
+	color: var(--text-muted);
+}
+
+.error {
+	color: var(--text-danger);
+}
+
+.grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.card {
+	background: var(--background-primary);
+	border: 1px solid var(--border-subtle);
+	border-radius: 12px;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.cardBody {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	padding: 10px;
+}
+
+.cardBody strong {
+	font-size: 0.85rem;
+	overflow-wrap: anywhere;
+}
+
+.platform {
+	color: var(--text-muted);
+	font-size: 0.72rem;
+	line-height: 1.35;
+}
+
+.addButton {
+	background: var(--brand-experiment);
+	border: 0;
+	border-radius: 8px;
+	color: var(--text-on-brand, #fff);
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.82rem;
+	font-weight: 600;
+	min-height: 36px;
+	padding: 7px 10px;
+}
+
+.addButton:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+@media (max-width: 600px) {
+	.grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}

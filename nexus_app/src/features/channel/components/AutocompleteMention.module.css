@@ -1,0 +1,7 @@
+/* SPDX-License-Identifier: Nebula */
+
+.divider {
+	margin: 0.25rem 0;
+	height: 0.0625rem;
+	background-color: var(--background-modifier-hover);
+}

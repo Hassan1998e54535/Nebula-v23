@@ -1,0 +1,48 @@
+/* SPDX-License-Identifier: Nebula */
+
+.profileHero {
+	position: relative;
+}
+
+.profileHeroIdentity {
+	position: absolute;
+	top: 76%;
+	left: calc(1rem + var(--profile-popout-expanded-avatar-size, 4.75rem) + 0.75rem);
+	right: 0.75rem;
+	z-index: 2;
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 0.2rem;
+	transform: translateY(-50%);
+	color: var(--text-primary);
+	text-shadow: 0 1px 8px rgb(0 0 0 / 75%);
+}
+
+.profileHeroIdentity > :last-child {
+	max-width: 100%;
+}
+
+.profileHero :global([data-flx='user.user-profile-modal.profile-media-header.actions']) :global(button),
+.profileHero :global([data-flx*='profile-media-header.actions']) :global(button) {
+	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	border-radius: 0.75rem !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	background-color: rgba(255, 255, 255, 0.08) !important;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+	-webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+	backdrop-filter: blur(16px) saturate(160%) !important;
+	color: #ffffff !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
+	font-weight: 600 !important;
+	transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease !important;
+}
+
+.profileHero :global([data-flx='user.user-profile-modal.profile-media-header.actions']) :global(button:hover),
+.profileHero :global([data-flx*='profile-media-header.actions']) :global(button:hover) {
+	background: rgba(255, 255, 255, 0.16) !important;
+	background-color: rgba(255, 255, 255, 0.16) !important;
+	border-color: rgba(255, 255, 255, 0.32) !important;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.25) !important;
+	transform: translateY(-1px) !important;
+}

@@ -1,0 +1,9 @@
+[package]
+name = "nexus_sample_pool"
+version = "0.0.0"
+edition = "2024"
+license = "Nebula"
+publish = false
+
+[workspace]
+resolver = "2"

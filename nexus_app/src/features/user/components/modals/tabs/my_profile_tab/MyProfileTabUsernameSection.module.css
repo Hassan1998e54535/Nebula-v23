@@ -1,0 +1,52 @@
+/* SPDX-License-Identifier: Nebula */
+
+.label {
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+	color: var(--text-primary);
+	font-size: 0.875rem;
+}
+
+.actions {
+	margin-bottom: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+	.actions {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.premiumButton {
+	display: none;
+	color: var(--text-primary);
+	transition: opacity 0.15s;
+	cursor: pointer;
+}
+
+@media (min-width: 640px) {
+	.premiumButton {
+		display: block;
+	}
+}
+
+.label {
+	font-weight: 600;
+}
+
+.premiumButton {
+	color: var(--brand-primary);
+}
+
+.premiumButton:hover {
+	color: var(--brand-primary-light, var(--brand-primary));
+}
+
+.premiumButton:focus-visible {
+	outline: 0.125rem solid var(--brand-primary);
+	outline-offset: 0.125rem;
+}

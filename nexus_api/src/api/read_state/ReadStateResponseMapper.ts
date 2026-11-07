@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: Nebula
+
+import type {ReadState} from '@app/api/models/ReadState';
+import type {ReadStateResponse} from '@nexus/schema/src/domains/gateway/GatewaySchemas';
+
+export function mapReadStateResponse(readState: ReadState): ReadStateResponse {
+	return {
+		id: readState.channelId.toString(),
+		mention_count: readState.mentionCount,
+		last_message_id: readState.lastMessageId?.toString() ?? null,
+		last_pin_timestamp: readState.lastPinTimestamp?.toISOString() ?? null,
+		version: readState.version.toString(),
+		...(readState.isMarked ? {flags: readState.flags ?? 0} : {}),
+	};
+}

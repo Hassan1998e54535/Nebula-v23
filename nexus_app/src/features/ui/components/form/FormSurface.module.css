@@ -1,0 +1,6 @@
+/* SPDX-License-Identifier: Nebula */
+
+.surface {
+	background-color: var(--form-surface-background);
+	transition: background-color 0.15s ease;
+}

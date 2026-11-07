@@ -1,0 +1,5 @@
+/* SPDX-License-Identifier: Nebula */
+
+.content {
+	padding: var(--spacing-6) var(--spacing-6) var(--spacing-4);
+}

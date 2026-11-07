@@ -1,0 +1,11 @@
+/* SPDX-License-Identifier: Nebula */
+
+.headerIconContainer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.headerIcon {
+	color: var(--text-primary);
+}

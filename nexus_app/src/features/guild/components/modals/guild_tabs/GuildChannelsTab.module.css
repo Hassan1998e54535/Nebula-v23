@@ -1,0 +1,217 @@
+/* SPDX-License-Identifier: Nebula */
+
+.container {
+	position: relative;
+	display: flex;
+	min-height: 100%;
+	flex-direction: column;
+	padding-block-end: 5rem;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+}
+
+.sectionTitle {
+	padding: 0.75rem 0.75rem 0.35rem;
+	color: var(--text-secondary, #b5bac1);
+	font-size: 0.8125rem;
+	font-weight: 600;
+}
+
+.row {
+	position: relative;
+	display: flex;
+	min-height: 3.25rem;
+	align-items: center;
+	gap: 0.5rem;
+	padding-inline: 0.625rem;
+	border-radius: 0.625rem;
+	color: var(--text-primary, #f2f3f5);
+	transition:
+		opacity 120ms ease,
+		background-color 120ms ease;
+}
+
+.row:hover {
+	background-color: var(--background-modifier-hover, rgb(255 255 255 / 5%));
+}
+
+.channelButton {
+	display: flex;
+	min-width: 0;
+	min-height: 3rem;
+	flex: 1;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.channelButton:focus-visible,
+.dragHandle:focus-visible,
+.addButton:focus-visible {
+outline: 2px solid var(--brand-primary, #245da7);
+	outline-offset: 2px;
+}
+
+.channelIcon {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex: 0 0 auto;
+	color: var(--text-tertiary, #949ba4);
+}
+
+.channelName {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dragHandle {
+	display: grid;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex: 0 0 auto;
+	place-items: center;
+	padding: 0;
+	border: 1px solid var(--border-subtle, rgb(255 255 255 / 8%));
+	border-radius: 0.5rem;
+	background-color: var(--background-modifier-hover, rgb(255 255 255 / 4%));
+	color: var(--text-tertiary, #949ba4);
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+}
+
+.dragHandle:active {
+	background-color: var(--background-modifier-hover, rgb(255 255 255 / 8%));
+	cursor: grabbing;
+}
+
+.gripDots {
+	display: grid;
+	grid-template-columns: repeat(3, 2px);
+	gap: 2.5px;
+}
+
+.gripDot {
+	width: 2px;
+	height: 2px;
+	border-radius: 50%;
+	background-color: currentColor;
+}
+
+.dragging {
+	opacity: 0.24;
+}
+
+.dragPreview {
+	position: fixed;
+	z-index: 10000;
+	display: flex;
+	min-width: 5rem;
+	max-width: min(16.25rem, calc(100vw - 1rem));
+	min-height: 2.75rem;
+	align-items: center;
+	gap: 0.625rem;
+	padding: 0.55rem 0.75rem;
+	overflow: hidden;
+	border: 1px solid var(--border-subtle, rgb(255 255 255 / 12%));
+	border-radius: 0.75rem;
+	background: var(--background-secondary, #2b2d31);
+	box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 35%);
+	color: var(--text-primary, #f2f3f5);
+	opacity: 0.98;
+	pointer-events: none;
+	transform: scale(1.02);
+}
+
+.dragPreviewIcon {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex: 0 0 auto;
+	color: var(--text-secondary, #b5bac1);
+}
+
+.dragPreviewName {
+	min-width: 0;
+	overflow: hidden;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dropBefore::before,
+.dropAfter::after {
+	position: absolute;
+	z-index: 1;
+	inset-inline: 0.5rem;
+	height: 2px;
+	border-radius: 2px;
+background: var(--brand-primary, #245da7);
+	content: '';
+	pointer-events: none;
+}
+
+.dropBefore::before {
+	top: 0;
+}
+
+.dropAfter::after {
+	bottom: 0;
+}
+
+.addButton {
+	position: sticky;
+	z-index: 2;
+	bottom: 1rem;
+	display: grid;
+	width: 3.5rem;
+	height: 3.5rem;
+	flex: 0 0 auto;
+	align-self: flex-end;
+	place-items: center;
+	margin-block-start: 1.5rem;
+	margin-inline-end: 0.5rem;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+background: var(--brand-primary, #245da7);
+	color: var(--text-on-brand, #fff);
+	box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 25%);
+	cursor: pointer;
+}
+
+.liveRegion {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	clip-path: inset(50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.row {
+		transition: none;
+	}
+
+	.dragPreview {
+		transform: none;
+	}
+}

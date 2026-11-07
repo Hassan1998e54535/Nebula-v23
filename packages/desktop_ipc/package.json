@@ -1,0 +1,19 @@
+{
+	"name": "@nexus/desktop_ipc",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./*": "./*"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@types/node": "catalog:",
+		"typescript": "catalog:ts7"
+	},
+	"dependencies": {
+		"@nexus/record_utils": "workspace:*"
+	}
+}

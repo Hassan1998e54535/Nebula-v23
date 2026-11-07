@@ -1,0 +1,932 @@
+/* SPDX-License-Identifier: Nebula */
+
+.scrim {
+	--discovery-accent: var(--brand-primary);
+	--discovery-accent-fill: var(--brand-primary-fill);
+	--discovery-surface: var(--background-secondary);
+	--discovery-text: var(--text-primary);
+	--discovery-muted: var(--text-primary-muted);
+	--discovery-line: color-mix(in srgb, var(--text-primary) 12%, transparent);
+	position: fixed;
+	z-index: var(--z-index-modal, 1000);
+	inset: 0;
+	display: grid;
+	align-items: center;
+	justify-items: center;
+	padding: 1.5rem;
+	background: color-mix(in srgb, var(--background-primary) 66%, transparent);
+	-webkit-backdrop-filter: blur(0.25rem);
+	backdrop-filter: blur(0.25rem);
+}
+
+.dialog {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: 10rem minmax(0, 1fr);
+	column-gap: 1.55rem;
+	width: min(100%, 37rem);
+	padding: 1.75rem;
+	border: 1px solid var(--discovery-line);
+	border-radius: 1.55rem;
+	background:
+		radial-gradient(ellipse at 8% 0%, color-mix(in srgb, var(--discovery-accent) 11%, transparent), transparent 42%),
+		var(--discovery-surface);
+	color: var(--discovery-text);
+	box-shadow:
+		0 1.75rem 5rem color-mix(in srgb, var(--background-primary) 52%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--text-primary) 7%, transparent);
+	outline: none;
+	animation: dialog-arrive 300ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+
+.dialog:focus-visible {
+	outline: 2px solid var(--discovery-accent);
+	outline-offset: 4px;
+}
+
+.artwork {
+	position: relative;
+	grid-row: span 2;
+	display: grid;
+	min-height: 12.5rem;
+	place-items: center;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--discovery-accent) 19%, transparent);
+	border-radius: 1.15rem;
+	background:
+		radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--discovery-accent) 18%, transparent), transparent 55%),
+		color-mix(in srgb, var(--background-primary) 30%, var(--discovery-surface));
+}
+
+.artwork::before,
+.artwork::after {
+	position: absolute;
+	width: 13rem;
+	height: 13rem;
+	border: 1px solid color-mix(in srgb, var(--discovery-accent) 15%, transparent);
+	border-radius: 50%;
+	content: '';
+}
+
+.artwork::after {
+	width: 9.25rem;
+	height: 9.25rem;
+	border-style: dashed;
+	opacity: 0.7;
+}
+
+.artworkOrbit {
+	position: absolute;
+	width: 6.7rem;
+	height: 6.7rem;
+	border: 1px solid color-mix(in srgb, var(--discovery-accent) 23%, transparent);
+	border-radius: 50%;
+}
+
+.artworkMark {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	width: 4.2rem;
+	height: 4.2rem;
+	place-items: center;
+	border: 1px solid color-mix(in srgb, var(--discovery-accent-fill) 40%, transparent);
+	border-radius: 1.3rem;
+	background: color-mix(in srgb, var(--discovery-accent) 18%, var(--discovery-surface));
+	box-shadow: 0 0.8rem 2rem color-mix(in srgb, var(--discovery-accent) 20%, transparent);
+	transform: rotate(-7deg);
+}
+
+.mark {
+	width: 2.25rem;
+	height: 2.25rem;
+}
+
+.iconToken {
+	position: absolute;
+	z-index: 2;
+	display: grid;
+	width: 2.5rem;
+	height: 2.5rem;
+	place-items: center;
+	border: 1px solid var(--discovery-line);
+	border-radius: 0.85rem;
+	background: color-mix(in srgb, var(--discovery-surface) 88%, transparent);
+	color: var(--discovery-accent);
+	box-shadow: 0 0.55rem 1.35rem color-mix(in srgb, var(--background-primary) 28%, transparent);
+}
+
+.iconToken svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.chatToken {
+	top: 1.4rem;
+	left: 1.2rem;
+	transform: rotate(-8deg);
+}
+
+.voiceToken {
+	top: 2.2rem;
+	right: 1rem;
+	transform: rotate(9deg);
+}
+
+.communityToken {
+	right: 1.55rem;
+	bottom: 1.15rem;
+	transform: rotate(-5deg);
+}
+
+.artworkDot {
+	position: absolute;
+	bottom: 2.1rem;
+	left: 1.65rem;
+	width: 0.45rem;
+	height: 0.45rem;
+	border-radius: 50%;
+	background: var(--discovery-accent);
+	box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--discovery-accent) 14%, transparent);
+}
+
+.copy {
+	align-self: center;
+	min-width: 0;
+	padding-block: 0.3rem 0.8rem;
+}
+
+.eyebrow {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin-bottom: 0.85rem;
+	color: var(--discovery-muted);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.13em;
+	line-height: 1;
+}
+
+.liveDot {
+	width: 0.42rem;
+	height: 0.42rem;
+	border-radius: 50%;
+	background: var(--discovery-accent);
+	box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--discovery-accent) 13%, transparent);
+}
+
+.progressText {
+	font-variant-numeric: tabular-nums;
+}
+
+.progressDivider {
+	margin-inline: 0.35rem;
+	color: color-mix(in srgb, var(--discovery-muted) 55%, transparent);
+}
+
+.title {
+	margin: 0;
+	font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+	font-weight: 750;
+	letter-spacing: -0.045em;
+	line-height: 1.12;
+	text-wrap: balance;
+}
+
+.description {
+	margin: 0.7rem 0 0;
+	color: var(--discovery-muted);
+	font-size: 0.9rem;
+	line-height: 1.55;
+	text-wrap: pretty;
+}
+
+.progressTrack {
+	height: 0.22rem;
+	margin-top: 1.3rem;
+	overflow: hidden;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--text-primary) 11%, transparent);
+}
+
+.progressFill {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	background: var(--discovery-accent);
+	transform-origin: left center;
+	transition: transform 260ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.actions {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-top: 1.2rem;
+	border-top: 1px solid var(--discovery-line);
+}
+
+.secondaryActions {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.backButton,
+.skipButton,
+.primaryButton {
+	display: inline-flex;
+	min-height: 2.7rem;
+	align-items: center;
+	justify-content: center;
+	gap: 0.48rem;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid transparent;
+	border-radius: 0.8rem;
+	font: inherit;
+	font-size: 0.82rem;
+	font-weight: 650;
+	line-height: 1;
+	cursor: pointer;
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease,
+		color 150ms ease,
+		transform 150ms ease;
+}
+
+.backButton,
+.skipButton {
+	background: transparent;
+	color: var(--discovery-muted);
+}
+
+.backButton:hover,
+.skipButton:hover {
+	background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+	color: var(--discovery-text);
+}
+
+.primaryButton {
+	padding-inline: 1.05rem;
+	background: var(--discovery-accent);
+	color: var(--discovery-accent-fill);
+	box-shadow: 0 0.35rem 1rem color-mix(in srgb, var(--discovery-accent) 18%, transparent);
+}
+
+.primaryButton:hover {
+	filter: brightness(1.07);
+	transform: translateY(-1px);
+}
+
+.backButton:active,
+.skipButton:active,
+.primaryButton:active {
+	transform: scale(0.97);
+}
+
+.backButton:focus-visible,
+.skipButton:focus-visible,
+.primaryButton:focus-visible {
+	outline: 2px solid var(--discovery-accent);
+	outline-offset: 3px;
+}
+
+:global([dir='rtl']) .backButton svg,
+:global([dir='rtl']) .primaryButton svg {
+	transform: rotate(180deg);
+}
+
+.mode-spotlight {
+	background: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+.mode-spotlight[data-has-target='true']::before {
+	position: fixed;
+	z-index: 0;
+	top: var(--target-top);
+	left: var(--target-left);
+	width: var(--target-width);
+	height: var(--target-height);
+	border-radius: 0.9rem;
+	background: transparent;
+	box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--background-primary) 68%, transparent);
+	content: '';
+	pointer-events: none;
+}
+
+.targetWindow {
+	position: fixed;
+	z-index: 0;
+	top: var(--target-top);
+	left: var(--target-left);
+	width: var(--target-width);
+	height: var(--target-height);
+	border: 1px solid color-mix(in srgb, var(--discovery-accent) 72%, transparent);
+	border-radius: 0.9rem;
+	box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--discovery-accent) 15%, transparent);
+	pointer-events: none;
+animation: discovery-target-pulse 1.8s ease-in-out infinite;
+}
+
+.targetWindow::after {
+position: absolute;
+inset-block-start: -0.6rem;
+inset-inline-start: 50%;
+width: 0;
+height: 0;
+border-block-start: 0.55rem solid var(--discovery-accent);
+border-inline: 0.45rem solid transparent;
+content: '';
+transform: translateX(-50%);
+}
+
+.mode-spotlight .dialog {
+	position: fixed;
+	top: min(calc(var(--target-top, 50vh) + var(--target-height, 0px) + 1rem), calc(100vh - 21rem));
+	left: clamp(1rem, var(--target-left, 50vw), calc(100vw - 39rem));
+	width: min(37rem, calc(100vw - 2rem));
+}
+
+.mode-spotlight[data-target-placement='above'] .dialog {
+top: 1rem;
+}
+
+.mode-bottom-sheet {
+	align-items: end;
+	padding: 0;
+	background: color-mix(in srgb, var(--background-primary) 58%, transparent);
+}
+
+.mode-bottom-sheet .dialog {
+	grid-template-columns: 5.5rem minmax(0, 1fr);
+	width: min(100%, 42rem);
+	padding: 1.35rem 1.4rem max(1.2rem, env(safe-area-inset-bottom));
+	border-radius: 1.45rem 1.45rem 0 0;
+}
+
+.mode-bottom-sheet .artwork {
+	min-height: 6.25rem;
+	border-radius: 1rem;
+}
+
+.mode-bottom-sheet .artwork::before {
+	width: 8rem;
+	height: 8rem;
+}
+
+.mode-bottom-sheet .artwork::after,
+.mode-bottom-sheet .artworkOrbit {
+	display: none;
+}
+
+.mode-bottom-sheet .artworkMark {
+	width: 3rem;
+	height: 3rem;
+	border-radius: 1rem;
+}
+
+.mode-bottom-sheet .mark {
+	width: 1.8rem;
+	height: 1.8rem;
+}
+
+.mode-bottom-sheet .iconToken {
+	width: 1.8rem;
+	height: 1.8rem;
+	border-radius: 0.65rem;
+}
+
+.mode-bottom-sheet .iconToken svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.mode-bottom-sheet .chatToken {
+	top: 0.55rem;
+	left: 0.5rem;
+}
+
+.mode-bottom-sheet .voiceToken {
+	top: 0.65rem;
+	right: 0.45rem;
+}
+
+.mode-bottom-sheet .communityToken {
+	right: 0.5rem;
+	bottom: 0.5rem;
+}
+
+.mode-bottom-sheet .artworkDot {
+	bottom: 0.85rem;
+	left: 0.65rem;
+}
+
+.mode-bottom-sheet .copy {
+	padding-block: 0.1rem 0.5rem;
+}
+
+.mode-bottom-sheet .actions {
+	padding-top: 1rem;
+}
+
+@media (max-width: 40rem) {
+	.scrim {
+		padding: 1rem;
+	}
+
+	.dialog {
+		grid-template-columns: minmax(0, 1fr);
+		width: min(100%, 28rem);
+		padding: 1.15rem;
+		border-radius: 1.25rem;
+	}
+
+	.artwork {
+		grid-row: auto;
+		min-height: 6.5rem;
+		margin-bottom: 1.1rem;
+	}
+
+	.artwork::before {
+		width: 9rem;
+		height: 9rem;
+	}
+
+	.artwork::after {
+		width: 6.6rem;
+		height: 6.6rem;
+	}
+
+	.artworkOrbit {
+		width: 4.8rem;
+		height: 4.8rem;
+	}
+
+	.artworkMark {
+		width: 3.1rem;
+		height: 3.1rem;
+		border-radius: 1rem;
+	}
+
+	.mark {
+		width: 1.8rem;
+		height: 1.8rem;
+	}
+
+	.iconToken {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 0.7rem;
+	}
+
+	.iconToken svg {
+		width: 1.05rem;
+		height: 1.05rem;
+	}
+
+	.chatToken {
+		top: 0.6rem;
+		left: calc(50% - 5.6rem);
+	}
+
+	.voiceToken {
+		top: 0.65rem;
+		right: calc(50% - 5.6rem);
+	}
+
+	.communityToken {
+		right: calc(50% - 5.2rem);
+		bottom: 0.5rem;
+	}
+
+	.artworkDot {
+		bottom: 0.8rem;
+		left: calc(50% - 5rem);
+	}
+
+	.copy {
+		padding: 0 0.15rem 1.1rem;
+	}
+
+	.mode-spotlight .dialog {
+		top: auto;
+		right: 1rem;
+		bottom: 1rem;
+		left: 1rem;
+		width: auto;
+	}
+
+	.mode-bottom-sheet .dialog {
+		grid-template-columns: 4.25rem minmax(0, 1fr);
+		width: 100%;
+		padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
+	}
+
+	.mode-bottom-sheet .artwork {
+		min-height: 4.5rem;
+		margin: 0 0.9rem 0 0;
+	}
+
+	.mode-bottom-sheet .artworkMark {
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+
+	.mode-bottom-sheet .mark {
+		width: 1.45rem;
+		height: 1.45rem;
+	}
+
+	.mode-bottom-sheet .copy {
+		padding: 0 0 0.8rem;
+	}
+
+	.mode-bottom-sheet .actions {
+		padding-top: 0.85rem;
+	}
+}
+
+@media (max-width: 23rem) {
+	.actions {
+		align-items: stretch;
+		flex-direction: column-reverse;
+		gap: 0.55rem;
+	}
+
+	.secondaryActions {
+		justify-content: space-between;
+	}
+
+	.primaryButton {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dialog {
+		animation: none;
+	}
+
+	.progressFill,
+	.backButton,
+	.skipButton,
+	.primaryButton {
+		transition: none;
+	}
+}
+
+@keyframes dialog-arrive {
+	from {
+		opacity: 0;
+		transform: translateY(0.6rem) scale(0.985);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* The discovery card uses a wide, editorial banner to make the NEXUS mark
+   the first thing users see, while keeping the tour controls predictable. */
+.dialog {
+	grid-template-columns: minmax(0, 1fr);
+	gap: 0;
+	width: min(100%, 35rem);
+	padding: 1rem;
+	border-radius: 1.65rem;
+	background:
+		linear-gradient(145deg, color-mix(in srgb, var(--discovery-accent) 7%, transparent), transparent 44%),
+		var(--discovery-surface);
+	box-shadow:
+		0 2rem 6rem color-mix(in srgb, var(--background-primary) 58%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--discovery-accent) 8%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+
+.artwork {
+	grid-row: auto;
+	min-height: 9rem;
+	margin-bottom: 1.3rem;
+	border-radius: 1.15rem;
+	background:
+		radial-gradient(ellipse at 50% 55%, color-mix(in srgb, var(--discovery-accent) 16%, transparent), transparent 35%),
+		linear-gradient(115deg, color-mix(in srgb, var(--background-primary) 67%, var(--discovery-surface)), color-mix(in srgb, var(--discovery-accent) 8%, var(--discovery-surface)));
+}
+
+.artwork::before {
+	width: 18rem;
+	height: 18rem;
+	border-color: color-mix(in srgb, var(--discovery-accent) 12%, transparent);
+}
+
+.artwork::after {
+	width: 13rem;
+	height: 13rem;
+	border-color: color-mix(in srgb, var(--discovery-accent) 19%, transparent);
+}
+
+.artworkOrbit {
+	width: 8rem;
+	height: 8rem;
+	border-style: dashed;
+	opacity: 0.8;
+animation: discovery-orbit 26s linear infinite;
+}
+
+.artworkMark {
+	width: 4.6rem;
+	height: 4.6rem;
+	border-radius: 1.45rem;
+	background:
+		linear-gradient(145deg, color-mix(in srgb, var(--discovery-accent) 31%, var(--discovery-surface)), color-mix(in srgb, var(--discovery-accent) 10%, var(--discovery-surface)));
+	box-shadow:
+		0 1rem 2.5rem color-mix(in srgb, var(--discovery-accent) 24%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--text-primary) 19%, transparent);
+	transform: rotate(-5deg);
+}
+
+.mark {
+	width: 2.45rem;
+	height: 2.45rem;
+}
+
+.brandStamp {
+	position: absolute;
+	z-index: 3;
+	inset-block-start: 0.85rem;
+	inset-inline-start: 0.9rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.42rem;
+	padding: 0.42rem 0.6rem;
+	border: 1px solid color-mix(in srgb, var(--discovery-accent) 18%, transparent);
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--discovery-surface) 82%, transparent);
+	color: var(--discovery-text);
+	font-size: 0.64rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	backdrop-filter: blur(0.6rem);
+}
+
+.stampMark {
+	width: 0.85rem;
+	height: 0.85rem;
+	color: var(--discovery-accent);
+}
+
+.stampDivider {
+	width: 1px;
+	height: 0.65rem;
+	margin-inline: 0.1rem;
+	background: var(--discovery-line);
+}
+
+.stampCaption {
+	color: var(--discovery-muted);
+	font-size: 0.55rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+}
+
+.featureMark {
+display: grid;
+width: 2.45rem;
+height: 2.45rem;
+place-items: center;
+color: var(--discovery-accent-fill);
+}
+
+.featureMark svg {
+width: 100%;
+height: 100%;
+}
+
+.iconToken {
+	border-color: color-mix(in srgb, var(--discovery-accent) 16%, transparent);
+	border-radius: 0.9rem;
+	background: color-mix(in srgb, var(--discovery-surface) 91%, transparent);
+	box-shadow: 0 0.65rem 1.6rem color-mix(in srgb, var(--background-primary) 38%, transparent);
+animation: discovery-float 4.8s ease-in-out infinite;
+}
+
+.chatToken {
+	inset-inline-start: calc(50% - 7rem);
+	inset-inline-end: auto;
+	inset-block-start: 1.15rem;
+}
+
+.voiceToken {
+	inset-inline-end: calc(50% - 7rem);
+	inset-inline-start: auto;
+	inset-block-start: 1.15rem;
+}
+
+.communityToken {
+	inset-inline-end: calc(50% - 6.4rem);
+	inset-inline-start: auto;
+	inset-block-end: 1rem;
+animation-delay: -2.4s;
+}
+
+.artworkDot {
+	inset-inline-start: calc(50% - 6.8rem);
+	inset-inline-end: auto;
+	inset-block-end: 1.3rem;
+}
+
+.copy {
+	padding: 0.05rem 0.4rem 1.15rem;
+}
+
+.eyebrow {
+	gap: 0.65rem;
+	margin-bottom: 0.75rem;
+	letter-spacing: 0.1em;
+}
+
+.progressText {
+	direction: ltr;
+}
+
+.title {
+	font-size: clamp(1.45rem, 3vw, 1.85rem);
+	letter-spacing: -0.04em;
+}
+
+.description {
+	max-width: 48ch;
+	margin-top: 0.55rem;
+	font-size: 0.93rem;
+	line-height: 1.65;
+}
+
+.progressTrack {
+	height: 0.28rem;
+	margin-top: 1.2rem;
+	background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+}
+
+.progressFill {
+	background: linear-gradient(90deg, var(--discovery-accent), color-mix(in srgb, var(--discovery-accent) 65%, #66d6cc));
+	transform-origin: left center;
+}
+
+:global([dir='rtl']) .progressFill {
+	transform-origin: right center;
+}
+
+.actions {
+	padding: 1rem 0.35rem 0.15rem;
+}
+
+.primaryButton {
+	min-height: 2.9rem;
+	padding-inline: 1.15rem;
+	border-radius: 0.9rem;
+	box-shadow: 0 0.5rem 1.2rem color-mix(in srgb, var(--discovery-accent) 23%, transparent);
+}
+
+.backButton,
+.skipButton {
+	min-height: 2.8rem;
+}
+
+.mode-spotlight .dialog {
+	width: min(35rem, calc(100vw - 2rem));
+}
+
+.mode-bottom-sheet .dialog {
+	grid-template-columns: minmax(0, 1fr);
+	width: min(100%, 42rem);
+	padding: 1rem 1rem max(1.2rem, env(safe-area-inset-bottom));
+	border-radius: 1.45rem 1.45rem 0 0;
+}
+
+.mode-bottom-sheet .artwork {
+	min-height: 7rem;
+	margin-bottom: 1rem;
+}
+
+.mode-bottom-sheet .artwork::after,
+.mode-bottom-sheet .artworkOrbit {
+	display: block;
+}
+
+.mode-bottom-sheet .copy {
+	padding: 0 0.25rem 0.9rem;
+}
+
+@media (max-width: 40rem) {
+	.scrim {
+		padding: 1rem;
+	}
+
+	.dialog {
+		width: min(100%, 30rem);
+		padding: 0.8rem;
+		border-radius: 1.35rem;
+	}
+
+	.artwork {
+		min-height: 7.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.copy {
+		padding: 0 0.25rem 1rem;
+	}
+
+	.mode-spotlight .dialog {
+		top: auto;
+		right: 1rem;
+		bottom: 1rem;
+		left: 1rem;
+		width: auto;
+	}
+
+.mode-spotlight[data-target-placement='above'] .dialog {
+top: 1rem;
+right: 1rem;
+bottom: auto;
+left: 1rem;
+}
+
+	.mode-bottom-sheet .dialog {
+		width: 100%;
+		padding: 0.85rem 0.85rem max(1rem, env(safe-area-inset-bottom));
+	}
+
+	.mode-bottom-sheet .artwork {
+		min-height: 6rem;
+		margin: 0 0 0.8rem;
+	}
+
+	.mode-bottom-sheet .copy {
+		padding: 0 0.2rem 0.75rem;
+	}
+}
+
+@media (max-width: 23rem) {
+	.brandStamp {
+		gap: 0.32rem;
+		padding: 0.38rem 0.48rem;
+	}
+
+	.stampCaption {
+		font-size: 0.49rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.progressFill,
+	.backButton,
+	.skipButton,
+	.primaryButton {
+		transition: none;
+	}
+
+.artworkOrbit,
+.iconToken,
+.targetWindow {
+animation: none;
+}
+}
+
+@keyframes discovery-orbit {
+to {
+transform: rotate(360deg);
+}
+}
+
+@keyframes discovery-float {
+0%,
+100% {
+translate: 0 0;
+}
+
+50% {
+translate: 0 -0.3rem;
+}
+}
+
+@keyframes discovery-target-pulse {
+0%,
+100% {
+box-shadow: 0 0 0 0.16rem color-mix(in srgb, var(--discovery-accent) 12%, transparent);
+}
+
+50% {
+box-shadow: 0 0 0 0.36rem color-mix(in srgb, var(--discovery-accent) 25%, transparent);
+}
+}
