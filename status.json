@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "phase": "environment-started",
-  "conclusion": "in_progress",
+  "phase": "environment-completed",
+  "conclusion": "success",
   "runner": "Windows",
   "runId": "42399646716",
   "attempt": "1",
