@@ -335,16 +335,19 @@ jobs:
           --step set_build_channel
 
       - name: Download and remove this run's temporary renderer
-        shell: bash
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
         run: |
-          set -euo pipefail
-          gh release download "$PRIVATE_RELEASE" --pattern shared-renderer.tar.gz \
-            --dir "$RUNNER_TEMP" --repo "$GITHUB_REPOSITORY"
-          tar -xzf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source
-          gh release delete-asset "$PRIVATE_RELEASE" shared-renderer.tar.gz --yes --repo "$GITHUB_REPOSITORY"
+          $archive = Join-Path $env:RUNNER_TEMP 'shared-renderer.tar.gz'
+          gh release download $env:PRIVATE_RELEASE --pattern shared-renderer.tar.gz `
+            --dir $env:RUNNER_TEMP --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw 'Could not download the temporary renderer archive.' }
+          tar.exe -xzf $archive -C source
+          if ($LASTEXITCODE -ne 0) { throw 'Could not extract the temporary renderer archive.' }
+          gh release delete-asset $env:PRIVATE_RELEASE shared-renderer.tar.gz --yes --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw 'Could not remove the temporary renderer archive from the private draft.' }
 
       - name: Restore shared renderer assets
         run: >-
