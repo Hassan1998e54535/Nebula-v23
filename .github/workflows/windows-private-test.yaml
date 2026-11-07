@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - windows-test
+      - windows-test-retry
 
 permissions:
   actions: read
@@ -92,6 +93,10 @@ jobs:
       - name: Record renderer runner
         working-directory: source
         run: node tools/ci/report-progress.mjs renderer-started in_progress
+
+      - name: Test locked profile-media downloads and transient retries
+        working-directory: source
+        run: python3 -m unittest discover -s tools/replit -p test_profile_media_inputs.py -v
 
       # A fresh private build repository does not contain the old upload history.
       # Only existing public rendering assets are fetched; source ZIPs stay local.
