@@ -29,8 +29,11 @@ function ConvertTo-Base64Url([byte[]]$Bytes) {
 }
 
 function New-VapidKeyPair {
+    $curve = [System.Security.Cryptography.ECCurve]::CreateFromValue(
+        '1.2.840.10045.3.1.7'
+    )
     $key = [System.Security.Cryptography.ECDsa]::Create(
-        [System.Security.Cryptography.ECCurve]::NamedCurves.nistP256
+        $curve
     )
     try {
         $parameters = $key.ExportParameters($true)
