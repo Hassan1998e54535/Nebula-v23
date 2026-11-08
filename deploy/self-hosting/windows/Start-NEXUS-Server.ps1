@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: Nebula
 
 [CmdletBinding()]
-param()
+param(
+    [switch]$RebuildImages
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -219,13 +221,13 @@ function Add-LanFirewallRules([string]$LanAddress) {
     }
 }
 
-function Start-LanDiscoveryResponder {
+function Start-LanDiscoveryResponder([string]$LanAddress) {
     Stop-LanDiscoveryResponder
     $listenerPath = Join-Path $PSScriptRoot 'NEXUS-LanDiscovery.ps1'
     if (-not (Test-Path -LiteralPath $listenerPath)) {
         throw "Missing LAN discovery listener: $listenerPath"
     }
-    $arguments = "-NoLogo -NoProfile -ExecutionPolicy Bypass -File `"$listenerPath`""
+    $arguments = "-NoLogo -NoProfile -ExecutionPolicy Bypass -File `"$listenerPath`" -LanAddress $LanAddress"
     $process = Start-Process -FilePath 'powershell.exe' -ArgumentList $arguments -WindowStyle Hidden -PassThru
     Start-Sleep -Milliseconds 300
     if ($process.HasExited) {
@@ -341,8 +343,14 @@ try {
 
     Write-Host 'Validating the local Compose stack...'
     Invoke-NexusCompose @('config', '--quiet')
-    Write-Host 'Building NEXUS services from this source tree with Compose parallelism limited to 2 to reduce memory pressure. The first build may take a long time.'
-    Invoke-NexusCompose @('up', '--build', '-d')
+    if ($RebuildImages) {
+        Write-Host 'Rebuilding NEXUS service images from source. This can take a long time.'
+        Invoke-NexusCompose @('up', '--build', '-d')
+    } else {
+        Write-Host 'Starting NEXUS without forcing image rebuilds; Compose builds services whose images are missing.'
+        Write-Host 'After updating server source, run Start-NEXUS-Server.cmd -RebuildImages to rebuild it.'
+        Invoke-NexusCompose @('up', '-d')
+    }
 
     if ($shareWithLan) {
         Write-Host 'Waiting for the NEXUS web endpoint to become ready before announcing it on the local network...'
@@ -359,7 +367,7 @@ try {
         if (-not $ready) {
             throw 'NEXUS did not become ready at its private-network address. The LAN discovery listener was not started.'
         }
-        Start-LanDiscoveryResponder
+        Start-LanDiscoveryResponder $lanAddress
     }
 
     Write-Host ''
