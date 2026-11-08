@@ -55,6 +55,15 @@
 /s3_payload/
 /upload_staging/
 
+# Workspace-only caches and inputs that are not part of the server image.
+# Keep generated profile-media assets: the web app build consumes that subtree.
+/.local/
+/.agents/
+/attached_assets/
+/generated-artifacts/nexus-mobile/
+/generated-artifacts/toolchains/
+/generated-artifacts/windows-build/
+
 
 /nexus_desktop/
 

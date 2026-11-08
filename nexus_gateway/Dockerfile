@@ -2,6 +2,8 @@
 FROM erlang:28-slim AS build
 
 ARG RUST_TOOLCHAIN=1.98.1
+ARG REBAR3_VERSION=3.28.0
+ARG REBAR3_SHA256=5a28b1cca082d3b023ec0f5df9d9f9d52557036c6f2a21c1ffa11b93a984dd42
 
 ENV PATH="/root/.cargo/bin:${PATH}"
 
@@ -17,8 +19,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN curl --retry 5 --retry-delay 2 --retry-all-errors -fsSL https://github.com/erlang/rebar3/releases/download/3.27.0/rebar3 -o /usr/local/bin/rebar3 && \
-	chmod +x /usr/local/bin/rebar3
+# Use the upstream S3 distribution mirror rather than the GitHub release asset,
+# which can return transient 5xx responses in some Docker build environments.
+# The checksum pins the exact Rebar3 release and fails closed if the mirror changes.
+RUN set -eux; \
+	curl --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 15 --max-time 180 \
+		--proto '=https' --tlsv1.2 -fsSL https://s3.amazonaws.com/rebar3/rebar3 \
+		-o /tmp/rebar3; \
+	printf '%s  %s\n' "${REBAR3_SHA256}" /tmp/rebar3 | sha256sum --check --strict; \
+	install -m 0755 /tmp/rebar3 /usr/local/bin/rebar3; \
+	rm /tmp/rebar3; \
+	rebar3 version | grep -F "${REBAR3_VERSION}"
 
 RUN curl --retry 5 --retry-delay 2 --retry-all-errors --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs | \
 	sh -s -- -y --profile minimal --default-toolchain "${RUST_TOOLCHAIN}"
