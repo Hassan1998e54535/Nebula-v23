@@ -1,1 +1,65 @@
 modules = ["python-base-3.13"]
+
+[[ports]]
+localPort = 5000
+externalPort = 8081
+
+[[ports]]
+localPort = 8082
+externalPort = 8080
+
+[[ports]]
+localPort = 8088
+externalPort = 3001
+
+[[ports]]
+localPort = 8110
+externalPort = 3002
+
+[[ports]]
+localPort = 8113
+externalPort = 8000
+
+[[ports]]
+localPort = 8121
+externalPort = 6000
+
+[[ports]]
+localPort = 8122
+externalPort = 4200
+
+[[ports]]
+localPort = 8124
+externalPort = 6800
+
+[[ports]]
+localPort = 8125
+externalPort = 8008
+
+[[ports]]
+localPort = 8773
+externalPort = 5000
+
+[[ports]]
+localPort = 8888
+externalPort = 9000
+
+[[ports]]
+localPort = 9101
+externalPort = 3003
+
+[[ports]]
+localPort = 9340
+externalPort = 8099
+
+[[ports]]
+localPort = 18333
+externalPort = 3000
+
+[[ports]]
+localPort = 19333
+externalPort = 80
+
+[[ports]]
+localPort = 19340
+externalPort = 5173
