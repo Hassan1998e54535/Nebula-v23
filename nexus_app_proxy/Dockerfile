@@ -80,8 +80,8 @@ COPY nexus_app/src/ ./nexus_app/src/
 ENV BUILD_VERSION=${BUILD_VERSION} \
 	PUBLIC_ASSET_BASE_URL=${PUBLIC_ASSET_BASE_URL}
 
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-	--mount=type=cache,target=/usr/local/cargo/git \
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+--mount=type=cache,target=/usr/local/cargo/git,sharing=locked \
 	cd nexus_app && pnpm build
 
 # ---------- Stage 2: The one canonical asset tree every architecture serves ----------
@@ -141,8 +141,8 @@ RUN printf '%s\n' \
 	'strip = "symbols"' \
 	> Cargo.toml
 
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-	--mount=type=cache,target=/usr/local/cargo/git \
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+--mount=type=cache,target=/usr/local/cargo/git,sharing=locked \
 	cargo build --release -p nexus_app_proxy \
 	&& cp target/release/nexus_app_proxy /usr/local/bin/nexus-app-proxy
 

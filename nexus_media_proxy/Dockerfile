@@ -44,8 +44,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 COPY . .
 
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,target=/usr/local/cargo/git,sharing=locked \
     --mount=type=cache,target=/build/target \
     cargo test -p nexus-media-proxy \
     && cargo build --release -p nexus-media-proxy \

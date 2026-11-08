@@ -48,8 +48,8 @@ RUN printf '%s\n' \
 	'strip = "symbols"' \
 	> Cargo.toml
 
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
+RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,target=/usr/local/cargo/git,sharing=locked \
     cargo build --release -p nexus_admin \
 	&& cp target/release/nexus_admin /usr/local/bin/nexus-admin
 

@@ -1,0 +1,1 @@
+- [Cargo BuildKit cache locking](cargo-buildkit-cache-locking.md) — Shared Cargo caches need BuildKit locking when independent service images build in parallel.

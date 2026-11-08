@@ -40,12 +40,12 @@ RUN curl --retry 5 --retry-delay 2 --retry-all-errors --proto '=https' --tlsv1.2
 
 COPY . .
 WORKDIR /usr/src/app/nexus_gateway
-RUN --mount=type=cache,target=/root/.cargo/registry \
-	--mount=type=cache,target=/root/.cargo/git \
+RUN --mount=type=cache,target=/root/.cargo/registry,sharing=locked \
+	--mount=type=cache,target=/root/.cargo/git,sharing=locked \
 	rebar3 compile --deps_only
 
-RUN --mount=type=cache,target=/root/.cargo/registry \
-	--mount=type=cache,target=/root/.cargo/git \
+RUN --mount=type=cache,target=/root/.cargo/registry,sharing=locked \
+	--mount=type=cache,target=/root/.cargo/git,sharing=locked \
 	cp config/sys.config.template config/sys.config && \
 	rebar3 as prod release
 
