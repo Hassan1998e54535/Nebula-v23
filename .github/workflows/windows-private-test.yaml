@@ -208,7 +208,8 @@ jobs:
           set -euo pipefail
           test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
           tar -czf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source desktop-shared-assets
-          gh release upload "$PRIVATE_RELEASE" "$RUNNER_TEMP/shared-renderer.tar.gz" --repo "$GITHUB_REPOSITORY"
+          gh release upload "$PRIVATE_RELEASE" "$RUNNER_TEMP/shared-renderer.tar.gz" \
+            --clobber --repo "$GITHUB_REPOSITORY"
 
       - name: Record renderer result
         if: always()
@@ -364,7 +365,8 @@ jobs:
           set -euo pipefail
           gh release download "$PRIVATE_RELEASE" --pattern shared-renderer.tar.gz \
             --dir "$RUNNER_TEMP" --repo "$GITHUB_REPOSITORY"
-          tar -xzf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source
+          renderer_archive="$(cygpath -u "$RUNNER_TEMP/shared-renderer.tar.gz")"
+          tar -xzf "$renderer_archive" -C source
           gh release delete-asset "$PRIVATE_RELEASE" shared-renderer.tar.gz --yes --repo "$GITHUB_REPOSITORY"
 
       - name: Restore shared renderer assets
