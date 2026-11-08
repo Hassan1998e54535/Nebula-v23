@@ -1,8 +1,12 @@
+# syntax=docker/dockerfile:1.7
 # SPDX-License-Identifier: Nebula
 
 FROM rust:1-trixie AS builder
 
 ARG TARGETARCH
+ENV CARGO_HTTP_TIMEOUT=180 \
+    CARGO_HTTP_LOW_SPEED_LIMIT=1 \
+    CARGO_NET_RETRY=5
 
 WORKDIR /usr/src/app
 
@@ -44,7 +48,9 @@ RUN printf '%s\n' \
 	'strip = "symbols"' \
 	> Cargo.toml
 
-RUN cargo build --release -p nexus_admin \
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    cargo build --release -p nexus_admin \
 	&& cp target/release/nexus_admin /usr/local/bin/nexus-admin
 
 RUN test -s target/release/build/nexus_admin-*/out/static/app.css \

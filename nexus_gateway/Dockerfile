@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # SPDX-License-Identifier: Nebula
 FROM erlang:28-slim AS build
 
@@ -6,6 +7,9 @@ ARG REBAR3_VERSION=3.28.0
 ARG REBAR3_SHA256=5a28b1cca082d3b023ec0f5df9d9f9d52557036c6f2a21c1ffa11b93a984dd42
 
 ENV PATH="/root/.cargo/bin:${PATH}"
+ENV CARGO_HTTP_TIMEOUT=180 \
+	CARGO_HTTP_LOW_SPEED_LIMIT=1 \
+	CARGO_NET_RETRY=5
 
 WORKDIR /usr/src/app
 
@@ -36,9 +40,13 @@ RUN curl --retry 5 --retry-delay 2 --retry-all-errors --proto '=https' --tlsv1.2
 
 COPY . .
 WORKDIR /usr/src/app/nexus_gateway
-RUN rebar3 compile --deps_only
+RUN --mount=type=cache,target=/root/.cargo/registry \
+	--mount=type=cache,target=/root/.cargo/git \
+	rebar3 compile --deps_only
 
-RUN cp config/sys.config.template config/sys.config && \
+RUN --mount=type=cache,target=/root/.cargo/registry \
+	--mount=type=cache,target=/root/.cargo/git \
+	cp config/sys.config.template config/sys.config && \
 	rebar3 as prod release
 
 FROM erlang:28-slim

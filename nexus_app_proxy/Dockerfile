@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # SPDX-License-Identifier: Nebula
 
 ARG BUILD_VERSION=""
@@ -24,6 +25,9 @@ ARG RUST_VERSION=1.98.1
 ENV RUSTUP_HOME=/usr/local/rustup \
 	CARGO_HOME=/usr/local/cargo \
 	PATH=/usr/local/cargo/bin:$PATH
+ENV CARGO_HTTP_TIMEOUT=180 \
+	CARGO_HTTP_LOW_SPEED_LIMIT=1 \
+	CARGO_NET_RETRY=5
 RUN set -eux; \
 	curl --retry 3 --retry-all-errors --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
 		| sh -s -- -y --no-modify-path --profile minimal --default-toolchain "${RUST_VERSION}" \
@@ -109,7 +113,9 @@ FROM --platform=${APP_ASSETS_PLATFORM} ${APP_ASSETS_REF} AS app-static
 
 # ---------- Stage 3: Build the Rust proxy binary ----------
 FROM rust:1-trixie AS rust-builder
-
+ENV CARGO_HTTP_TIMEOUT=180 \
+	CARGO_HTTP_LOW_SPEED_LIMIT=1 \
+	CARGO_NET_RETRY=5
 
 WORKDIR /usr/src/app
 
@@ -135,7 +141,9 @@ RUN printf '%s\n' \
 	'strip = "symbols"' \
 	> Cargo.toml
 
-RUN cargo build --release -p nexus_app_proxy \
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+	--mount=type=cache,target=/usr/local/cargo/git \
+	cargo build --release -p nexus_app_proxy \
 	&& cp target/release/nexus_app_proxy /usr/local/bin/nexus-app-proxy
 
 # ---------- Stage 4: Runtime ----------

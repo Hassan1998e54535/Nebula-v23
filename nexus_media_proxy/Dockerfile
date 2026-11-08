@@ -21,6 +21,9 @@ RUN mkdir -p /native/lib \
     && cp -a /usr/local/lib/*.so.* /native/lib/
 
 FROM ${RUST_IMAGE} AS builder
+ENV CARGO_HTTP_TIMEOUT=180 \
+    CARGO_HTTP_LOW_SPEED_LIMIT=1 \
+    CARGO_NET_RETRY=5
 WORKDIR /build
 
 COPY --from=native /usr/local /usr/local
