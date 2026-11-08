@@ -173,8 +173,10 @@ try {
         Write-LocalEnvironment
     }
 
-    $placeholders = [System.IO.File]::ReadAllLines($envPath) |
-        Where-Object { $_ -match '^[A-Z0-9_]+=CHANGE_ME$' }
+    $placeholders = @(
+        [System.IO.File]::ReadAllLines($envPath) |
+            Where-Object { $_ -match '^[A-Z0-9_]+=CHANGE_ME$' }
+    )
     if ($placeholders.Count -gt 0) {
         throw "The existing .env still contains CHANGE_ME values. Fix them first; this script will not replace your secrets."
     }
