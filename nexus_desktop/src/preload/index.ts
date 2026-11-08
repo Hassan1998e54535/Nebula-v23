@@ -59,6 +59,7 @@ import type {
 	VirtmicNode,
 } from '@electron/common/Types';
 import {createBrowserHandoffPreloadAPI} from '@electron/preload/BrowserHandoffPreload';
+import {createDesktopLanDiscoveryPreloadAPI} from '@electron/preload/DesktopLanDiscoveryPreload';
 import {createDesktopStoragePreloadAPI} from '@electron/preload/DesktopStoragePreload';
 import {createFirstContentPaintSignal} from '@electron/preload/FirstContentPaint';
 import {applyLegacyRawLocalStorage} from '@electron/preload/LegacyRawStorageSeed';
@@ -399,6 +400,7 @@ const api: ElectronAPI = {
 	capabilities: readDesktopCapabilityManifest(),
 	offlineBuild: IS_OFFLINE_BUILD,
 	...createDesktopStoragePreloadAPI(ipcRenderer),
+	...createDesktopLanDiscoveryPreloadAPI(ipcRenderer),
 	...createLocalAppPreloadAPI(ipcRenderer),
 	...createBrowserHandoffPreloadAPI(ipcRenderer),
 	...createNativeGatewayPreloadAPI(ipcRenderer),

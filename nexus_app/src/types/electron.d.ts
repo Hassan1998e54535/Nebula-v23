@@ -54,6 +54,7 @@ import type {
 } from '@nexus/desktop_ipc/src/DesktopBridgeTypes';
 import type {NativeGatewayTransportAPI} from '@nexus/desktop_ipc/src/GatewayTransportContract';
 import type {DesktopKnownInstanceStorageAPI} from '@nexus/desktop_ipc/src/KnownInstanceContract';
+import type {DesktopLanDiscoveryAPI} from '@nexus/desktop_ipc/src/LanDiscoveryContract';
 import type {DesktopLegacyHarvest} from '@nexus/desktop_ipc/src/LegacyHarvestContract';
 import type {DesktopLocalAppUploadProgress} from '@nexus/desktop_ipc/src/LocalAppRouteContract';
 import type {DesktopRuntimeConfigAPI} from '@nexus/desktop_ipc/src/LocalAppRuntimeContract';
@@ -370,6 +371,7 @@ export interface ElectronAPI {
 	desktopAccounts?: DesktopAccountStorageAPI;
 	desktopStorage?: DesktopStorageAPI;
 	desktopKnownInstances?: DesktopKnownInstanceStorageAPI;
+	desktopLanDiscovery?: DesktopLanDiscoveryAPI;
 	desktopHandoff?: DesktopHandoffAPI;
 	voiceEngine?: VoiceEngineV2BridgeHardwareEncoderApi;
 	desktopRuntimeConfig?: DesktopRuntimeConfigAPI;

@@ -98,7 +98,11 @@ export function InstancePickerRows({
 						type="button"
 						className={styles.instanceOption}
 						onClick={() => onSelectInstance(instance)}
-						onContextMenu={removable ? (event) => handleKnownInstanceContextMenu(event, instance) : undefined}
+						onContextMenu={
+							removable && !instance.discoveredOnLan
+								? (event) => handleKnownInstanceContextMenu(event, instance)
+								: undefined
+						}
 						disabled={disabled || isDiscovering}
 						aria-label={i18n._(USE_INSTANCE_DESCRIPTOR, {name, domain: instance.domain})}
 						data-flx="auth.flow.instance-selector.instance-picker-rows.button.select-known"
@@ -124,12 +128,14 @@ export function InstancePickerRows({
 							>
 								{name}
 							</span>
-							<span
-								className={styles.instanceDomain}
-								data-flx="auth.flow.instance-selector.instance-picker-rows.render-known-instance.instance-domain"
-							>
-								{instance.domain}
-							</span>
+							{!instance.discoveredOnLan && (
+								<span
+									className={styles.instanceDomain}
+									data-flx="auth.flow.instance-selector.instance-picker-rows.render-known-instance.instance-domain"
+								>
+									{instance.domain}
+								</span>
+							)}
 						</span>
 						<ArrowRightIcon
 							size={remFromPx(17)}
@@ -155,7 +161,7 @@ export function InstancePickerRows({
 				{pinnedInstance != null && renderKnownInstance(pinnedInstance, false)}
 				{instances
 					.filter((instance) => !isOfficialInstanceInfo(instance))
-					.map((instance) => renderKnownInstance(instance, true))}
+					.map((instance) => renderKnownInstance(instance, !instance.discoveredOnLan))}
 				<div
 					className={styles.instanceRow}
 					role="listitem"

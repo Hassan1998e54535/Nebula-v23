@@ -19,6 +19,7 @@ export interface InstanceInfo {
 	domain: string;
 	name: string | null;
 	lastUsed: number;
+	discoveredOnLan?: boolean;
 }
 
 export function normalizeInstanceDomain(domain: string): string | null {

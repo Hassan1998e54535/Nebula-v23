@@ -40,11 +40,11 @@ import {Button, ButtonVariant} from '@app/features/ui/button/Button';
 import {TextInput} from '@app/features/ui/components/form/FormInput';
 import {SteppedCarousel} from '@app/features/ui/stepped_carousel/SteppedCarousel';
 import {flxElementClassName} from '@app/lib/react';
-import type {DesktopKnownInstanceRecord} from '@nexus/desktop_ipc/src/KnownInstanceContract';
-import {NETWORK_ENDPOINT_INPUT_MAX_BYTES} from '@nexus/instance_bootstrap/src/NetworkOrigin';
 import type {I18n} from '@lingui/core';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
+import type {DesktopKnownInstanceRecord} from '@nexus/desktop_ipc/src/KnownInstanceContract';
+import {NETWORK_ENDPOINT_INPUT_MAX_BYTES} from '@nexus/instance_bootstrap/src/NetworkOrigin';
 import {ArrowLeftIcon, ArrowRightIcon, GlobeIcon} from '@phosphor-icons/react';
 import {observer} from 'mobx-react-lite';
 import {
@@ -204,6 +204,7 @@ export const InstanceSelector = observer(function InstanceSelector({
 	const [discoveryError, setDiscoveryError] = useState<string | null>(null);
 	const [discoveryProgressDomain, setDiscoveryProgressDomain] = useState<string | null>(null);
 	const [knownInstances, setKnownInstances] = useState<ReadonlyArray<InstanceInfo>>([]);
+	const [lanInstances, setLanInstances] = useState<ReadonlyArray<InstanceInfo>>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [discoveryRequestOwner] = useState(() => new InstanceDiscoveryRequestOwner());
 	const statusId = useId();
@@ -225,6 +226,44 @@ export const InstanceSelector = observer(function InstanceSelector({
 	useEffect(() => {
 		refreshKnownInstances(null);
 	}, [refreshKnownInstances]);
+	useEffect(() => {
+		const lanDiscovery = window.electron?.desktopLanDiscovery;
+		if (lanDiscovery == null) {
+			return;
+		}
+		let active = true;
+		let scanning = false;
+		const scan = async (): Promise<void> => {
+			if (scanning) {
+				return;
+			}
+			scanning = true;
+			try {
+				const discovered = await lanDiscovery.scan();
+				if (active) {
+					setLanInstances(
+						discovered.map((instance) => ({
+							instanceKey: instance.instanceKey,
+							domain: instance.domain,
+							name: instance.displayName,
+							lastUsed: 0,
+							discoveredOnLan: true,
+						})),
+					);
+				}
+			} catch (error) {
+				logger.warn('Failed to discover NEXUS servers on the local network', error);
+			} finally {
+				scanning = false;
+			}
+		};
+		void scan();
+		const interval = window.setInterval(() => void scan(), 8000);
+		return () => {
+			active = false;
+			window.clearInterval(interval);
+		};
+	}, []);
 	const updateDiscoveryStatus = useCallback(
 		(status: InstanceDiscoveryStatus) => {
 			setDiscoveryStatus(status);
@@ -321,7 +360,7 @@ export const InstanceSelector = observer(function InstanceSelector({
 	const handleSelectKnown = useCallback(
 		(instance: InstanceInfo) => {
 			onChange(instance.domain);
-			startDiscovery(instance.domain, true);
+			startDiscovery(instance.domain, !instance.discoveredOnLan);
 		},
 		[onChange, startDiscovery],
 	);
@@ -448,7 +487,12 @@ export const InstanceSelector = observer(function InstanceSelector({
 				<InstancePickerRows
 					disabled={disabled}
 					discoveryStatus={discoveryStatus}
-					instances={knownInstances}
+					instances={[
+						...lanInstances.filter(
+							(lanInstance) => !knownInstances.some((knownInstance) => knownInstance.domain === lanInstance.domain),
+						),
+						...knownInstances,
+					]}
 					pinnedInstance={resolveLocalDevelopmentInstance(knownInstances)}
 					onAddInstance={handleAddInstance}
 					onRemoveInstance={handleRemoveKnownInstance}

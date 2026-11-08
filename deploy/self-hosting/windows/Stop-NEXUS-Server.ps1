@@ -6,6 +6,22 @@ $ErrorActionPreference = 'Stop'
 $stackDir = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $serverDataDir = Join-Path $env:LOCALAPPDATA 'NEXUS\Server'
 $envPath = Join-Path $serverDataDir '.env'
+$discoveryPidPath = Join-Path $serverDataDir 'lan-discovery.pid'
+$firewallGroup = 'NEXUS Local Server'
+if (Test-Path -LiteralPath $discoveryPidPath) {
+    $processId = 0
+    if ([int]::TryParse([System.IO.File]::ReadAllText($discoveryPidPath).Trim(), [ref]$processId)) {
+        $process = Get-CimInstance Win32_Process -Filter "ProcessId = $processId" -ErrorAction SilentlyContinue
+        if ($process -and $process.CommandLine -like '*NEXUS-LanDiscovery.ps1*') {
+            Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
+        }
+    }
+    Remove-Item -LiteralPath $discoveryPidPath -Force -ErrorAction SilentlyContinue
+}
+
+Get-NetFirewallRule -Group $firewallGroup -ErrorAction SilentlyContinue |
+    Remove-NetFirewallRule -ErrorAction SilentlyContinue
+
 if (-not (Test-Path -LiteralPath $envPath)) {
     Write-Error "No server .env exists at $envPath."
     exit 1

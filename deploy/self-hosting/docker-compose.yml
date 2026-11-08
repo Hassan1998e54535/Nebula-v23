@@ -446,8 +446,8 @@ services:
           urls:
             - http://api:8080/webhooks/livekit
     ports:
-      - "${NEXUS_LIVEKIT_TCP_PORT:-7881}:${NEXUS_LIVEKIT_TCP_PORT:-7881}"
-      - "${NEXUS_LIVEKIT_UDP_PORT:-7882}:${NEXUS_LIVEKIT_UDP_PORT:-7882}/udp"
+      - "${NEXUS_LIVEKIT_BIND_IP:-0.0.0.0}:${NEXUS_LIVEKIT_TCP_PORT:-7881}:${NEXUS_LIVEKIT_TCP_PORT:-7881}"
+      - "${NEXUS_LIVEKIT_BIND_IP:-0.0.0.0}:${NEXUS_LIVEKIT_UDP_PORT:-7882}:${NEXUS_LIVEKIT_UDP_PORT:-7882}/udp"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:7880/"]
       interval: ${NEXUS_HEALTHCHECK_INTERVAL:-10s}

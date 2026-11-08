@@ -46,6 +46,7 @@ export const RootComponent: React.FC<{children?: React.ReactNode}> = observer(({
 	const location = useLocation();
 	const isAuthenticated = Authentication.isAuthenticated;
 	const requiresSelfHostedSetup = RuntimeConfig.requiresSelfHostedSetup();
+	const setupTokenRequired = RuntimeConfig.appPublic.setup.setup_token_required === true;
 	const mobileLayoutState = MobileLayout;
 	const [hasRestoredLocation, setHasRestoredLocation] = useState(false);
 	const [effectiveSkeletonPathname, setEffectiveSkeletonPathname] = useState<string | null>(null);
@@ -85,8 +86,8 @@ export const RootComponent: React.FC<{children?: React.ReactNode}> = observer(({
 			pathname.startsWith('/theme/')
 		);
 	}, [pathname]);
-	const shouldShowSelfHostedSetup = requiresSelfHostedSetup && !isStandaloneRoute && isAuthenticated;
-	const shouldBypassGateway = (requiresSelfHostedSetup && isAuthenticated) || isStandaloneRoute;
+	const shouldShowSelfHostedSetup = requiresSelfHostedSetup && (isAuthenticated || setupTokenRequired);
+	const shouldBypassGateway = shouldShowSelfHostedSetup || isStandaloneRoute;
 	const authToken = SessionManager.token;
 	const shouldShowLoadingSkeleton = getShouldShowLoadingSkeleton({
 		booting: isClientBooting(),

@@ -21,6 +21,7 @@ import {setHandoffReturnLinkSink} from '@electron/main/DeepLinks';
 import {getDesktopAppStorage} from '@electron/main/DesktopAppStorage';
 import {createDesktopAppStorageIpcRoutes} from '@electron/main/DesktopAppStorageIpc';
 import {getLaunchDesktopTroubleshootingSettings} from '@electron/main/DesktopDebugInfo';
+import {discoverNexusLanInstances} from '@electron/main/DesktopLanDiscovery';
 import {cleanupDesktopRuntimeConfigHandlers} from '@electron/main/DesktopRuntimeConfigIpc';
 import {
 	applyDesktopWindowBehaviorSettings,
@@ -91,6 +92,7 @@ import {
 	THEME_STUDIO_POPOUT_KEY,
 } from '@electron/main/Window';
 import {setWindowsBadgeOverlay} from '@electron/main/WindowsBadge';
+import {DESKTOP_LAN_DISCOVERY_CHANNELS} from '@nexus/desktop_ipc/src/LanDiscoveryContract';
 import {
 	DESKTOP_MODULE_CHANNELS,
 	DESKTOP_UPDATE_CHANNELS,
@@ -154,6 +156,10 @@ function getActiveMiddleClickAutoscroll(): boolean {
 export function registerIpcHandlers(): void {
 	registerVoiceDebugEventSinkPopoutIpcHandlers();
 	registerVoiceBackgroundMediaCacheHandlers();
+	ipcMain.handle(DESKTOP_LAN_DISCOVERY_CHANNELS.scan, (event) => {
+		requirePrivilegedRendererDocumentSender(event, DESKTOP_LAN_DISCOVERY_CHANNELS.scan);
+		return discoverNexusLanInstances();
+	});
 	ipcMain.handle(DESKTOP_MODULE_CHANNELS.ensure, (event, moduleName: unknown) => {
 		requirePrivilegedRendererDocumentSender(event, DESKTOP_MODULE_CHANNELS.ensure);
 		return ensureDesktopModule(moduleName);
@@ -576,6 +582,7 @@ export function cleanupGatewayTransportHandlers(): void {
 
 export function cleanupIpcHandlers(_options: {quitting?: boolean} = {}): void {
 	cleanupDesktopRuntimeConfigHandlers();
+	ipcMain.removeHandler(DESKTOP_LAN_DISCOVERY_CHANNELS.scan);
 	browserHandoff?.cleanup();
 	browserHandoff = null;
 	setHandoffReturnLinkSink(null);
