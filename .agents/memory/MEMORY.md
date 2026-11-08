@@ -1,1 +1,2 @@
 - [Cargo BuildKit cache locking](cargo-buildkit-cache-locking.md) — Shared Cargo caches need BuildKit locking when independent service images build in parallel.
+- [On-demand Windows server](on-demand-windows-server.md) — The owner wants to run the NEXUS server on his PC only while he and a friend are testing.
