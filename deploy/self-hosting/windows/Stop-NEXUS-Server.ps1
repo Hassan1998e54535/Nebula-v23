@@ -4,14 +4,15 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $stackDir = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$envPath = Join-Path $stackDir '.env'
+$serverDataDir = Join-Path $env:LOCALAPPDATA 'NEXUS\Server'
+$envPath = Join-Path $serverDataDir '.env'
 if (-not (Test-Path -LiteralPath $envPath)) {
     Write-Error "No server .env exists at $envPath."
     exit 1
 }
 
 $composeArgs = @(
-    '--project-name', 'nexus',
+    '--project-name', 'nexus-host-local',
     '--project-directory', $stackDir,
     '--env-file', $envPath,
     '-f', (Join-Path $stackDir 'docker-compose.yml'),

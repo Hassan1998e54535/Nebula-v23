@@ -8,8 +8,10 @@ $ErrorActionPreference = 'Stop'
 
 $stackDir = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $templatePath = Join-Path $stackDir '.env.example'
-$envPath = Join-Path $stackDir '.env'
-$localOrigin = 'http://localhost:8080'
+$serverDataDir = Join-Path $env:LOCALAPPDATA 'NEXUS\Server'
+$envPath = Join-Path $serverDataDir '.env'
+$composeProjectName = 'nexus-host-local'
+$localOrigin = 'http://localhost:8081'
 
 function New-RandomHex([int]$Count = 32) {
     $bytes = New-Object byte[] $Count
@@ -50,16 +52,20 @@ function Write-LocalEnvironment {
         throw "Missing self-hosted template: $templatePath"
     }
 
+    New-Item -ItemType Directory -Path $serverDataDir -Force | Out-Null
+
     $overrides = @{
         NEXUS_DOMAIN = 'localhost'
         NEXUS_PUBLIC_SCHEME = 'http'
-        NEXUS_PUBLIC_PORT = '8080'
+        NEXUS_PUBLIC_PORT = '8081'
         NEXUS_PUBLIC_ORIGIN = $localOrigin
-        NEXUS_HTTP_PORT = '127.0.0.1:8080'
+        NEXUS_HTTP_PORT = '127.0.0.1:8081'
         NEXUS_REGISTRY = 'local'
         NEXUS_REGISTRY_OWNER = 'hassan1998e54535'
         NEXUS_IMAGE_TAG = 'source'
         NEXUS_EMAIL_ENABLED = 'false'
+        NEXUS_LIVEKIT_TCP_PORT = '17881'
+        NEXUS_LIVEKIT_UDP_PORT = '17882'
     }
     foreach ($entry in (New-VapidKeyPair).GetEnumerator()) {
         $overrides[$entry.Key] = $entry.Value
@@ -134,7 +140,7 @@ function Get-EnvironmentValue([string]$Name) {
 
 function Invoke-NexusCompose([string[]]$Arguments) {
     $composeArgs = @(
-        '--project-name', 'nexus',
+        '--project-name', $composeProjectName,
         '--project-directory', $stackDir,
         '--env-file', $envPath,
         '-f', (Join-Path $stackDir 'docker-compose.yml'),

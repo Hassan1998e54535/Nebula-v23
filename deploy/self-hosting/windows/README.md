@@ -1,16 +1,16 @@
 # NEXUS server on Windows
 
-This runs a local test server from the NEXUS source tree. It is separate from the Windows desktop client.
+This runs a new, isolated local test server from the NEXUS source tree. It is separate from the Windows desktop client and from any existing Docker Compose project named `nexus`.
 
 ## Start locally
 
-1. Download and extract the private NEXUS repository ZIP on the server computer.
+1. Download and extract the private NEXUS source ZIP on the server computer.
 2. Install Docker Desktop with its WSL 2 Linux-container engine, then start Docker Desktop.
 3. Open `deploy/self-hosting/windows` and double-click `Start-NEXUS-Server.cmd`.
-4. On the first run, the launcher creates a private `.env` with new secrets and builds the server images from this source tree. The first build can take a long time.
-5. Open `http://localhost:8080` on that same computer.
+4. On the first run, the launcher creates a private `.env` at `%LOCALAPPDATA%\NEXUS\Server\.env` with new secrets and builds the server images from this source tree. The first build can take a long time.
+5. Open `http://localhost:8081` on that same computer.
 
-The database and uploads live in Docker's persistent volumes. `Stop-NEXUS-Server.cmd` stops containers without deleting those volumes. Do not run `docker compose down -v` unless you intend to erase all server data.
+The new stack uses the separate Docker Compose project `nexus-host-local`, a separate local `.env`, and separate Docker volumes. Existing containers and volumes are left untouched. The database and uploads live in Docker's persistent volumes. `Stop-NEXUS-Server.cmd` stops only this new stack without deleting its volumes. Do not run `docker compose down -v` unless you intend to erase this server's data.
 
 ## Friend access and email
 
