@@ -27,7 +27,8 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 	PATH=/usr/local/cargo/bin:$PATH
 ENV CARGO_HTTP_TIMEOUT=180 \
 	CARGO_HTTP_LOW_SPEED_LIMIT=1 \
-	CARGO_NET_RETRY=5
+	CARGO_NET_RETRY=5 \
+	CARGO_BUILD_JOBS=2
 RUN set -eux; \
 	curl --retry 3 --retry-all-errors --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
 		| sh -s -- -y --no-modify-path --profile minimal --default-toolchain "${RUST_VERSION}" \
@@ -115,7 +116,8 @@ FROM --platform=${APP_ASSETS_PLATFORM} ${APP_ASSETS_REF} AS app-static
 FROM rust:1-trixie AS rust-builder
 ENV CARGO_HTTP_TIMEOUT=180 \
 	CARGO_HTTP_LOW_SPEED_LIMIT=1 \
-	CARGO_NET_RETRY=5
+	CARGO_NET_RETRY=5 \
+	CARGO_BUILD_JOBS=2
 
 WORKDIR /usr/src/app
 

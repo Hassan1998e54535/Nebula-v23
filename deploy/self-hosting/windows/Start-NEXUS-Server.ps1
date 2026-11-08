@@ -143,6 +143,7 @@ function Get-EnvironmentValue([string]$Name) {
 
 function Invoke-NexusCompose([string[]]$Arguments) {
     $composeArgs = @(
+        '--parallel', '2',
         '--project-name', $composeProjectName,
         '--project-directory', $stackDir,
         '--env-file', $envPath,
@@ -187,7 +188,7 @@ try {
 
     Write-Host 'Validating the local Compose stack...'
     Invoke-NexusCompose @('config', '--quiet')
-    Write-Host 'Building NEXUS services from this source tree and starting the server. The first build may take a long time.'
+    Write-Host 'Building NEXUS services from this source tree with Compose parallelism limited to 2 to reduce memory pressure. The first build may take a long time.'
     Invoke-NexusCompose @('up', '--build', '-d')
 
     Write-Host ''

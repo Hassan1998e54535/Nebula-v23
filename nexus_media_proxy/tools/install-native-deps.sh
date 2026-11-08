@@ -242,7 +242,9 @@ fi
 
 verify_linux_floors
 
-JOBS="$(nproc 2>/dev/null || echo 4)"
+JOBS="${NEXUS_NATIVE_BUILD_JOBS:-2}"
+[[ "$JOBS" =~ ^[1-9][0-9]*$ ]] || die "NEXUS_NATIVE_BUILD_JOBS must be a positive integer"
+log "using ${JOBS} native build jobs"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 

@@ -4,6 +4,8 @@ ARG DEBIAN_BASE=debian:trixie-slim
 ARG RUST_IMAGE=rust:1-trixie
 
 FROM ${DEBIAN_BASE} AS native
+ARG NEXUS_NATIVE_BUILD_JOBS=2
+ENV NEXUS_NATIVE_BUILD_JOBS=${NEXUS_NATIVE_BUILD_JOBS}
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -23,7 +25,8 @@ RUN mkdir -p /native/lib \
 FROM ${RUST_IMAGE} AS builder
 ENV CARGO_HTTP_TIMEOUT=180 \
     CARGO_HTTP_LOW_SPEED_LIMIT=1 \
-    CARGO_NET_RETRY=5
+    CARGO_NET_RETRY=5 \
+    CARGO_BUILD_JOBS=2
 WORKDIR /build
 
 COPY --from=native /usr/local /usr/local
