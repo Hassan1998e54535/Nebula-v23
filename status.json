@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "phase": "windows-build-started",
-  "conclusion": "in_progress",
+  "phase": "windows-build-completed",
+  "conclusion": "failure",
   "runner": "Windows",
   "job": "build_windows_x64",
   "runId": "42683047780",
