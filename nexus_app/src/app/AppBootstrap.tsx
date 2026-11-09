@@ -20,11 +20,14 @@ import type {
 import type {Account} from '@app/features/platform/state/AuthSession';
 import {Logger} from '@app/features/platform/utils/AppLogger';
 import {
+	formatClientBuildInfo,
+	getClientInfo,
 	getFormattedClientInfo,
 	getFormattedClientInfoSync,
 	installNEXUSConfigDebugApi,
 	preloadClientInfo,
 } from '@app/features/platform/utils/ClientInfo';
+import {getElectronAPI} from '@app/features/ui/utils/NativeUtils';
 import {loadLazyModule} from '@app/features/platform/utils/LazyModuleLoader';
 import {scheduleNonLatinScriptFaces} from '@app/features/theme/fonts/ScriptFontLoader';
 import {installVoiceSubscriptionDebugApi} from '@app/features/voice/diagnostics/VoiceSubscriptionDebugApi';
@@ -80,6 +83,15 @@ async function logClientInfo(): Promise<void> {
 	} catch (error) {
 		logger.warn('Failed to load full client info:', error);
 		logger.info(`[CLIENT INFO] ${getFormattedClientInfoSync()}`);
+	}
+	const electronApi = getElectronAPI();
+	if (electronApi?.setTrayRuntimeState) {
+		try {
+			const info = await getClientInfo();
+			electronApi.setTrayRuntimeState({buildInfo: formatClientBuildInfo(info)});
+		} catch {
+			electronApi.setTrayRuntimeState({buildInfo: formatClientBuildInfo(getClientInfoSync())});
+		}
 	}
 }
 

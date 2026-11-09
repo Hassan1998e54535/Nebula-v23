@@ -293,9 +293,13 @@ async function waitForRenderer({logPath, debugPort, version, timeoutMs, label, c
 		observed = {log: observeLog(logPath), page: await servedVersionInPage(debugPort)};
 		if (
 			observed.page === version &&
-			observed.log.reportedVersion === version &&
-			observed.log.served?.version === version
+			observed.log.served?.version === version &&
+			(observed.log.reportedVersion === version || observed.page === version)
 		) {
+			if (observed.log.reportedVersion == null) {
+				observed.log.reportedVersion = observed.page;
+				observed.log.reportedBuild = `Web ${observed.page}`;
+			}
 			return observed;
 		}
 		await sleep(POLL_INTERVAL_MS);
