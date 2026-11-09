@@ -38,7 +38,7 @@ export const AuthRuntimeTargetGate = observer(function AuthRuntimeTargetGate({ch
 	const [inviteInstanceResolutionFailed, setInviteInstanceResolutionFailed] = useState(false);
 
 	useEffect(() => {
-		if (runtimeSnapshot != null || !isInviteRoute || privateInstanceUrl == null) {
+		if (runtimeSnapshot != null || privateInstanceUrl == null) {
 			return;
 		}
 		const controller = new AbortController();

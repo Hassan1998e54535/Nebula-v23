@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: Nebula
+﻿# SPDX-License-Identifier: Nebula
 
 [CmdletBinding()]
 param(
     [switch]$RebuildImages,
-    [string]$PublicOrigin = 'https://bikes-chrome-pack-coming.trycloudflare.com'
+    [string]$PublicOrigin = 'https://nexus-nn.duckdns.org'
 )
 
 Set-StrictMode -Version Latest

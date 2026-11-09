@@ -164,6 +164,7 @@ export function InstancePickerRows({
 				{instances
 					.filter((instance) => !isOfficialInstanceInfo(instance))
 					.map((instance) => renderKnownInstance(instance, !instance.discoveredOnLan))}
+				{!globalThis.window?.electron?.nexusPrivateInstanceUrl && (
 				<div
 					className={styles.instanceRow}
 					role="listitem"
@@ -214,6 +215,7 @@ export function InstancePickerRows({
 						</button>
 					</FocusRing>
 				</div>
+				)}
 			</div>
 		</flx-auth-instance-picker-rows>
 	);
