@@ -82,11 +82,11 @@ start nats nats-server -a 127.0.0.1 -js -sd "$state/nats" -m 8222
 start search meilisearch --http-addr 127.0.0.1:7700 --db-path "$state/search" \
   --master-key nexus-dev-meilisearch --no-analytics
 
-# Replit exposes this webview through external port 5000 (mapped to the app
-# proxy). Keep generated API, gateway, media, and static URLs on that same
-# origin; omitting the port sends browser assets to a different Replit route.
+# The Replit webview must route external port 5000 to the full NEXUS development
+# proxy (local port 8088), which dispatches assets and API calls to their services.
 public_port=5000
 origin="https://$REPLIT_DEV_DOMAIN:$public_port"
+service_origin="$origin"
 # The managed local SeaweedFS instance uses these development-only credentials.
 # Keep the API/bootstrap client aligned with tools/dev/src/media_proxy.rs.
 export NEXUS_S3_ACCESS_KEY_ID=nexus
@@ -101,16 +101,17 @@ export NEXUS_BASE_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_STATIC_CDN_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_PUBLIC_SCHEME=https NEXUS_PUBLIC_PORT="$public_port"
 export NEXUS_PUBLIC_ORIGIN="$origin" NEXUS_PUBLIC_URL="$origin"
-export NEXUS_API_ENDPOINT="$origin/api" NEXUS_API_CLIENT_ENDPOINT="$origin/api"
+export NEXUS_DEV_PUBLIC_SERVICE_ORIGIN="$service_origin"
+export NEXUS_API_ENDPOINT="$service_origin/api" NEXUS_API_CLIENT_ENDPOINT="$service_origin/api"
 export NEXUS_APP_ENDPOINT="$origin" NEXUS_MARKETING_ENDPOINT="$origin"
-export NEXUS_GATEWAY_ENDPOINT="wss://$REPLIT_DEV_DOMAIN/gateway"
-export NEXUS_MEDIA_ENDPOINT="$origin/media" NEXUS_STATIC_CDN_ENDPOINT="$origin"
-export NEXUS_ADMIN_ENDPOINT="$origin/admin" NEXUS_S3_PUBLIC_ENDPOINT="$origin"
-export NEXUS_MEDIA_PROXY_PUBLIC_ENDPOINT="$origin/media"
-export NEXUS_MEDIA_PROXY_UPLOAD_RELAY_ENDPOINT="$origin/media"
-export NEXUS_GATEWAY_MEDIA_PROXY_ENDPOINT="$origin/media"
-export NEXUS_GATEWAY_STATIC_CDN_ENDPOINT="$origin"
-export NEXUS_ADMIN_OAUTH_REDIRECT_URI="$origin/admin/oauth2_callback"
+export NEXUS_GATEWAY_ENDPOINT="wss://$REPLIT_DEV_DOMAIN:$public_port/gateway"
+export NEXUS_MEDIA_ENDPOINT="$service_origin/media" NEXUS_STATIC_CDN_ENDPOINT="$service_origin"
+export NEXUS_ADMIN_ENDPOINT="$service_origin/admin" NEXUS_S3_PUBLIC_ENDPOINT="$service_origin"
+export NEXUS_MEDIA_PROXY_PUBLIC_ENDPOINT="$service_origin/media"
+export NEXUS_MEDIA_PROXY_UPLOAD_RELAY_ENDPOINT="$service_origin/media"
+export NEXUS_GATEWAY_MEDIA_PROXY_ENDPOINT="$service_origin/media"
+export NEXUS_GATEWAY_STATIC_CDN_ENDPOINT="$service_origin"
+export NEXUS_ADMIN_OAUTH_REDIRECT_URI="$service_origin/admin/oauth2_callback"
 export NEXUS_PASSKEY_RP_ID="$REPLIT_DEV_DOMAIN"
 export NEXUS_PASSKEY_ADDITIONAL_ALLOWED_ORIGINS="$origin"
 

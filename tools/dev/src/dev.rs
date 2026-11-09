@@ -330,6 +330,8 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
     let app_dir = ROOT.join("nexus_app");
     let app_dev_server = ROOT.join("tools/ci/run.sh");
     let public_url = public_url();
+    let public_service_origin = std::env::var("NEXUS_DEV_PUBLIC_SERVICE_ORIGIN")
+        .unwrap_or_else(|_| public_url.clone());
     let admin_endpoint =
         std::env::var("NEXUS_ADMIN_ENDPOINT").unwrap_or_else(|_| format!("{public_url}/admin"));
     let mut tasks = BTreeMap::new();
@@ -360,7 +362,7 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
         env: vec![
             (
                 "NEXUS_S3_PUBLIC_ENDPOINT".to_owned(),
-                Some(public_url.clone()),
+                Some(public_service_origin.clone()),
             ),
             (
                 "NEXUS_S3_FORCE_PATH_STYLE".to_owned(),
@@ -404,11 +406,11 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
             ("NEXUS_APP_DEV_PORT".to_owned(), Some(APP_PORT.to_string())),
             (
                 "NEXUS_STATIC_CDN_ENDPOINT".to_owned(),
-                Some(public_url.clone()),
+                Some(public_service_origin.clone()),
             ),
             (
                 "PUBLIC_STATIC_CDN_ENDPOINT".to_owned(),
-                Some(public_url.clone()),
+                Some(public_service_origin.clone()),
             ),
         ],
     });
@@ -427,7 +429,7 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
             ),
             (
                 "NEXUS_STATIC_CDN_ENDPOINT".to_owned(),
-                Some(public_url.clone()),
+                Some(public_service_origin.clone()),
             ),
             (
                 "NEXUS_STATIC_DIR".to_owned(),
@@ -532,14 +534,17 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
             ("NEXUS_ADMIN_PORT".to_owned(), Some(ADMIN_PORT.to_string())),
             (
                 "NEXUS_API_ENDPOINT".to_owned(),
-                Some(format!("{public_url}/api")),
+                Some(format!("{public_service_origin}/api")),
             ),
             ("NEXUS_APP_ENDPOINT".to_owned(), Some(public_url.clone())),
             (
                 "NEXUS_MEDIA_ENDPOINT".to_owned(),
-                Some(format!("{public_url}/media")),
+                Some(format!("{public_service_origin}/media")),
             ),
-            ("NEXUS_STATIC_CDN_ENDPOINT".to_owned(), Some(public_url)),
+            (
+                "NEXUS_STATIC_CDN_ENDPOINT".to_owned(),
+                Some(public_service_origin),
+            ),
         ],
     });
     insert(DevTask {
