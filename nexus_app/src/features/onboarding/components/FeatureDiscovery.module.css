@@ -52,6 +52,7 @@
 	min-height: 12.5rem;
 	place-items: center;
 	overflow: hidden;
+	pointer-events: none;
 	border: 1px solid color-mix(in srgb, var(--discovery-accent) 19%, transparent);
 	border-radius: 1.15rem;
 	background:

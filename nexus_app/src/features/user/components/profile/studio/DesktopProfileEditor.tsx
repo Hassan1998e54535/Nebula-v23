@@ -188,6 +188,8 @@ export function DesktopProfileEditor(props: Props) {
 		setTool(null);
 		setDraft(null);
 	}, [tool, props.onDialogCancel]);
+const cancelRef = useRef(cancel);
+cancelRef.current = cancel;
 	const dismissForManagedPicker = () => {
 		// The host upload/crop dialog owns its own accept/cancel lifecycle.
 		// Dismissing this shell must not discard that active managed flow.
@@ -213,7 +215,7 @@ export function DesktopProfileEditor(props: Props) {
 		if (!tool) return;
 		closeRef.current?.focus();
 		const onKey = (event: KeyboardEvent) => {
-			if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); cancel(); }
+if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); cancelRef.current(); }
 			if (event.key !== 'Tab' || !dialogRef.current) return;
 			const items = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]'));
 			if (!items.length) return;
@@ -226,7 +228,7 @@ export function DesktopProfileEditor(props: Props) {
 			openerRef.current?.focus();
 			openerRef.current = null;
 		};
-	}, [tool, cancel]);
+}, [tool]);
 
 	const appearance = draft?.appearance ?? props.value.appearance;
 	const preview = draft && props.renderDesktopPreview ? props.renderDesktopPreview(draft) : props.desktopPreview;

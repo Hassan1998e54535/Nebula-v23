@@ -79,4 +79,65 @@ describe('DesktopProfileEditor details dialog', () => {
 		act(() => close?.click());
 		expect(document.body.querySelector('[role="dialog"]')).toBeNull();
 	});
+
+it('keeps the edited field focused when the parent rerenders after a keystroke', () => {
+const onChange = vi.fn();
+const renderEditor = (displayName: string) => (
+<DesktopProfileEditor
+value={DEFAULT_PROFILE_CUSTOMIZATION}
+onChange={onChange}
+disabled={false}
+displayName={displayName}
+profileScopeLabel="NEXUS account"
+desktopDetailsControls={
+<label>
+Display name
+<input aria-label="Display name" value={displayName} onChange={() => {}} />
+</label>
+}
+onDialogCancel={() => {}}
+/>
+);
+
+act(() => root.render(renderEditor('HASOON')));
+const openDetails = container.querySelector<HTMLButtonElement>('button[aria-label="Profile sections: Bio · Status"]');
+act(() => openDetails?.click());
+const dialog = document.body.querySelector('[role="dialog"]');
+const input = dialog?.querySelector<HTMLInputElement>('input[aria-label="Display name"]');
+expect(input).not.toBeNull();
+act(() => input?.focus());
+
+act(() => root.render(renderEditor('H')));
+
+expect(document.activeElement).toBe(input);
+expect(input?.value).toBe('H');
+});
+
+it('applies profile details and closes when Apply is clicked', () => {
+const onChange = vi.fn();
+act(() => {
+root.render(
+<DesktopProfileEditor
+value={DEFAULT_PROFILE_CUSTOMIZATION}
+onChange={onChange}
+disabled={false}
+displayName="HASOON"
+profileScopeLabel="NEXUS account"
+desktopDetailsControls={<div>Profile details controls</div>}
+/>,
+);
+});
+
+const openDetails = container.querySelector<HTMLButtonElement>('button[aria-label="Profile sections: Bio · Status"]');
+act(() => openDetails?.click());
+const dialog = document.body.querySelector('[role="dialog"]');
+const applyButton = Array.from(dialog?.querySelectorAll<HTMLButtonElement>('button') ?? []).find((button) =>
+button.textContent?.includes('Apply'),
+);
+expect(applyButton).toBeDefined();
+act(() => applyButton?.click());
+
+expect(onChange).toHaveBeenCalledTimes(1);
+expect(document.body.querySelector('[role="dialog"]')).toBeNull();
+});
 });
