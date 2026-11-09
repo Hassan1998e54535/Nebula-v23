@@ -2,7 +2,7 @@ modules = ["python-base-3.13", "nodejs-24", "rust-stable"]
 
 [[ports]]
 localPort = 5000
-externalPort = 8081
+externalPort = 5000
 
 [[ports]]
 localPort = 8082
@@ -38,7 +38,7 @@ externalPort = 8008
 
 [[ports]]
 localPort = 8773
-externalPort = 5000
+externalPort = 8081
 
 [[ports]]
 localPort = 8888
@@ -90,4 +90,4 @@ outputType = "webview"
 
 [nix]
 channel = "stable-25_05"
-packages = ["rustup", "awscli2", "nats-server", "valkey", "meilisearch", "cargo-watch", "vips", "libheif", "ffmpeg", "lcms2", "libwebp", "libyuv"]
+packages = ["rustup", "awscli2", "nats-server", "valkey", "meilisearch", "cargo-watch", "vips", "libheif", "ffmpeg", "lcms2", "libwebp", "libyuv", "erlang", "rebar3"]
