@@ -3,7 +3,7 @@
 [CmdletBinding()]
 param(
     [switch]$RebuildImages,
-    [string]$PublicOrigin = 'https://bikes-chrome-pack-coming.trycloudflare.com'
+    [string]$PublicOrigin = 'https://celebration-donation-promotion-decision.trycloudflare.com'
 )
 
 Set-StrictMode -Version Latest

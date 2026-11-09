@@ -16,9 +16,9 @@ describe('resolveInstanceLabel', () => {
 
 describe('resolvePinnedNexusInstance', () => {
 	test('creates a branded default card without exposing the URL as its label', () => {
-		expect(resolvePinnedNexusInstance('https://nexus-nn.duckdns.org/')).toEqual({
+expect(resolvePinnedNexusInstance('https://celebration-donation-promotion-decision.trycloudflare.com/')).toEqual({
 			instanceKey: 'nexus-private-default',
-			domain: 'nexus-nn.duckdns.org',
+domain: 'celebration-donation-promotion-decision.trycloudflare.com',
 			name: 'NEXUS',
 			lastUsed: 0,
 			pinnedDefault: true,
