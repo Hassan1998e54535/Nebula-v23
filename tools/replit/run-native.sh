@@ -82,11 +82,14 @@ start nats nats-server -a 127.0.0.1 -js -sd "$state/nats" -m 8222
 start search meilisearch --http-addr 127.0.0.1:7700 --db-path "$state/search" \
   --master-key nexus-dev-meilisearch --no-analytics
 
-# The Replit webview must route external port 5000 to the full NEXUS development
-# proxy (local port 8088), which dispatches assets and API calls to their services.
+# Replit's webview port 5000 currently reaches the app proxy, whose HTML needs
+# static assets from the full NEXUS development proxy on external port 3001.
+# The app origin stays on 5000 so CORS and passkey origin checks match the page;
+# API, media, gateway, and CDN endpoints use 3001.
 public_port=5000
+service_port=3001
 origin="https://$REPLIT_DEV_DOMAIN:$public_port"
-service_origin="$origin"
+service_origin="https://$REPLIT_DEV_DOMAIN:$service_port"
 # The managed local SeaweedFS instance uses these development-only credentials.
 # Keep the API/bootstrap client aligned with tools/dev/src/media_proxy.rs.
 export NEXUS_S3_ACCESS_KEY_ID=nexus
@@ -104,7 +107,7 @@ export NEXUS_PUBLIC_ORIGIN="$origin" NEXUS_PUBLIC_URL="$origin"
 export NEXUS_DEV_PUBLIC_SERVICE_ORIGIN="$service_origin"
 export NEXUS_API_ENDPOINT="$service_origin/api" NEXUS_API_CLIENT_ENDPOINT="$service_origin/api"
 export NEXUS_APP_ENDPOINT="$origin" NEXUS_MARKETING_ENDPOINT="$origin"
-export NEXUS_GATEWAY_ENDPOINT="wss://$REPLIT_DEV_DOMAIN:$public_port/gateway"
+export NEXUS_GATEWAY_ENDPOINT="wss://$REPLIT_DEV_DOMAIN:$service_port/gateway"
 export NEXUS_MEDIA_ENDPOINT="$service_origin/media" NEXUS_STATIC_CDN_ENDPOINT="$service_origin"
 export NEXUS_ADMIN_ENDPOINT="$service_origin/admin" NEXUS_S3_PUBLIC_ENDPOINT="$service_origin"
 export NEXUS_MEDIA_PROXY_PUBLIC_ENDPOINT="$service_origin/media"
