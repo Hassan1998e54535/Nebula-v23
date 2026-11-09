@@ -20,6 +20,7 @@ export type UserSettingsTabType =
 	| 'blocked_users'
 	| 'devices'
 	| 'appearance'
+	| 'themes'
 	| 'gaming'
 	| 'accessibility'
 	| 'chat_settings'

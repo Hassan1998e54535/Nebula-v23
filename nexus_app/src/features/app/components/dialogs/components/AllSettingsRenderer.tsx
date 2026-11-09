@@ -22,6 +22,7 @@ import MyProfileTab from '@app/features/user/components/modals/tabs/MyProfileTab
 import {NotificationsInlineContent} from '@app/features/user/components/modals/tabs/NotificationsTab';
 import {PlutoniumInlineTab} from '@app/features/user/components/modals/tabs/PlutoniumTab';
 import {PrivacyDashboardContent} from '@app/features/user/components/modals/tabs/privacy_safety_tab/PrivacySafetyTabInline';
+import {ThemesInlineContent} from '@app/features/user/components/modals/tabs/ThemesTab';
 import {VoiceVideoInlineContent} from '@app/features/user/components/modals/tabs/VoiceVideoTab';
 import {getSettingsTabComponent} from '@app/features/user/components/settings_utils/DesktopSettingsTabs';
 import type {SettingsTab} from '@app/features/user/components/settings_utils/SettingsConstants';
@@ -69,6 +70,7 @@ const INLINE_TAB_COMPONENTS: Partial<Record<UserSettingsTabType, React.Component
 	blocked_users: AccountSecurityInlineTab,
 	devices: AccountSecurityInlineTab,
 	appearance: AppearanceInlineContent,
+	themes: ThemesInlineContent,
 	accessibility: AccessibilityInlineContent,
 	chat_settings: ChatSettingsInlineContent,
 	voice_video: VoiceVideoInlineContent,

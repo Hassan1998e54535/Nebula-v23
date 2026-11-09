@@ -61,8 +61,8 @@ function normaliseGiftCodeRowForWrite(data: GiftCodeRow): GiftCodeRow {
 export class GiftCodeRepository {
 	async createGiftCode(data: GiftCodeRow): Promise<void> {
 		const normalisedData = normaliseGiftCodeRowForWrite(data);
-		await upsertOne(GiftCodes.insert(normalisedData));
 		const batch = new BatchBuilder();
+		batch.addPrepared(GiftCodes.insert(normalisedData));
 		batch.addPrepared(
 			GiftCodesByCreator.upsertAll({
 				created_by_user_id: normalisedData.created_by_user_id,
@@ -147,7 +147,8 @@ export class GiftCodeRepository {
 	}
 
 	async redeemGiftCode(code: string, userId: UserID): Promise<void> {
-		await upsertOne(
+		const batch = new BatchBuilder();
+		batch.addPrepared(
 			GiftCodes.patchByPk(
 				{code},
 				{
@@ -156,12 +157,13 @@ export class GiftCodeRepository {
 				},
 			),
 		);
-		await upsertOne(
+		batch.addPrepared(
 			GiftCodesByRedeemer.upsertAll({
 				redeemed_by_user_id: userId,
 				code,
 			}),
 		);
+		await batch.execute();
 	}
 
 	async unredeemGiftCode(code: string, userId: UserID): Promise<void> {

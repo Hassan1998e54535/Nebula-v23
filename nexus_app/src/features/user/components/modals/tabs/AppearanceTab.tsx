@@ -6,7 +6,6 @@ import {
 	ACTIVE_NOW_DESCRIPTOR,
 	APP_ZOOM_LEVEL_DESCRIPTOR,
 	FAVORITES_DESCRIPTOR,
-	THEME_DESCRIPTOR,
 } from '@app/features/i18n/utils/CommonMessageDescriptors';
 import MobileLayout from '@app/features/ui/state/MobileLayout';
 import {ActiveNowTabContent} from '@app/features/user/components/modals/tabs/appearance_tab/ActiveNowTab';
@@ -28,7 +27,6 @@ import {
 	canResetAppZoomLevel,
 } from '@app/features/user/components/modals/tabs/appearance_tab/ScalingTab';
 import {StreamerModeTabContent} from '@app/features/user/components/modals/tabs/appearance_tab/StreamerModeTab';
-import {ThemeTabContent} from '@app/features/user/components/modals/tabs/appearance_tab/theme/ThemeTabContent';
 import inlineStyles from '@app/features/user/components/modals/tabs/TabInline.module.css';
 import {shouldShowAppZoomLevel} from '@app/features/user/components/settings_utils/AppZoomLevelUtils';
 import {
@@ -51,10 +49,6 @@ const AppearanceSections = observer(() => {
 	const showHdrSettings = shouldShowHdrSettings();
 	return (
 		<>
-			<SettingsSection id="theme" title={i18n._(THEME_DESCRIPTOR)} data-flx="user.appearance-tab.theme">
-				<ThemeTabContent data-flx="user.appearance-tab.theme-tab-content" />
-			</SettingsSection>
-
 			{showHdrSettings ? (
 				<SettingsSection id="hdr" title={i18n._(HIGH_DYNAMIC_RANGE_DESCRIPTOR)} data-flx="user.appearance-tab.hdr">
 					<HdrTabContent data-flx="user.appearance-tab.hdr-tab-content" />

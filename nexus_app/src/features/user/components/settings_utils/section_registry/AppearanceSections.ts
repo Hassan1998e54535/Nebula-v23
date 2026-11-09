@@ -436,7 +436,7 @@ const WALLPAPER_DESCRIPTOR = msg({
 export const appearanceSections = [
 	{
 		id: 'theme',
-		tabType: 'appearance',
+		tabType: 'themes',
 		label: THEME_DESCRIPTOR,
 		description: CHOOSE_A_BASE_APPEARANCE_MANAGE_QUICK_CSS_ORGANIZE_DESCRIPTOR,
 		keywords: [

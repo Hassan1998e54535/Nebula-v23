@@ -24,6 +24,7 @@ import {
 	SettingsModalSidebarSubItems,
 	SettingsTreeProvider,
 } from '@app/features/app/components/dialogs/shared/SettingsModalLayout';
+import {openClaimAccountModal} from '@app/features/auth/components/modals/ClaimAccountModal';
 import {
 	BACK_TO_SETTINGS_DESCRIPTOR,
 	SEARCH_SETTINGS_PLACEHOLDER_DESCRIPTOR,
@@ -89,7 +90,7 @@ import {
 } from '@app/features/user/utils/SettingsModalLayoutUtils';
 import type {I18n} from '@lingui/core';
 import {Trans, useLingui} from '@lingui/react/macro';
-import {ArrowLeftIcon, ArrowRightIcon, CaretRightIcon, SignOutIcon} from '@phosphor-icons/react';
+import {ArrowLeftIcon, ArrowRightIcon, CaretRightIcon, PencilIcon, SignOutIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {AnimatePresence, motion} from 'framer-motion';
 import {observer} from 'mobx-react-lite';
@@ -464,13 +465,43 @@ export const DesktopSettingsView: React.FC<DesktopSettingsViewProps> = observer(
 						userSettingsStyles.userProfile,
 						selectedTab === PROFILE_SETTINGS_TAB && userSettingsStyles.userProfileSelected,
 					)}
-					onClick={() => handleTabSelect(PROFILE_SETTINGS_TAB)}
+					onClick={() => {
+						if (currentUser?.isClaimed() ?? true) {
+							handleTabSelect(PROFILE_SETTINGS_TAB);
+						} else {
+							openClaimAccountModal({force: true});
+						}
+					}}
 					data-flx="app.desktop-settings-view.user-profile.profile-tab-select"
 				>
 					<div className={userSettingsStyles.userProfileInfo} data-flx="app.desktop-settings-view.div--3">
 						<StatusAwareAvatar size={32} user={currentUser!} data-flx="app.desktop-settings-view.status-aware-avatar" />
-						<div className={userSettingsStyles.userProfileName} data-flx="app.desktop-settings-view.div--4">
-							{currentUser?.displayName}
+						<div className={userSettingsStyles.userProfileText} data-flx="app.desktop-settings-view.user-profile-text">
+							<div className={userSettingsStyles.userProfileName} data-flx="app.desktop-settings-view.div--4">
+								{currentUser?.displayName}
+							</div>
+							<div
+								className={userSettingsStyles.userProfileHint}
+								data-flx="app.desktop-settings-view.user-profile-hint"
+							>
+								{(currentUser?.isClaimed() ?? true) ? (
+									<>
+										<PencilIcon
+											size={remFromPx(12)}
+											weight="bold"
+											className={userSettingsStyles.userProfileHintIcon}
+											data-flx="app.desktop-settings-view.user-profile-hint-icon"
+										/>
+										<span className={userSettingsStyles.userProfileHintText}>
+											<Trans>Edit your profile</Trans>
+										</span>
+									</>
+								) : (
+									<span className={userSettingsStyles.userProfileHintText}>
+										<Trans>Claim your account to edit your profile</Trans>
+									</span>
+								)}
+							</div>
 						</div>
 					</div>
 				</button>

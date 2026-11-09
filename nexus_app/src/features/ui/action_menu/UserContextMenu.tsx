@@ -41,6 +41,7 @@ import {
 	UnblockUserMenuItem,
 } from '@app/features/ui/action_menu/items/RelationshipMenuItems';
 import {ReportMessageMenuItem} from '@app/features/ui/action_menu/items/ReportMessageMenuItem';
+import {ReportUserProfileMenuItem} from '@app/features/ui/action_menu/items/ReportUserProfileMenuItem';
 import {shouldShowSpammerOverrideMenuItems} from '@app/features/ui/action_menu/items/SpammerOverrideMenuItems';
 import {StaffDeveloperUserControlsMenuItem} from '@app/features/ui/action_menu/items/StaffDeveloperUserControlsMenuItem';
 import {shouldShowStaffUserControlsMenuItems} from '@app/features/ui/action_menu/items/StaffUserControlsMenuItems';
@@ -76,11 +77,10 @@ import PopoutWindowManager, {isVoicePopoutSupported} from '@app/features/voice/s
 import VoiceSettings from '@app/features/voice/state/VoiceSettings';
 import {hasActiveDirectCallWithUser, isActiveCallParticipant} from '@app/features/voice/utils/PrivateCallMenuUtils';
 import {buildVoiceParticipantIdentity} from '@app/features/voice/utils/VoiceParticipantIdentity';
-
-import {Permissions} from '@nexus/constants/src/ChannelConstants';
-import {RelationshipTypes} from '@nexus/constants/src/UserConstants';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
+import {Permissions} from '@nexus/constants/src/ChannelConstants';
+import {RelationshipTypes} from '@nexus/constants/src/UserConstants';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
 import {useCallback} from 'react';
@@ -268,6 +268,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = observer(
 							data-flx="ui.action-menu.user-context-menu.render-report-actions.report-message-menu-item"
 						/>
 					)}
+					<ReportUserProfileMenuItem user={user} guildId={guildId} onClose={onClose} />
 					{relationshipType === RelationshipTypes.BLOCKED ? (
 						<UnblockUserMenuItem
 							user={user}

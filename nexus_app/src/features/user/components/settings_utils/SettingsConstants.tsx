@@ -104,6 +104,10 @@ const ADVANCED_SETTINGS_DESCRIPTOR = msg({
 	message: 'Advanced',
 	comment: 'User settings tab for power-user and experimental application preferences.',
 });
+const THEMES_DESCRIPTOR = msg({
+	message: 'Themes',
+	comment: 'User settings tab for appearance themes and theme customization.',
+});
 const DESIGN_SYSTEM_DESCRIPTOR = msg({
 	message: 'Design system',
 	comment: 'Developer settings tab showing UI component examples.',
@@ -206,6 +210,12 @@ const ALL_TABS_DESCRIPTORS: Array<SettingsTabDescriptor> = [
 		category: 'app_settings',
 		label: LOOK_AND_FEEL_DESCRIPTOR,
 		icon: PaintBrushIcon,
+	},
+	{
+		type: 'themes',
+		category: 'app_settings',
+		label: THEMES_DESCRIPTOR,
+		icon: PaletteIcon,
 	},
 	{
 		type: 'gaming',
