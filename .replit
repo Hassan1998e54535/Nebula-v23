@@ -1,16 +1,12 @@
 modules = ["python-base-3.13", "nodejs-24", "rust-stable"]
 
 [[ports]]
-localPort = 5000
-externalPort = 8081
-
-[[ports]]
 localPort = 8082
 externalPort = 8080
 
 [[ports]]
 localPort = 8088
-externalPort = 3001
+externalPort = 5000
 
 [[ports]]
 localPort = 8110
@@ -38,7 +34,7 @@ externalPort = 8008
 
 [[ports]]
 localPort = 8773
-externalPort = 5000
+externalPort = 8081
 
 [[ports]]
 localPort = 8888
