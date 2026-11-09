@@ -35,6 +35,7 @@ export NEXUS_KV_URL=redis://127.0.0.1:6379
 export NEXUS_NATS_URL=nats://127.0.0.1:4222
 export NEXUS_NATS_JETSTREAM_URL=nats://127.0.0.1:4222
 export NEXUS_SVC_NATS_URL=nats://127.0.0.1:4222
+export NEXUS_SEARCH_ENGINE=meilisearch
 export NEXUS_SEARCH_URL=http://127.0.0.1:7700
 
 state="$ROOT/.nexus/replit"

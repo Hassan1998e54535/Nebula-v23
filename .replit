@@ -1,4 +1,4 @@
-modules = ["python-base-3.13", "nodejs-24"]
+modules = ["python-base-3.13", "nodejs-24", "rust-stable"]
 
 [[ports]]
 localPort = 5000
@@ -63,3 +63,31 @@ externalPort = 80
 [[ports]]
 localPort = 19340
 externalPort = 5173
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash tools/replit/run-native.sh"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[nix]
+channel = "stable-25_05"
+packages = ["rustup", "awscli2", "nats-server", "valkey", "meilisearch"]
