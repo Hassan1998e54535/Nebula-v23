@@ -2,7 +2,11 @@ import {isRecord} from '@nexus/record_utils/src/RecordGuards';
 // SPDX-License-Identifier: Nebula
 
 import {BUILD_CHANNEL} from '@electron/common/BuildChannel';
-import {DESKTOP_PREBOOT_THEME_CHANNEL, LOCAL_DEVELOPMENT_INSTANCE_URL} from '@electron/common/Constants';
+import {
+	DESKTOP_PREBOOT_THEME_CHANNEL,
+	LOCAL_DEVELOPMENT_INSTANCE_URL,
+	NEXUS_PRIVATE_INSTANCE_URL,
+} from '@electron/common/Constants';
 import {IS_OFFLINE_BUILD} from '@electron/common/OfflineBuild';
 import {readExactPlainRecord} from '@electron/common/PlainRecord';
 import type {
@@ -397,6 +401,7 @@ const api: ElectronAPI = {
 	platform: process.platform,
 	buildChannel: BUILD_CHANNEL,
 	localDevelopmentInstanceUrl: LOCAL_DEVELOPMENT_INSTANCE_URL,
+	nexusPrivateInstanceUrl: NEXUS_PRIVATE_INSTANCE_URL,
 	capabilities: readDesktopCapabilityManifest(),
 	offlineBuild: IS_OFFLINE_BUILD,
 	...createDesktopStoragePreloadAPI(ipcRenderer),

@@ -13,6 +13,7 @@ const MAX_KNOWN_INSTANCE_ROWS = 5;
 const HTTPS_DISPLAY_PREFIX = 'https://';
 
 const LOCAL_DEVELOPMENT_INSTANCE_KEY = 'local-development';
+const NEXUS_PRIVATE_INSTANCE_KEY = 'nexus-private-default';
 
 export interface InstanceInfo {
 	instanceKey: string;
@@ -20,6 +21,7 @@ export interface InstanceInfo {
 	name: string | null;
 	lastUsed: number;
 	discoveredOnLan?: boolean;
+	pinnedDefault?: boolean;
 }
 
 export function normalizeInstanceDomain(domain: string): string | null {
@@ -97,6 +99,26 @@ export function resolveLocalDevelopmentInstance(knownInstances: ReadonlyArray<In
 		return null;
 	}
 	return {instanceKey: LOCAL_DEVELOPMENT_INSTANCE_KEY, domain, name: new URL(origin).host, lastUsed: 0};
+}
+
+export function resolvePinnedNexusInstance(
+	url: string | null | undefined = globalThis.window?.electron?.nexusPrivateInstanceUrl,
+): InstanceInfo | null {
+	if (url == null) {
+		return null;
+	}
+	const domain = normalizeInstanceDomain(url);
+	const origin = instanceDomainOrigin(url);
+	if (domain == null || origin == null) {
+		return null;
+	}
+	return {
+		instanceKey: NEXUS_PRIVATE_INSTANCE_KEY,
+		domain,
+		name: 'NEXUS',
+		lastUsed: 0,
+		pinnedDefault: true,
+	};
 }
 
 function getDesktopKnownInstanceAPI(): DesktopKnownInstanceStorageAPI | null {

@@ -229,6 +229,7 @@ export interface ElectronAPI {
 	platform: 'darwin' | 'win32' | 'linux' | string;
 	buildChannel: 'stable' | 'canary' | 'development';
 	localDevelopmentInstanceUrl?: string | null;
+	nexusPrivateInstanceUrl?: string | null;
 	offlineBuild?: boolean;
 	openExternal(url: string): Promise<void>;
 	downloadFile(url: string, suggestedName: string, sha256?: string | null): Promise<DownloadResult>;

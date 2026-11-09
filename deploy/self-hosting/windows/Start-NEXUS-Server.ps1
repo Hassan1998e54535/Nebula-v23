@@ -2,7 +2,8 @@
 
 [CmdletBinding()]
 param(
-    [switch]$RebuildImages
+    [switch]$RebuildImages,
+    [string]$PublicOrigin = 'https://bikes-chrome-pack-coming.trycloudflare.com'
 )
 
 Set-StrictMode -Version Latest
@@ -15,6 +16,20 @@ $envPath = Join-Path $serverDataDir '.env'
 $composeProjectName = 'nexus-host-local'
 $localOrigin = 'http://localhost:8081'
 $serverOrigin = $localOrigin
+$publicOriginUri = $null
+try {
+    $publicOriginUri = [System.Uri]::new($PublicOrigin, [System.UriKind]::Absolute)
+} catch {
+    throw 'PublicOrigin must be an absolute HTTPS origin, such as https://nexus.example.com.'
+}
+if ($publicOriginUri.Scheme -ne 'https' -or
+    $publicOriginUri.UserInfo -ne '' -or
+    $publicOriginUri.AbsolutePath -ne '/' -or
+    $publicOriginUri.Query -ne '' -or
+    $publicOriginUri.Fragment -ne '') {
+    throw 'PublicOrigin must be an HTTPS origin with no path, query, or credentials.'
+}
+$publicOrigin = $publicOriginUri.GetLeftPart([System.UriPartial]::Authority)
 $shareWithLan = $false
 $firewallGroup = 'NEXUS Local Server'
 $discoveryPidPath = Join-Path $serverDataDir 'lan-discovery.pid'
@@ -67,7 +82,7 @@ function Write-LocalEnvironment {
         NEXUS_DOMAIN = 'localhost'
         NEXUS_PUBLIC_SCHEME = 'http'
         NEXUS_PUBLIC_PORT = '8081'
-        NEXUS_PUBLIC_ORIGIN = $localOrigin
+        NEXUS_PUBLIC_ORIGIN = $publicOrigin
         NEXUS_HTTP_PORT = '127.0.0.1:8081'
         NEXUS_REGISTRY = 'local'
         NEXUS_REGISTRY_OWNER = 'hassan1998e54535'
@@ -301,7 +316,7 @@ try {
             NEXUS_DOMAIN = $lanAddress
             NEXUS_PUBLIC_SCHEME = 'http'
             NEXUS_PUBLIC_PORT = '8081'
-            NEXUS_PUBLIC_ORIGIN = $serverOrigin
+            NEXUS_PUBLIC_ORIGIN = $publicOrigin
             NEXUS_HTTP_PORT = "${lanAddress}:8081"
             NEXUS_LIVEKIT_BIND_IP = $lanAddress
             NEXUS_LIVEKIT_TCP_PORT = '17881'
@@ -318,7 +333,7 @@ try {
             NEXUS_DOMAIN = 'localhost'
             NEXUS_PUBLIC_SCHEME = 'http'
             NEXUS_PUBLIC_PORT = '8081'
-            NEXUS_PUBLIC_ORIGIN = $localOrigin
+            NEXUS_PUBLIC_ORIGIN = $publicOrigin
             NEXUS_HTTP_PORT = '127.0.0.1:8081'
             NEXUS_LIVEKIT_BIND_IP = '127.0.0.1'
             NEXUS_LIVEKIT_TCP_PORT = '17881'

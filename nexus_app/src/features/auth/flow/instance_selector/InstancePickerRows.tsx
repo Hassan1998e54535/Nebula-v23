@@ -38,7 +38,7 @@ interface InstancePickerRowsProps {
 	readonly disabled: boolean;
 	readonly discoveryStatus: InstanceDiscoveryStatus;
 	readonly instances: ReadonlyArray<InstanceInfo>;
-	readonly pinnedInstance: InstanceInfo | null;
+	readonly pinnedInstances: ReadonlyArray<InstanceInfo>;
 	readonly onAddInstance: () => void;
 	readonly onRemoveInstance: (instance: InstanceInfo) => void;
 	readonly onSelectInstance: (instance: InstanceInfo) => void;
@@ -48,7 +48,7 @@ export function InstancePickerRows({
 	disabled,
 	discoveryStatus,
 	instances,
-	pinnedInstance,
+	pinnedInstances,
 	onAddInstance,
 	onRemoveInstance,
 	onSelectInstance,
@@ -81,7 +81,9 @@ export function InstancePickerRows({
 	const renderKnownInstance = (instance: InstanceInfo, removable: boolean): ReactNode => {
 		const snapshot = findInstanceSnapshot(instance.instanceKey);
 		const storedName = instance.name !== instance.domain ? instance.name : null;
-		const name = resolveInstanceLabel(storedName ?? resolveInstanceProductName(snapshot), instance.domain);
+		const name = instance.pinnedDefault
+			? (instance.name ?? 'NEXUS')
+			: resolveInstanceLabel(storedName ?? resolveInstanceProductName(snapshot), instance.domain);
 		const iconUrl = resolveInstanceBrandIconUrl(snapshot);
 		return (
 			<div
@@ -128,7 +130,7 @@ export function InstancePickerRows({
 							>
 								{name}
 							</span>
-							{!instance.discoveredOnLan && (
+							{!instance.discoveredOnLan && !instance.pinnedDefault && (
 								<span
 									className={styles.instanceDomain}
 									data-flx="auth.flow.instance-selector.instance-picker-rows.render-known-instance.instance-domain"
@@ -158,7 +160,7 @@ export function InstancePickerRows({
 				role="list"
 				data-flx="auth.flow.instance-selector.instance-picker-rows.instance-group"
 			>
-				{pinnedInstance != null && renderKnownInstance(pinnedInstance, false)}
+				{pinnedInstances.map((instance) => renderKnownInstance(instance, false))}
 				{instances
 					.filter((instance) => !isOfficialInstanceInfo(instance))
 					.map((instance) => renderKnownInstance(instance, !instance.discoveredOnLan))}

@@ -13,6 +13,7 @@ import {
 	normalizeInstanceName,
 	resolveInstanceLabel,
 	resolveLocalDevelopmentInstance,
+	resolvePinnedNexusInstance,
 	saveKnownInstance,
 	shouldSaveKnownInstance,
 } from '@app/features/auth/flow/instance_selector/InstanceDirectoryStorage';
@@ -441,6 +442,10 @@ export const InstanceSelector = observer(function InstanceSelector({
 	const statusMessage = progressMessage ?? discoveryError;
 	const canSubmit = value.trim().length > 0 && value.length <= NETWORK_ENDPOINT_INPUT_MAX_BYTES && !disabled;
 	const placeholder = i18n._(ENTER_INSTANCE_URL_E_G_DESCRIPTOR, {exampleInstanceDomain: EXAMPLE_DOMAIN});
+	const pinnedInstances = [
+		resolvePinnedNexusInstance(),
+		resolveLocalDevelopmentInstance(knownInstances),
+	].filter((instance): instance is InstanceInfo => instance != null);
 	const renderStatusActions = (): ReactNode => {
 		if (discoveryStatus === InstanceDiscoveryStatus.IDLE) {
 			return null;
@@ -489,11 +494,16 @@ export const InstanceSelector = observer(function InstanceSelector({
 					discoveryStatus={discoveryStatus}
 					instances={[
 						...lanInstances.filter(
-							(lanInstance) => !knownInstances.some((knownInstance) => knownInstance.domain === lanInstance.domain),
+							(lanInstance) =>
+								!knownInstances.some((knownInstance) => knownInstance.domain === lanInstance.domain) &&
+								!pinnedInstances.some((pinnedInstance) => pinnedInstance.domain === lanInstance.domain),
 						),
-						...knownInstances,
+						...knownInstances.filter(
+							(knownInstance) =>
+								!pinnedInstances.some((pinnedInstance) => pinnedInstance.domain === knownInstance.domain),
+						),
 					]}
-					pinnedInstance={resolveLocalDevelopmentInstance(knownInstances)}
+					pinnedInstances={pinnedInstances}
 					onAddInstance={handleAddInstance}
 					onRemoveInstance={handleRemoveKnownInstance}
 					onSelectInstance={handleSelectKnown}

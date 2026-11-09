@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: Nebula
 
-import {resolveInstanceLabel} from '@app/features/auth/flow/instance_selector/InstanceDirectoryStorage';
+import {
+	resolveInstanceLabel,
+	resolvePinnedNexusInstance,
+} from '@app/features/auth/flow/instance_selector/InstanceDirectoryStorage';
 import {isOfficialInstanceHost} from '@nexus/instance_bootstrap/src/OfficialInstance';
 import {describe, expect, test} from 'vitest';
 
@@ -8,6 +11,22 @@ describe('resolveInstanceLabel', () => {
 	test('a self-hosted instance that reports the official product name is labelled by its host', () => {
 		expect(resolveInstanceLabel('NEXUS', 'http://localhost:48090')).toBe('localhost:48090');
 		expect(resolveInstanceLabel(' nexus ', 'chat.example.com/nexus')).toBe('chat.example.com');
+	});
+});
+
+describe('resolvePinnedNexusInstance', () => {
+	test('creates a branded default card without exposing the URL as its label', () => {
+		expect(resolvePinnedNexusInstance('https://nexus.example.test/')).toEqual({
+			instanceKey: 'nexus-private-default',
+			domain: 'nexus.example.test',
+			name: 'NEXUS',
+			lastUsed: 0,
+			pinnedDefault: true,
+		});
+	});
+
+	test('rejects an invalid configured endpoint', () => {
+		expect(resolvePinnedNexusInstance('not a URL')).toBeNull();
 	});
 });
 
