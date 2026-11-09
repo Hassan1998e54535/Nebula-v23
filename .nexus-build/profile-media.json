@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "purpose": "temporary rendering build inputs, not a backend address",
-  "assetOrigin": "https://6dbde50f-e8cf-421d-81c2-a8c42304db17-00-16iddqo2emwoi.pike.replit.dev",
+  "assetOrigin": "https://6dbde50f-e8cf-421d-81c2-a8c42304db17-00-16iddqo2emwoi.pike.replit.dev:5000",
   "files": [
     {
       "path": "avatar-decorations/a_363732b221f45aa7e81b3be945c6e072.png",
