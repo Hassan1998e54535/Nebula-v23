@@ -31,6 +31,7 @@ if ($publicOriginUri.Scheme -ne 'https' -or
 }
 $publicOrigin = $publicOriginUri.GetLeftPart([System.UriPartial]::Authority)
 $shareWithLan = $false
+$shareVoiceWithInternet = $false
 $firewallGroup = 'NEXUS Local Server'
 $discoveryPidPath = Join-Path $serverDataDir 'lan-discovery.pid'
 
@@ -236,6 +237,25 @@ function Add-LanFirewallRules([string]$LanAddress) {
     }
 }
 
+function Add-RemoteVoiceFirewallRules([string]$LanAddress) {
+    $rules = @(
+        @{Name = 'NEXUS remote voice TCP'; Protocol = 'TCP'; Port = '17881'}
+        @{Name = 'NEXUS remote voice UDP'; Protocol = 'UDP'; Port = '17882'}
+    )
+    foreach ($rule in $rules) {
+        New-NetFirewallRule `
+            -DisplayName $rule.Name `
+            -Group $firewallGroup `
+            -Direction Inbound `
+            -Action Allow `
+            -Protocol $rule.Protocol `
+            -LocalAddress $LanAddress `
+            -LocalPort $rule.Port `
+            -RemoteAddress Any `
+            -Profile Private | Out-Null
+    }
+}
+
 function Start-LanDiscoveryResponder([string]$LanAddress) {
     Stop-LanDiscoveryResponder
     $listenerPath = Join-Path $PSScriptRoot 'NEXUS-LanDiscovery.ps1'
@@ -301,16 +321,23 @@ try {
         Write-Warning 'LAN testing uses unencrypted HTTP. Other devices on this trusted private network could observe traffic. Never enable it on public or guest Wi-Fi.'
         $lanAnswer = Read-Host 'Allow NEXUS devices on this private Wi-Fi network to connect? [y/N]'
         $shareWithLan = $lanAnswer -match '^(?i:y|yes)$'
+
+        Write-Warning 'Remote voice requires router port forwarding and exposes only the LiveKit voice ports to internet traffic. Do not continue on public or guest Wi-Fi.'
+        $remoteVoiceAnswer = Read-Host 'Allow friends outside this network to connect to NEXUS voice? [y/N]'
+        $shareVoiceWithInternet = $remoteVoiceAnswer -match '^(?i:y|yes)$'
     } else {
         Write-Host 'No private IPv4 network was found; NEXUS will remain local to this computer.'
     }
 
-    if ($shareWithLan) {
+    if ($shareWithLan -or $shareVoiceWithInternet) {
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
         $principal = [System.Security.Principal.WindowsPrincipal]::new($identity)
         if (-not $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
-            throw 'LAN sharing needs administrator permission to add private-network firewall rules. Reopen Start-NEXUS-Server.cmd as Administrator.'
+            throw 'Network sharing needs administrator permission to add Windows Firewall rules. Reopen Start-NEXUS-Server.cmd as Administrator.'
         }
+    }
+
+    if ($shareWithLan) {
         $serverOrigin = "http://${lanAddress}:8081"
         Set-LocalEnvironmentValues @{
             NEXUS_DOMAIN = $lanAddress
@@ -321,27 +348,32 @@ try {
             NEXUS_LIVEKIT_BIND_IP = $lanAddress
             NEXUS_LIVEKIT_TCP_PORT = '17881'
             NEXUS_LIVEKIT_UDP_PORT = '17882'
-            NEXUS_LIVEKIT_USE_EXTERNAL_IP = 'false'
-            NEXUS_LIVEKIT_NODE_IP = $lanAddress
+            NEXUS_LIVEKIT_USE_EXTERNAL_IP = [string]$shareVoiceWithInternet
+            NEXUS_LIVEKIT_NODE_IP = $(if ($shareVoiceWithInternet) { '' } else { $lanAddress })
         }
         Add-LanFirewallRules $lanAddress
         Write-Host 'LAN sharing is limited to the current private subnet and Windows Private firewall profile.'
         Write-Warning 'Use this only on a trusted home network. This local test uses HTTP and is not for public Wi-Fi or internet exposure.'
     } else {
         $serverOrigin = $localOrigin
+        $voiceBindAddress = if ($shareVoiceWithInternet) { $lanAddress } else { '127.0.0.1' }
         Set-LocalEnvironmentValues @{
             NEXUS_DOMAIN = 'localhost'
             NEXUS_PUBLIC_SCHEME = 'http'
             NEXUS_PUBLIC_PORT = '8081'
             NEXUS_PUBLIC_ORIGIN = $publicOrigin
             NEXUS_HTTP_PORT = '127.0.0.1:8081'
-            NEXUS_LIVEKIT_BIND_IP = '127.0.0.1'
+            NEXUS_LIVEKIT_BIND_IP = $voiceBindAddress
             NEXUS_LIVEKIT_TCP_PORT = '17881'
             NEXUS_LIVEKIT_UDP_PORT = '17882'
             NEXUS_LIVEKIT_USE_EXTERNAL_IP = 'true'
             NEXUS_LIVEKIT_NODE_IP = ''
         }
         Remove-LanFirewallRules
+    }
+
+    if ($shareVoiceWithInternet) {
+        Add-RemoteVoiceFirewallRules $lanAddress
     }
 
     $placeholders = @(
@@ -389,14 +421,21 @@ try {
     Write-Host "NEXUS server address: $serverOrigin"
     if ($shareWithLan) {
         Write-Host 'NEXUS desktop clients on this same private network can discover the server as a named instance.'
-        Write-Host 'This does not make the server reachable over the internet.'
-    } else {
-        Write-Host 'LAN sharing was not enabled; this address works only on this computer.'
+    }
+    if ($shareVoiceWithInternet) {
+        Write-Warning 'The Windows firewall now permits inbound voice traffic on TCP 17881 and UDP 17882 from any internet address.'
+        Write-Host "In your router, forward TCP 17881 and UDP 17882 to this PC at $lanAddress, keeping the external and internal port numbers the same."
+        Write-Host 'Reserve this PC’s LAN address in the router, or the port-forward target may change.'
+        Write-Host 'The router must have a public IPv4 address; carrier-grade NAT or a second upstream router can prevent port forwarding.'
+        Write-Host 'This does not forward the NEXUS web/API port. The current HTTPS tunnel handles that separately and may change when restarted.'
+        Write-Host 'If voice still stays on Connecting, the friend’s network may block UDP; the LiveKit TCP path uses TCP 17881.'
+    } elseif (-not $shareWithLan) {
+        Write-Host 'LAN and remote sharing are off; this address works only on this computer.'
     }
     Write-Host 'To stop without deleting accounts or files, run Stop-NEXUS-Server.cmd.'
 } catch {
     Stop-LanDiscoveryResponder
-    if ($shareWithLan) {
+    if ($shareWithLan -or $shareVoiceWithInternet) {
         Remove-LanFirewallRules
     }
     Write-Error $_
