@@ -583,10 +583,12 @@
 }
 
 .dialogHeader {
+	position: relative;
+	direction: ltr;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 1rem 1.4rem;
+	padding: 1rem 4rem 1rem 1.4rem;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 	flex-shrink: 0;
 }
@@ -610,10 +612,15 @@
 }
 
 .close {
+	position: absolute;
+	top: 50%;
+	right: 1.4rem;
 	display: grid;
+	flex: 0 0 2rem;
 	place-items: center;
 	width: 2rem;
 	height: 2rem;
+	transform: translateY(-50%);
 	border-radius: 50%;
 	border: 1px solid rgba(255, 255, 255, 0.12);
 	background: rgba(255, 255, 255, 0.05);
@@ -2173,13 +2180,20 @@ isolation: isolate;
 	}
 	.dialog {
 		width: min(40rem, 100%);
+		height: min(53rem, 94dvh);
 		max-height: 94dvh;
 		min-height: 0;
+		overflow: hidden;
+	}
+	.dialogContentRow {
 		grid-template-columns: minmax(0, 1fr);
-		overflow: auto;
+		grid-template-rows: minmax(23rem, 1fr) auto;
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 	.dialogPreview {
 		min-height: 17rem;
+		border-left: 0;
 		border-top: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
 	}
 	.dialogEditor {
@@ -2189,6 +2203,24 @@ isolation: isolate;
 }
 
 @media (max-width: 480px) {
+	.backdrop {
+		padding: 0.4rem;
+	}
+	.dialog {
+		width: 100%;
+		height: min(54rem, 96dvh);
+		max-height: 96dvh;
+		border-radius: 0.8rem;
+	}
+	.dialogHeader {
+		padding: 0.85rem 3.4rem 0.85rem 0.9rem;
+	}
+	.close {
+		right: 0.9rem;
+	}
+	.dialogContentRow {
+		grid-template-rows: minmax(20rem, 1fr) auto;
+	}
 	.twoColumnGrid {
 		grid-template-columns: minmax(0, 1fr);
 	}
@@ -2209,6 +2241,14 @@ isolation: isolate;
 	}
 	.dialogBody {
 		padding: .8rem;
+	}
+	.dialogFooter {
+		flex-wrap: wrap;
+		gap: 0.65rem;
+		padding: 0.7rem 0.9rem;
+	}
+	.dialogFooterNote {
+		flex: 1 1 100%;
 	}
 }
 

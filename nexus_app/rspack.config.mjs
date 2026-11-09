@@ -28,6 +28,9 @@ const SRC_DIR = path.join(ROOT_DIR, 'src');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const PKGS_DIR = path.join(ROOT_DIR, 'pkgs');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'assets');
+const RIVE_RUNTIME_WASM = require.resolve('@rive-app/canvas/rive.wasm', {
+	paths: [dirname(require.resolve('@rive-app/react-canvas'))],
+});
 const BROWSER_ASSERT_STRICT_MODULE = path.join(SRC_DIR, 'features', 'platform', 'utils', 'BrowserAssertStrict.ts');
 const DEFAULT_DEV_SERVER_PORT = 3000;
 const BOOT_PRELOAD_CHUNK_GROUPS = ['app-bootstrap', 'boot-app'];
@@ -683,6 +686,14 @@ devtool: isDevelopment ? (process.env.REPLIT_DEV_DOMAIN ? false : 'cheap-module-
 									from: path.join(MONOREPO_ROOT, 'generated-artifacts', 'profile-media'),
 									to: path.join(DIST_DIR, 'assets', 'profile-media'),
 									noErrorOnMissing: true,
+								},
+								{
+									// This runtime is an npm dependency, not a profile-media input.
+									// Copy it from the locked Rive package so every installed client can
+									// render Rive effects even when the temporary media cache is absent.
+									from: RIVE_RUNTIME_WASM,
+									to: path.join(DIST_DIR, 'assets', 'profile-media', 'runtime', 'rive.wasm'),
+									force: true,
 								},
 							]
 						: []),

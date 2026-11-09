@@ -20,6 +20,7 @@ import {
 import {DeletionReasons} from '@nexus/constants/src/Core';
 import {NON_SELF_HOSTED_RESERVED_DISCRIMINATORS} from '@nexus/constants/src/DiscriminatorConstants';
 import {UserFlags} from '@nexus/constants/src/UserConstants';
+import {DEFAULT_PROFILE_CUSTOMIZATION} from '@nexus/schema/src/domains/user/ProfileCustomizationSchemas';
 import {KVCacheProvider} from '@pkgs/cache/src/providers/KVCacheProvider';
 import {MockKVProvider} from '@pkgs/kv_client/src/testing/MockKVProvider';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
@@ -142,6 +143,25 @@ describe('profile visibility', () => {
 			accent_color: 99,
 		});
 		expect(own.flags & PROFILE_HIDDEN_BIT).toBe(0);
+	});
+
+	it('sends saved profile effects to visible profiles without exposing them on hidden profiles', () => {
+		const customization = {
+			...DEFAULT_PROFILE_CUSTOMIZATION,
+			appearance: {
+				...DEFAULT_PROFILE_CUSTOMIZATION.appearance,
+				nameStyleEnabled: true,
+				nameEffect: 'orbit',
+				profileBackgroundPrimary: '#000000',
+			},
+		};
+		const visible = user({profile_appearance: JSON.stringify(customization)});
+		expect(mapUserToPartialResponse(visible).profile_appearance).toEqual(customization);
+		expect(mapUserToProfileResponse(visible)).toMatchObject({profile_appearance: customization});
+
+		const hidden = user({flags: UserFlags.PROFILE_HIDDEN, profile_appearance: JSON.stringify(customization)});
+		expect(mapUserToPartialResponse(hidden)).not.toHaveProperty('profile_appearance');
+		expect(mapUserToProfileResponse(hidden)).not.toHaveProperty('profile_appearance');
 	});
 
 	it('gives each account one stable pseudonym in the generated username format', () => {
