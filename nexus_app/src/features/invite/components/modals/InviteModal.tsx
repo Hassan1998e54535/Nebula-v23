@@ -43,12 +43,13 @@ import {Switch} from '@app/features/ui/components/form/FormSwitch';
 import {Spinner} from '@app/features/ui/components/Spinner';
 import FocusRing from '@app/features/ui/focus_ring/FocusRing';
 import {SteppedCarousel} from '@app/features/ui/stepped_carousel/SteppedCarousel';
+import {APP_PROTOCOL_PREFIX} from '@app/features/ui/utils/AppProtocol';
 import {useCopyLinkHandler} from '@app/lib/copy-link';
+import {msg} from '@lingui/core/macro';
+import {Trans, useLingui} from '@lingui/react/macro';
 import {GuildFeatures} from '@nexus/constants/src/GuildConstants';
 import {MAX_INVITE_AGE_SECONDS, MAX_INVITE_USES} from '@nexus/constants/src/LimitConstants';
 import type {Invite} from '@nexus/schema/src/domains/invite/InviteSchemas';
-import {msg} from '@lingui/core/macro';
-import {Trans, useLingui} from '@lingui/react/macro';
 import {MagnifyingGlassIcon, WarningCircleIcon, WarningIcon} from '@phosphor-icons/react';
 import clsx from 'clsx';
 import {observer} from 'mobx-react-lite';
@@ -275,11 +276,17 @@ const InviteModalContent = observer(function InviteModalContent({
 	}, [loadInvite, isUsingVanityUrl]);
 	const title = i18n._(INVITE_FRIENDS_TO_DESCRIPTOR, {guildName: guild.name});
 	const invitesDisabled = guild.features.has(GuildFeatures.INVITES_DISABLED);
-	const inviteUrl = isUsingVanityUrl
-		? InviteUtils.getVanityInviteUrl(inviteCapability.vanityUrlCode!)
-		: invite
-			? `${RuntimeConfig.inviteEndpoint}/${invite.code}`
-			: '';
+	const inviteCode = isUsingVanityUrl ? inviteCapability.vanityUrlCode : (invite?.code ?? null);
+	const usePrivateDesktopInviteLink =
+		RuntimeConfig.isSelfHosted() && globalThis.window?.electron?.nexusPrivateInstanceUrl != null;
+	const inviteUrl =
+		inviteCode == null
+			? ''
+			: usePrivateDesktopInviteLink
+				? `${APP_PROTOCOL_PREFIX}invite/${encodeURIComponent(inviteCode)}`
+				: isUsingVanityUrl
+					? InviteUtils.getVanityInviteUrl(inviteCode)
+					: `${RuntimeConfig.inviteEndpoint}/${inviteCode}`;
 	const hideInviteLinks = StreamerMode.shouldHideInviteLinks;
 	const displayedInviteUrl = hideInviteLinks && inviteUrl ? i18n._(LINK_HIDDEN_WHILE_SHARING_DESCRIPTOR) : inviteUrl;
 	const handleCopy = useCopyLinkHandler(inviteUrl, true);

@@ -442,10 +442,9 @@ export const InstanceSelector = observer(function InstanceSelector({
 	const statusMessage = progressMessage ?? discoveryError;
 	const canSubmit = value.trim().length > 0 && value.length <= NETWORK_ENDPOINT_INPUT_MAX_BYTES && !disabled;
 	const placeholder = i18n._(ENTER_INSTANCE_URL_E_G_DESCRIPTOR, {exampleInstanceDomain: EXAMPLE_DOMAIN});
-	const pinnedInstances = [
-		resolvePinnedNexusInstance(),
-		resolveLocalDevelopmentInstance(knownInstances),
-	].filter((instance): instance is InstanceInfo => instance != null);
+	const pinnedInstances = [resolvePinnedNexusInstance(), resolveLocalDevelopmentInstance(knownInstances)].filter(
+		(instance): instance is InstanceInfo => instance != null,
+	);
 	const renderStatusActions = (): ReactNode => {
 		if (discoveryStatus === InstanceDiscoveryStatus.IDLE) {
 			return null;
