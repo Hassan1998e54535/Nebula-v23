@@ -98,11 +98,62 @@ jobs:
         working-directory: source
         run: python3 -m unittest discover -s tools/replit -p test_profile_media_inputs.py -v
 
-      # A fresh private build repository does not contain the old upload history.
-      # Only existing public rendering assets are fetched; source ZIPs stay local.
+      # A temporary private archive can seed the locked originals when the
+      # Replit development host is unavailable to GitHub's build runners.
       - name: Restore SHA-256-locked original profile rendering assets
         working-directory: source
-        run: python3 tools/replit/profile_media_inputs.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROFILE_MEDIA_SOURCE_TAG: nexus-profile-media-inputs-temp
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
+          if gh release view "$PROFILE_MEDIA_SOURCE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$PROFILE_MEDIA_SOURCE_TAG" --jq '.draft')" = true
+            gh release download "$PROFILE_MEDIA_SOURCE_TAG" \
+              --pattern 'profile-media-inputs.part*' \
+              --pattern 'profile-media-inputs.tar.gz.sha256' \
+              --dir "$RUNNER_TEMP" --repo "$GITHUB_REPOSITORY"
+            cat "$RUNNER_TEMP"/profile-media-inputs.part* > "$RUNNER_TEMP/profile-media-inputs.tar.gz"
+            (cd "$RUNNER_TEMP" && sha256sum -c profile-media-inputs.tar.gz.sha256)
+            python3 - <<'PY'
+          import json
+          import shutil
+          import tarfile
+          from pathlib import Path, PurePosixPath
+
+          manifest = json.loads(Path(".nexus-build/profile-media.json").read_text())
+          expected = {item["path"]: item["bytes"] for item in manifest["files"]}
+          cache = Path("generated-artifacts/profile-media")
+          cache.mkdir(parents=True, exist_ok=True)
+          archive = Path(__import__("os").environ["RUNNER_TEMP"]) / "profile-media-inputs.tar.gz"
+          seen = set()
+          with tarfile.open(archive, "r:gz") as bundle:
+              members = bundle.getmembers()
+              if len(members) != len(expected):
+                  raise SystemExit("Temporary media bundle has an unexpected entry count.")
+              for member in members:
+                  name = member.name
+                  path = PurePosixPath(name)
+                  if (not member.isfile() or path.is_absolute() or "\\" in name or ":" in name
+                          or any(part in ("", ".", "..") for part in name.split("/"))
+                          or name not in expected or name in seen or member.size != expected[name]):
+                      raise SystemExit("Temporary media bundle contains an invalid entry.")
+                  destination = cache.joinpath(*path.parts)
+                  if not destination.resolve().is_relative_to(cache.resolve()):
+                      raise SystemExit("Temporary media destination escapes its cache.")
+                  source = bundle.extractfile(member)
+                  if source is None:
+                      raise SystemExit("Temporary media bundle contains an unreadable file.")
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with source, destination.open("wb") as output:
+                      shutil.copyfileobj(source, output)
+                  seen.add(name)
+          if seen != set(expected):
+              raise SystemExit("Temporary media bundle is missing locked originals.")
+          PY
+          fi
+          python3 tools/replit/profile_media_inputs.py
 
       - name: Set up Rust toolchain (renderer WebAssembly)
         uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de
