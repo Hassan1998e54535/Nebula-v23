@@ -83,6 +83,10 @@ start search meilisearch --http-addr 127.0.0.1:7700 --db-path "$state/search" \
 
 # Keep public endpoints on the preview's same origin.
 origin="https://$REPLIT_DEV_DOMAIN"
+# The managed local SeaweedFS instance uses these development-only credentials.
+# Keep the API/bootstrap client aligned with tools/dev/src/media_proxy.rs.
+export NEXUS_S3_ACCESS_KEY_ID=nexus
+export NEXUS_S3_SECRET_ACCESS_KEY=nexus-secret
 export NEXUS_BASE_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_STATIC_CDN_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_PUBLIC_SCHEME=https NEXUS_PUBLIC_PORT=443
