@@ -474,7 +474,10 @@ pub fn task_table() -> Result<BTreeMap<&'static str, DevTask>> {
             &PUSH_PORT.to_string(),
         ]),
         cwd: ROOT.clone(),
-        env: Vec::new(),
+        env: vec![(
+            "NEXUS_INTERNAL_API_ENDPOINT".to_owned(),
+            Some(format!("http://{LOOPBACK_HOST}:{API_PORT}")),
+        )],
     });
     insert(DevTask {
         name: "services",

@@ -87,6 +87,12 @@ origin="https://$REPLIT_DEV_DOMAIN"
 # Keep the API/bootstrap client aligned with tools/dev/src/media_proxy.rs.
 export NEXUS_S3_ACCESS_KEY_ID=nexus
 export NEXUS_S3_SECRET_ACCESS_KEY=nexus-secret
+# Web push is not configured for this local preview. Keep the API's required
+# VAPID validation satisfied with the public test pair already used by config
+# tests; never use this pair in a published deployment.
+export NEXUS_VAPID_PUBLIC_KEY='BB76bTFIuoqmxJtTfZX0yGTn1f_qu9H03B_nkj8OyExJFkN7Y-HBZZzShnHZoEhXKc5ZRy3jFu7OkBbnaQG-4aw'
+export NEXUS_VAPID_PRIVATE_KEY='Xgi-3P8J-I3Q6U1HlCcXMuc_tKLGAM9nIfznX3Hz68o'
+export NEXUS_VAPID_EMAIL=dev@nexus.invalid
 export NEXUS_BASE_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_STATIC_CDN_DOMAIN="$REPLIT_DEV_DOMAIN"
 export NEXUS_PUBLIC_SCHEME=https NEXUS_PUBLIC_PORT=443

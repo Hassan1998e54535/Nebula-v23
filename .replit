@@ -90,4 +90,4 @@ outputType = "webview"
 
 [nix]
 channel = "stable-25_05"
-packages = ["rustup", "awscli2", "nats-server", "valkey", "meilisearch", "cargo-watch"]
+packages = ["rustup", "awscli2", "nats-server", "valkey", "meilisearch", "cargo-watch", "vips", "libheif", "ffmpeg", "lcms2", "libwebp", "libyuv"]
