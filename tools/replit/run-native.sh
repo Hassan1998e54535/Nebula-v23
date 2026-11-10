@@ -82,11 +82,10 @@ start nats nats-server -a 127.0.0.1 -js -sd "$state/nats" -m 8222
 start search meilisearch --http-addr 127.0.0.1:7700 --db-path "$state/search" \
   --master-key nexus-dev-meilisearch --no-analytics
 
-# Replit's webview port 5000 currently reaches the app proxy, whose HTML needs
-# static assets from the full NEXUS development proxy on external port 3001.
-# The app origin stays on 5000 so CORS and passkey origin checks match the page;
-# API, media, gateway, and CDN endpoints use 3001.
-public_port=5000
+# Replit's external port 3001 reaches the full NEXUS development proxy.
+# Keep the page and all service endpoints on that same origin so the preview
+# does not depend on a second forwarded port or cross-origin credentials.
+public_port=3001
 service_port=3001
 origin="https://$REPLIT_DEV_DOMAIN:$public_port"
 service_origin="https://$REPLIT_DEV_DOMAIN:$service_port"
