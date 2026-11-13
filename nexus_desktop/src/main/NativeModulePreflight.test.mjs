@@ -27,6 +27,7 @@ function loadPreflight({
 	unresolvable = new Set(),
 	probeFailures = new Set(),
 	isPackaged = true,
+	platform = 'linux',
 } = {}) {
 	const spawns = [];
 	const warnings = [];
@@ -102,7 +103,7 @@ function loadPreflight({
 	const context = vm.createContext({
 		exports: module.exports,
 		module,
-		process: {env: {}, platform: 'linux', arch: 'x64', execPath: '/app/nexus'},
+		process: {env: {}, platform, arch: 'x64', execPath: '/app/nexus'},
 		require: requireStub,
 	});
 	vm.runInContext(transformedSource, context, {filename: sourcePath});
@@ -133,6 +134,20 @@ describe('NativeModulePreflight', () => {
 		const preflight = loadPreflight({probeFailures: new Set(['@nexus/gateway-socket'])});
 		assert.deepEqual(degradedModules(preflight), ['@nexus/gateway-socket']);
 		assert.equal(preflight.warnings.length, 1);
+	});
+
+	test('Windows continues startup when application control blocks the optional WebAuthn addon', () => {
+		const preflight = loadPreflight({
+			platform: 'win32',
+			probeFailures: new Set(['@nexus/webauthn']),
+		});
+		assert.deepEqual(degradedModules(preflight), ['@nexus/webauthn']);
+		assert.equal(preflight.warnings.length, 1);
+	});
+
+	test('WebAuthn remains required on Linux when its native addon fails to load', () => {
+		const {module} = loadPreflight({probeFailures: new Set(['@nexus/webauthn'])});
+		assert.throws(() => module.runNativeModulePreflight(), /native module preflight failed/);
 	});
 
 	test('a required addon still aborts startup and clears the marker', () => {
