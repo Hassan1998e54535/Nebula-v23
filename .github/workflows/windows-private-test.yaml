@@ -513,7 +513,7 @@ jobs:
           while ((Test-Path $exe.FullName) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1 }
           if (Test-Path $exe.FullName) { throw 'The installed executable remains after uninstall.' }
 
-      - name: Attach the tested installer to the private draft
+      - name: Attach the tested installer and portable ZIP to the private draft
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -524,7 +524,19 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or $private -ne 'true') { throw 'Refusing to attach binaries outside the authorized private repository.' }
           $dist = Join-Path $env:WORKDIR 'nexus_desktop\dist-electron'
           $installer = Get-ChildItem $dist -File -Filter '*.exe' | Select-Object -First 1
-          gh release upload $env:PRIVATE_RELEASE $installer.FullName "$($installer.FullName).sha256" --repo $env:GITHUB_REPOSITORY
+          $portable = Get-ChildItem $dist -File -Filter '*-portable-win-x64.zip' | Select-Object -First 1
+          if (!$installer) { throw 'The verified Windows installer was not found.' }
+          if (!$portable) { throw 'The verified portable Windows ZIP was not found.' }
+          $installerChecksum = "$($installer.FullName).sha256"
+          $portableChecksum = "$($portable.FullName).sha256"
+          foreach ($file in @($installerChecksum, $portableChecksum)) {
+            if (!(Test-Path $file)) { throw "Checksum file was not found: $file" }
+          }
+          $portableExpected = (Get-Content $portableChecksum -Raw).Trim().Split(' ')[0].ToLowerInvariant()
+          $portableActual = (Get-FileHash $portable.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($portableExpected -ne $portableActual) { throw 'Portable ZIP checksum does not match its artifact.' }
+          gh release upload $env:PRIVATE_RELEASE $installer.FullName $installerChecksum `
+            $portable.FullName $portableChecksum --repo $env:GITHUB_REPOSITORY
           if ($LASTEXITCODE -ne 0) { throw 'Private installer upload failed.' }
           $url = gh release view $env:PRIVATE_RELEASE --repo $env:GITHUB_REPOSITORY --json url --jq '.url'
           if ($LASTEXITCODE -ne 0) { throw 'Private download page could not be resolved.' }
