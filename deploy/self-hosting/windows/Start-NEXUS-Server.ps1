@@ -486,16 +486,16 @@ try {
         Write-Warning 'The Windows firewall now permits public web traffic on TCP 80 and 443 from any internet address.'
         Write-Host "In your router, forward TCP 80 and 443 to this PC at $lanAddress, keeping the external and internal port numbers the same."
         Write-Host "Friends outside your network should use the HTTPS address: $publicOrigin"
-        Write-Host 'The DuckDNS record must point to this router’s public IPv4 address. Caddy can issue TLS only when the domain and router forwarding are reachable from the internet.'
+        Write-Host 'The DuckDNS record must point to the public IPv4 address assigned to this router. Caddy can issue TLS only when the domain and router forwarding are reachable from the internet.'
         Write-Host 'A carrier-grade NAT or another unconfigured upstream router prevents direct port forwarding.'
     }
     if ($shareVoiceWithInternet) {
         Write-Warning 'The Windows firewall now permits inbound voice traffic on TCP 17881 and UDP 17882 from any internet address.'
         Write-Host "In your router, forward TCP 17881 and UDP 17882 to this PC at $lanAddress, keeping the external and internal port numbers the same."
-        Write-Host 'Reserve this PC’s LAN address in the router, or the port-forward target may change.'
+        Write-Host 'Reserve the LAN address assigned to this PC in the router, or the port-forward target may change.'
         Write-Host 'The router must have a public IPv4 address; carrier-grade NAT or a second upstream router can prevent port forwarding.'
         Write-Host 'This does not forward the NEXUS web/API port. The current HTTPS tunnel handles that separately and may change when restarted.'
-        Write-Host 'If voice still stays on Connecting, the friend’s network may block UDP; the LiveKit TCP path uses TCP 17881.'
+        Write-Host 'If voice still stays on Connecting, the network your friend is using may block UDP; the LiveKit TCP path uses TCP 17881.'
     } elseif (-not $shareWithLan) {
         Write-Host 'LAN and remote sharing are off; this address works only on this computer.'
     }
