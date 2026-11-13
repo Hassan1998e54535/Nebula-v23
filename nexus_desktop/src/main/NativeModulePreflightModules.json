@@ -1,8 +1,13 @@
 [
 	{
 		"name": "@nexus/webauthn",
-		"platforms": ["darwin", "linux", "win32"],
+		"platforms": ["darwin", "linux"],
 		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/webauthn",
+		"platforms": ["win32"],
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/platform-info",
