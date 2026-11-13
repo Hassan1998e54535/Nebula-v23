@@ -1,11 +1,17 @@
 {
   "schema": 1,
-  "phase": "windows-build-started",
-  "conclusion": "in_progress",
+  "phase": "windows-installer-verified",
+  "conclusion": "success",
   "runner": "Windows",
   "job": "build_windows_x64",
   "runId": "43498020245",
   "attempt": "1",
   "runUrl": "https://github.com/Hassan1998e54535/Nebula-v23/actions/runs/43498020245",
-  "installerProduced": false
+  "installerProduced": true,
+  "artifact": {
+    "filename": "NEXUS-Canary-2026.1113.200556-win-x64.exe",
+    "sha256": "4e43dea70b1cd02ca5f04aba9f1f172c28fd145e9fa974cb1099db921629d87a",
+    "bytes": 287041144,
+    "releaseUrl": "https://github.com/Hassan1998e54535/Nebula-v23/releases/tag/untagged-cd2d49c9acbda9f45d39"
+  }
 }
