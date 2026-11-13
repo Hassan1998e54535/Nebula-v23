@@ -23,11 +23,10 @@ export const CHANNEL_APP_URLS: Record<BuildChannel, string> = {
 	development: DEVELOPMENT_APP_URL,
 };
 export const LOCAL_DEVELOPMENT_INSTANCE_URL = BUILD_CHANNEL === 'development' ? DEVELOPMENT_APP_URL : null;
-// Temporary Quick Tunnel endpoint for the current owner test session.
-// Replace it with a stable origin before producing a distributable client.
+// Private test default for the owner's self-hosted NEXUS server.
 // Keep this separate from OfficialInstance.ts so the private server is not
 // represented as a globally trusted official service.
-export const NEXUS_PRIVATE_INSTANCE_URL = 'https://celebration-donation-promotion-decision.trycloudflare.com';
+export const NEXUS_PRIVATE_INSTANCE_URL = 'https://nexus-nn.duckdns.org';
 export const DOWNLOAD_PAGE_URLS: Record<BuildChannel, string> = {
 	stable: 'https://nexus.app/download',
 	canary: 'https://canary.nexus.app/download',
