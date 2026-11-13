@@ -31,6 +31,7 @@ if ($publicOriginUri.Scheme -ne 'https' -or
 }
 $publicOrigin = $publicOriginUri.GetLeftPart([System.UriPartial]::Authority)
 $shareWithLan = $false
+$shareWebWithInternet = $false
 $shareVoiceWithInternet = $false
 $firewallGroup = 'NEXUS Local Server'
 $discoveryPidPath = Join-Path $serverDataDir 'lan-discovery.pid'
@@ -256,6 +257,25 @@ function Add-RemoteVoiceFirewallRules([string]$LanAddress) {
     }
 }
 
+function Add-RemoteWebFirewallRules([string]$LanAddress) {
+    $rules = @(
+        @{Name = 'NEXUS remote web HTTP'; Protocol = 'TCP'; Port = '80'}
+        @{Name = 'NEXUS remote web HTTPS'; Protocol = 'TCP'; Port = '443'}
+    )
+    foreach ($rule in $rules) {
+        New-NetFirewallRule `
+            -DisplayName $rule.Name `
+            -Group $firewallGroup `
+            -Direction Inbound `
+            -Action Allow `
+            -Protocol $rule.Protocol `
+            -LocalAddress $LanAddress `
+            -LocalPort $rule.Port `
+            -RemoteAddress Any `
+            -Profile Private | Out-Null
+    }
+}
+
 function Start-LanDiscoveryResponder([string]$LanAddress) {
     Stop-LanDiscoveryResponder
     $listenerPath = Join-Path $PSScriptRoot 'NEXUS-LanDiscovery.ps1'
@@ -288,9 +308,11 @@ function Invoke-NexusCompose([string[]]$Arguments) {
         '--project-directory', $stackDir,
         '--env-file', $envPath,
         '-f', (Join-Path $stackDir 'docker-compose.yml'),
-        '-f', (Join-Path $stackDir 'docker-compose.source.yml'),
-        '-f', (Join-Path $stackDir 'tunnel.compose.yml')
+        '-f', (Join-Path $stackDir 'docker-compose.source.yml')
     ) + $Arguments
+    if (-not $shareWebWithInternet) {
+        $composeArgs += @('-f', (Join-Path $stackDir 'tunnel.compose.yml'))
+    }
     & docker compose @composeArgs
     if ($LASTEXITCODE -ne 0) {
         throw "docker compose failed with exit code $LASTEXITCODE"
@@ -325,11 +347,15 @@ try {
         Write-Warning 'Remote voice requires router port forwarding and exposes only the LiveKit voice ports to internet traffic. Do not continue on public or guest Wi-Fi.'
         $remoteVoiceAnswer = Read-Host 'Allow friends outside this network to connect to NEXUS voice? [y/N]'
         $shareVoiceWithInternet = $remoteVoiceAnswer -match '^(?i:y|yes)$'
+
+        Write-Warning "Public web access exposes NEXUS over HTTPS at $publicOrigin. Forward TCP 80 and 443 to this computer, and use only a trusted home network."
+        $remoteWebAnswer = Read-Host 'Allow friends outside this network to access NEXUS over HTTPS? [y/N]'
+        $shareWebWithInternet = $remoteWebAnswer -match '^(?i:y|yes)$'
     } else {
         Write-Host 'No private IPv4 network was found; NEXUS will remain local to this computer.'
     }
 
-    if ($shareWithLan -or $shareVoiceWithInternet) {
+    if ($shareWithLan -or $shareVoiceWithInternet -or $shareWebWithInternet) {
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
         $principal = [System.Security.Principal.WindowsPrincipal]::new($identity)
         if (-not $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -337,7 +363,33 @@ try {
         }
     }
 
-    if ($shareWithLan) {
+    if ($shareWebWithInternet) {
+        $localWebOrigin = if ($shareWithLan) { "http://${lanAddress}:8081" } else { $localOrigin }
+        $serverOrigin = if ($shareWithLan) { $localWebOrigin } else { $localOrigin }
+        $siteAddresses = "https://$($publicOriginUri.DnsSafeHost), $localWebOrigin"
+        $localHttpBind = if ($shareWithLan) { "${lanAddress}:8081" } else { '127.0.0.1:8081' }
+        Set-LocalEnvironmentValues @{
+            NEXUS_DOMAIN = $publicOriginUri.DnsSafeHost
+            NEXUS_PUBLIC_SCHEME = 'https'
+            NEXUS_PUBLIC_PORT = '443'
+            NEXUS_PUBLIC_ORIGIN = $publicOrigin
+            NEXUS_EDGE_SITE_ADDRESS = $siteAddresses
+            NEXUS_HTTP_PORT = "${lanAddress}:80"
+            NEXUS_HTTPS_PORT = "${lanAddress}:443"
+            NEXUS_LOCAL_HTTP_BIND = $localHttpBind
+            NEXUS_LIVEKIT_BIND_IP = if ($shareVoiceWithInternet -or $shareWithLan) { $lanAddress } else { '127.0.0.1' }
+            NEXUS_LIVEKIT_TCP_PORT = '17881'
+            NEXUS_LIVEKIT_UDP_PORT = '17882'
+            NEXUS_LIVEKIT_USE_EXTERNAL_IP = [string]$shareVoiceWithInternet
+            NEXUS_LIVEKIT_NODE_IP = if ($shareVoiceWithInternet) { '' } else { $lanAddress }
+        }
+        if ($shareWithLan) {
+            Add-LanFirewallRules $lanAddress
+        } else {
+            Remove-LanFirewallRules
+        }
+        Add-RemoteWebFirewallRules $lanAddress
+    } elseif ($shareWithLan) {
         $serverOrigin = "http://${lanAddress}:8081"
         Set-LocalEnvironmentValues @{
             NEXUS_DOMAIN = $lanAddress
@@ -399,12 +451,13 @@ try {
         Invoke-NexusCompose @('up', '-d')
     }
 
-    if ($shareWithLan) {
-        Write-Host 'Waiting for the NEXUS web endpoint to become ready before announcing it on the local network...'
+    if ($shareWithLan -or $shareWebWithInternet) {
+        $readyOrigin = if ($shareWithLan) { $serverOrigin } else { $localOrigin }
+        Write-Host 'Waiting for the NEXUS web endpoint to become ready...'
         $ready = $false
         for ($attempt = 0; $attempt -lt 60; $attempt++) {
             try {
-                $null = Invoke-WebRequest -Uri "$serverOrigin/.well-known/nexus" -UseBasicParsing -TimeoutSec 3
+                $null = Invoke-WebRequest -Uri "$readyOrigin/.well-known/nexus" -UseBasicParsing -TimeoutSec 3
                 $ready = $true
                 break
             } catch {
@@ -422,6 +475,13 @@ try {
     if ($shareWithLan) {
         Write-Host 'NEXUS desktop clients on this same private network can discover the server as a named instance.'
     }
+    if ($shareWebWithInternet) {
+        Write-Warning 'The Windows firewall now permits public web traffic on TCP 80 and 443 from any internet address.'
+        Write-Host "In your router, forward TCP 80 and 443 to this PC at $lanAddress, keeping the external and internal port numbers the same."
+        Write-Host "Friends outside your network should use the HTTPS address: $publicOrigin"
+        Write-Host 'The DuckDNS record must point to this router’s public IPv4 address. Caddy can issue TLS only when the domain and router forwarding are reachable from the internet.'
+        Write-Host 'A carrier-grade NAT or another unconfigured upstream router prevents direct port forwarding.'
+    }
     if ($shareVoiceWithInternet) {
         Write-Warning 'The Windows firewall now permits inbound voice traffic on TCP 17881 and UDP 17882 from any internet address.'
         Write-Host "In your router, forward TCP 17881 and UDP 17882 to this PC at $lanAddress, keeping the external and internal port numbers the same."
@@ -435,7 +495,7 @@ try {
     Write-Host 'To stop without deleting accounts or files, run Stop-NEXUS-Server.cmd.'
 } catch {
     Stop-LanDiscoveryResponder
-    if ($shareWithLan -or $shareVoiceWithInternet) {
+    if ($shareWithLan -or $shareWebWithInternet -or $shareVoiceWithInternet) {
         Remove-LanFirewallRules
     }
     Write-Error $_
