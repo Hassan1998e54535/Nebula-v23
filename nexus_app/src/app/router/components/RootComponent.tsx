@@ -46,7 +46,8 @@ export const RootComponent: React.FC<{children?: React.ReactNode}> = observer(({
 	const location = useLocation();
 	const isAuthenticated = Authentication.isAuthenticated;
 	const requiresSelfHostedSetup = RuntimeConfig.requiresSelfHostedSetup();
-	const setupTokenRequired = RuntimeConfig.appPublic.setup.setup_token_required === true;
+	const setupTokenRequired =
+		requiresSelfHostedSetup && RuntimeConfig.getSnapshotOrNull()?.appPublic.setup.setup_token_required === true;
 	const mobileLayoutState = MobileLayout;
 	const [hasRestoredLocation, setHasRestoredLocation] = useState(false);
 	const [effectiveSkeletonPathname, setEffectiveSkeletonPathname] = useState<string | null>(null);

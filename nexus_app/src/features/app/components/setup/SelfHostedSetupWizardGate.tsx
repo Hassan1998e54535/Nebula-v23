@@ -593,7 +593,7 @@ export const SelfHostedSetupWizardGate = observer(() => {
 
 	const signOutOfSetup = useCallback(async () => {
 		await resetSetupSession();
-		if (RuntimeConfig.appPublic.setup.setup_token_required !== true) RouterUtils.replaceWith(Routes.LOGIN);
+		if (RuntimeConfig.getSnapshotOrNull()?.appPublic.setup.setup_token_required !== true) RouterUtils.replaceWith(Routes.LOGIN);
 	}, [resetSetupSession]);
 
 	const hydrateFromConfig = useCallback((next: InstanceConfigResponse) => {
@@ -695,8 +695,9 @@ export const SelfHostedSetupWizardGate = observer(() => {
 	);
 
 	const hasConfig = Boolean(config);
-	const identityLocked = RuntimeConfig.appPublic.setup.account_identity_locked === true;
-	const setupTokenRequired = RuntimeConfig.appPublic.setup.setup_token_required === true;
+	const runtimeSnapshot = RuntimeConfig.getSnapshotOrNull();
+	const identityLocked = runtimeSnapshot?.appPublic.setup.account_identity_locked === true;
+	const setupTokenRequired = runtimeSnapshot?.appPublic.setup.setup_token_required === true;
 	const syncedSnapshot =
 		wizardSnapshot.context.isAuthenticated !== isAuthenticated ||
 		wizardSnapshot.context.hasConfig !== hasConfig ||
