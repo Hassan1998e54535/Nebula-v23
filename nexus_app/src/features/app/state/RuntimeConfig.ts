@@ -158,7 +158,12 @@ class RuntimeConfig {
 	constructor() {
 		makeAutoObservable<
 			RuntimeConfig,
-			'activeRuntime' | 'gifProviderOverride' | 'isCurrentGeneration' | 'lifecycleGeneration' | 'retainedSnapshot'
+			| 'activeRuntime'
+			| 'appPublic'
+			| 'gifProviderOverride'
+			| 'isCurrentGeneration'
+			| 'lifecycleGeneration'
+			| 'retainedSnapshot'
 		>(
 			this,
 			{
@@ -167,6 +172,7 @@ class RuntimeConfig {
 				retainedSnapshot: observableRef,
 				gifProviderOverride: observableRef,
 				lifecycleGeneration: false,
+				appPublic: false,
 			},
 			{autoBind: true},
 		);

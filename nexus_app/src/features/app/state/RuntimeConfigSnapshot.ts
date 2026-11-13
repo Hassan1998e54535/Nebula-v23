@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Nebula
 
+import {PRODUCT_NAME} from '@app/features/app/config/ProductConstants';
 import type {GifProvider} from '@app/features/app/state/GifProviderConfig';
 import {AccountIdentityModes, TagStyles} from '@nexus/constants/src/AccountIdentityConstants';
 import {LIMIT_KEYS, type LimitKey} from '@nexus/constants/src/LimitConfigMetadata';
@@ -31,6 +32,7 @@ import type {LimitConfigSnapshot, LimitFilter, LimitRule} from '@nexus/limits/sr
 
 const LIMIT_KEYS_SET = new Set<string>(LIMIT_KEYS);
 const DEFAULT_PREMIUM_PRODUCT_NAME = 'Plutonium';
+const LEGACY_FLUXER_PRODUCT_NAME = /^fluxer(?:\b|[\s_-])/iu;
 
 export interface RuntimeConfigIdentity {
 	readonly apiEndpoint: string;
@@ -405,9 +407,10 @@ function readAppPublic(value: unknown): InstanceAppPublic {
 		'appPublic.setup.account_identity_locked',
 	);
 	const setupTokenRequired = readOptionalBoolean(setup, 'setup_token_required', 'appPublic.setup.setup_token_required');
+	const productName = readNonEmptyString(branding, 'product_name', 'appPublic.branding.product_name');
 	return {
 		branding: {
-			product_name: readNonEmptyString(branding, 'product_name', 'appPublic.branding.product_name'),
+			product_name: LEGACY_FLUXER_PRODUCT_NAME.test(productName) ? PRODUCT_NAME : productName,
 			icon_url: readNullableAbsoluteHttpUrl(branding, 'icon_url', 'appPublic.branding.icon_url'),
 			symbol_url: readNullableAbsoluteHttpUrl(branding, 'symbol_url', 'appPublic.branding.symbol_url'),
 			logo_url: readNullableAbsoluteHttpUrl(branding, 'logo_url', 'appPublic.branding.logo_url'),

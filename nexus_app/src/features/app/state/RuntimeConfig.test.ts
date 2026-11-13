@@ -9,10 +9,10 @@ import InstanceSnapshotStore, {
 import RuntimeConfig, {describeAPIEndpoint} from '@app/features/app/state/RuntimeConfig';
 import {BOOTSTRAP_APP_PUBLIC} from '@app/features/platform/state/__fixtures__/RuntimeBootstrapFixture';
 import {http} from '@app/features/platform/transport/RestTransport';
+import type {MessageDescriptor} from '@lingui/core';
 import {type InstanceDiscoveryDocument, parseInstanceDiscoveryDocument} from '@nexus/instance_bootstrap/src/Discovery';
 import type {InstanceDiscoveryResponse} from '@nexus/instance_bootstrap/src/Types';
 import type {LimitConfigSnapshot} from '@nexus/limits/src/LimitTypes';
-import type {MessageDescriptor} from '@lingui/core';
 import {autorun, configure} from 'mobx';
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
 
@@ -94,6 +94,25 @@ describe('boot', () => {
 	test('applies the initial runtime snapshot', () => {
 		expect(RuntimeConfig.apiEndpoint).toBe('https://boot.test/api');
 		expect(RuntimeConfig.productName).toBe('NEXUS boot.test');
+	});
+
+	test('keeps app branding readable while the active runtime changes', () => {
+		const observedNames: Array<string> = [];
+		const dispose = autorun(() => observedNames.push(RuntimeConfig.appPublic.branding.product_name));
+
+		RuntimeConfig.applySnapshot(runtimeSnapshotFromDiscovery(parsedDocument('next.test')));
+		dispose();
+
+		expect(observedNames).toEqual(['NEXUS boot.test', 'NEXUS next.test']);
+	});
+
+	test('replaces legacy Fluxer product branding with NEXUS', () => {
+		const document = discoveryDocument('legacy-brand.test');
+		document.app_public.branding.product_name = 'Fluxer Canary';
+
+		const snapshot = runtimeSnapshotFromDiscovery(parseInstanceDiscoveryDocument(document));
+
+		expect(snapshot.appPublic.branding.product_name).toBe('NEXUS');
 	});
 
 	test('keeps the active runtime out of the discovery cache', () => {
