@@ -4,3 +4,4 @@
 - [Replit preview port routing](replit-preview-port-routing.md) — Map the external preview port to the full development proxy, not the app proxy that fetches assets from that same origin.
 - [PowerShell smart quotes](powershell-smart-quotes.md) — Curly apostrophes in quoted PowerShell text can cause a misleading unterminated-string parse error.
 - [Windows app-control and passkeys](windows-app-control-passkeys.md) — Keep WebAuthn optional on Windows so application-control policies can block passkeys without blocking app startup.
+- [NEXUS product branding](nexus-product-branding.md) — User-facing app identity should say NEXUS throughout; preserve required legal and source attribution.
