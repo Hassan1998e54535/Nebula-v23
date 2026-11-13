@@ -310,7 +310,9 @@ function Invoke-NexusCompose([string[]]$Arguments) {
         '-f', (Join-Path $stackDir 'docker-compose.yml'),
         '-f', (Join-Path $stackDir 'docker-compose.source.yml')
     ) + $Arguments
-    if (-not $shareWebWithInternet) {
+    if ($shareWebWithInternet) {
+        $composeArgs += @('-f', (Join-Path $PSScriptRoot 'public-web.compose.yml'))
+    } else {
         $composeArgs += @('-f', (Join-Path $stackDir 'tunnel.compose.yml'))
     }
     & docker compose @composeArgs
@@ -368,7 +370,10 @@ try {
         $serverOrigin = if ($shareWithLan) { $localWebOrigin } else { $localOrigin }
         $siteAddresses = "https://$($publicOriginUri.DnsSafeHost), $localWebOrigin"
         $localHttpBind = if ($shareWithLan) { "${lanAddress}:8081" } else { '127.0.0.1:8081' }
+        $liveKitBindAddress = if ($shareVoiceWithInternet -or $shareWithLan) { $lanAddress } else { '127.0.0.1' }
+        $liveKitNodeAddress = if ($shareWithLan -and -not $shareVoiceWithInternet) { $lanAddress } else { '' }
         Set-LocalEnvironmentValues @{
+            NEXUS_PUBLIC_WEB_ENABLED = 'true'
             NEXUS_DOMAIN = $publicOriginUri.DnsSafeHost
             NEXUS_PUBLIC_SCHEME = 'https'
             NEXUS_PUBLIC_PORT = '443'
@@ -377,11 +382,11 @@ try {
             NEXUS_HTTP_PORT = "${lanAddress}:80"
             NEXUS_HTTPS_PORT = "${lanAddress}:443"
             NEXUS_LOCAL_HTTP_BIND = $localHttpBind
-            NEXUS_LIVEKIT_BIND_IP = if ($shareVoiceWithInternet -or $shareWithLan) { $lanAddress } else { '127.0.0.1' }
+            NEXUS_LIVEKIT_BIND_IP = $liveKitBindAddress
             NEXUS_LIVEKIT_TCP_PORT = '17881'
             NEXUS_LIVEKIT_UDP_PORT = '17882'
             NEXUS_LIVEKIT_USE_EXTERNAL_IP = [string]$shareVoiceWithInternet
-            NEXUS_LIVEKIT_NODE_IP = if ($shareVoiceWithInternet) { '' } else { $lanAddress }
+            NEXUS_LIVEKIT_NODE_IP = $liveKitNodeAddress
         }
         if ($shareWithLan) {
             Add-LanFirewallRules $lanAddress
@@ -392,6 +397,7 @@ try {
     } elseif ($shareWithLan) {
         $serverOrigin = "http://${lanAddress}:8081"
         Set-LocalEnvironmentValues @{
+            NEXUS_PUBLIC_WEB_ENABLED = 'false'
             NEXUS_DOMAIN = $lanAddress
             NEXUS_PUBLIC_SCHEME = 'http'
             NEXUS_PUBLIC_PORT = '8081'
@@ -410,6 +416,7 @@ try {
         $serverOrigin = $localOrigin
         $voiceBindAddress = if ($shareVoiceWithInternet) { $lanAddress } else { '127.0.0.1' }
         Set-LocalEnvironmentValues @{
+            NEXUS_PUBLIC_WEB_ENABLED = 'false'
             NEXUS_DOMAIN = 'localhost'
             NEXUS_PUBLIC_SCHEME = 'http'
             NEXUS_PUBLIC_PORT = '8081'
@@ -418,7 +425,7 @@ try {
             NEXUS_LIVEKIT_BIND_IP = $voiceBindAddress
             NEXUS_LIVEKIT_TCP_PORT = '17881'
             NEXUS_LIVEKIT_UDP_PORT = '17882'
-            NEXUS_LIVEKIT_USE_EXTERNAL_IP = 'true'
+            NEXUS_LIVEKIT_USE_EXTERNAL_IP = [string]$shareVoiceWithInternet
             NEXUS_LIVEKIT_NODE_IP = ''
         }
         Remove-LanFirewallRules

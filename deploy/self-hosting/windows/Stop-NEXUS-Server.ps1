@@ -32,10 +32,15 @@ $composeArgs = @(
     '--project-directory', $stackDir,
     '--env-file', $envPath,
     '-f', (Join-Path $stackDir 'docker-compose.yml'),
-    '-f', (Join-Path $stackDir 'docker-compose.source.yml'),
-    '-f', (Join-Path $stackDir 'tunnel.compose.yml'),
-    'down'
+    '-f', (Join-Path $stackDir 'docker-compose.source.yml')
 )
+$publicWebEnabled = [System.IO.File]::ReadAllLines($envPath) -contains 'NEXUS_PUBLIC_WEB_ENABLED=true'
+if ($publicWebEnabled) {
+    $composeArgs += @('-f', (Join-Path $PSScriptRoot 'public-web.compose.yml'))
+} else {
+    $composeArgs += @('-f', (Join-Path $stackDir 'tunnel.compose.yml'))
+}
+$composeArgs += 'down'
 & docker compose @composeArgs
 if ($LASTEXITCODE -ne 0) {
     Write-Error "docker compose down failed with exit code $LASTEXITCODE."
