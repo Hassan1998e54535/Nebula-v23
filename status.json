@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "phase": "windows-build-completed",
+  "conclusion": "failure",
+  "runner": "Windows",
+  "job": "build_windows_x64",
+  "runId": "43422113894",
+  "attempt": "1",
+  "runUrl": "https://github.com/Hassan1998e54535/Nebula-v23/actions/runs/43422113894",
+  "installerProduced": false
+}
