@@ -18,6 +18,7 @@ import {
 	suppressGamingProcessForGame,
 } from '@app/features/gaming/GamingPresenceHeartbeat';
 import type {GamingEntry, GamingProfile} from '@app/features/gaming/GamingTypes';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {getElectronAPI} from '@app/features/ui/utils/NativeUtils';
 import styles from '@app/features/user/components/modals/tabs/GamingTab.module.css';
 import Users from '@app/features/user/state/Users';
@@ -46,8 +47,9 @@ function GamingTab() {
 	const [query, setQuery] = useState('');
 	const [platform, setPlatform] = useState<GamingEntry['platform']>('computer');
 	const [catalogPlatform, setCatalogPlatform] = useState<'all' | GamingEntry['platform']>('all');
+	const activeLocalGame = useUserActiveGame(undefined, userId);
 	const [detectionPreferences, setDetectionPreferences] = useState<GamingDetectionPreferences>({
-		enabled: false,
+		enabled: true,
 		registrations: [],
 		suppressed_process_names: [],
 		suppressed_game_ids: [],
@@ -314,34 +316,26 @@ function GamingTab() {
 		<div className={styles.root}>
 			<header className={styles.intro}>
 				<h2>
-					<GameControllerIcon aria-hidden="true" size={22} /> <Trans>Gaming Infinity</Trans>
+					<GameControllerIcon aria-hidden="true" size={22} /> <Trans>Registered Games</Trans>
 				</h2>
 				<p className={styles.muted}>
-					<Trans>Add any game by name, then start or stop sharing it with one tap.</Trans>
+					<Trans>Games running on your computer are detected automatically.</Trans>
 				</p>
 			</header>
 
 			<section className={styles.card} aria-labelledby="gaming-activity-heading">
 				<h3 id="gaming-activity-heading">
-					<Trans>Current activity</Trans>
+					<Trans>Current Game</Trans>
 				</h3>
-				{profile.activity ? (
+				{profile.activity || activeLocalGame ? (
 					<div className={styles.currentActivity}>
 						<div className={styles.currentArtwork}>
-							<GameArtwork game={profile.activity.game} variant="wide" />
+							<GameArtwork game={profile.activity?.game ?? activeLocalGame!} variant="wide" />
 						</div>
 						<div className={styles.currentDetails}>
-							<strong className={styles.gameName}>{profile.activity.game.name}</strong>
+							<strong className={styles.gameName}>{(profile.activity?.game ?? activeLocalGame!).name}</strong>
 							<span className={styles.muted}>
-								{profile.activity.game.platform === 'computer' ? (
-									<Trans>Computer</Trans>
-								) : profile.activity.game.platform === 'mobile' ? (
-									<Trans>Mobile</Trans>
-								) : profile.activity.game.platform === 'console' ? (
-									<Trans>Console</Trans>
-								) : (
-									<Trans>Other platform</Trans>
-								)}
+								<Trans>Now playing!</Trans>
 							</span>
 						</div>
 						<button className={`${styles.button} ${styles.buttonSecondary}`} disabled={busy} onClick={stopGame} type="button">
@@ -350,7 +344,7 @@ function GamingTab() {
 					</div>
 				) : (
 					<p className={styles.muted}>
-						<Trans>You are not sharing a game right now.</Trans>
+						<Trans>No game currently detected. Launch a game to display it.</Trans>
 					</p>
 				)}
 			</section>

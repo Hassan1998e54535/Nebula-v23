@@ -334,17 +334,33 @@ async function getRunningExecutablePaths(): Promise<Array<string>> {
 }
 
 export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = {
+	'arcraiders.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'arcraiders-win64-shipping.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'pioneer.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'pioneer-win64-shipping.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'discovery.exe': {id: 'the-finals', name: 'THE FINALS'},
+	'discovery-win64-shipping.exe': {id: 'the-finals', name: 'THE FINALS'},
+	'robrun.exe': {id: 'rob-run', name: 'ROB RUN'},
+	'robrun-win64-shipping.exe': {id: 'rob-run', name: 'ROB RUN'},
+	'soundpad.exe': {id: 'soundpad', name: 'Soundpad'},
+	'blender.exe': {id: 'blender', name: 'Blender'},
+	'wallpaper32.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
+	'wallpaper64.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
 	'beamng.drive.x64.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
 	'beamng.drive.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
 	'cs2.exe': {id: 'cs2', name: 'Counter-Strike 2'},
 	'csgo.exe': {id: 'csgo', name: 'Counter-Strike: Global Offensive'},
 	'gta5.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
 	'gtav.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'playgtav.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
 	'cod.exe': {id: 'cod', name: 'Call of Duty'},
 	'modernwarfare.exe': {id: 'cod-mw', name: 'Call of Duty: Modern Warfare'},
 	'blackops6.exe': {id: 'cod-bo6', name: 'Call of Duty: Black Ops 6'},
+	'bootstrapper.exe': {id: 'cod', name: 'Call of Duty'},
 	'fc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
+	'eafc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
 	'fc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
+	'eafc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
 	'fifa23.exe': {id: 'fifa-23', name: 'FIFA 23'},
 	'fifa22.exe': {id: 'fifa-22', name: 'FIFA 22'},
 	'fifa21.exe': {id: 'fifa-21', name: 'FIFA 21'},
@@ -355,10 +371,13 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 	'ac2-win64-shipping.exe': {id: 'assetto-corsa-evo', name: 'Assetto Corsa EVO'},
 	'fortniteclient-win64-shipping.exe': {id: 'fortnite', name: 'Fortnite'},
 	'valorant-win64-shipping.exe': {id: 'valorant', name: 'VALORANT'},
+	'valorant.exe': {id: 'valorant', name: 'VALORANT'},
 	'robloxplayerbeta.exe': {id: 'roblox', name: 'Roblox'},
+	'robloxplayerlauncher.exe': {id: 'roblox', name: 'Roblox'},
 	'javaw.exe': {id: 'minecraft', name: 'Minecraft'},
 	'minecraft.exe': {id: 'minecraft', name: 'Minecraft'},
 	'leagueclient.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'leagueclientux.exe': {id: 'league-of-legends', name: 'League of Legends'},
 	'league of legends.exe': {id: 'league-of-legends', name: 'League of Legends'},
 	'rocketleague.exe': {id: 'rocket-league', name: 'Rocket League'},
 	'overwatch.exe': {id: 'overwatch-2', name: 'Overwatch 2'},
@@ -379,31 +398,52 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 export async function getRunningSteamGames(): Promise<Array<RunningSteamGame>> {
 	if (process.platform !== 'win32' && process.platform !== 'linux') return [];
 
-	const [installations, executablePaths] = await Promise.all([getSteamInstallations(), getRunningExecutablePaths()]);
 	const runningGames = new Map<string, RunningSteamGame>();
 
-	for (const executablePath of executablePaths) {
-		const baseName = path.basename(executablePath).toLowerCase();
-		const known = KNOWN_GAME_PROCESSES[baseName];
-		if (known && !runningGames.has(known.id)) {
-			runningGames.set(known.id, {
-				id: known.id,
-				name: known.name,
+	try {
+		const processNames = await getRunningGameProcessNames();
+		for (const name of processNames) {
+			const lower = normalizeProcessName(name);
+			const known = KNOWN_GAME_PROCESSES[lower];
+			if (known && !runningGames.has(known.id)) {
+				runningGames.set(known.id, {
+					id: known.id,
+					name: known.name,
+					platform: 'computer',
+				});
+			}
+		}
+	} catch {
+		// Ignore process scan error
+	}
+
+	try {
+		const [installations, executablePaths] = await Promise.all([getSteamInstallations(), getRunningExecutablePaths()]);
+		for (const executablePath of executablePaths) {
+			const baseName = path.basename(executablePath).toLowerCase();
+			const known = KNOWN_GAME_PROCESSES[baseName];
+			if (known && !runningGames.has(known.id)) {
+				runningGames.set(known.id, {
+					id: known.id,
+					name: known.name,
+					platform: 'computer',
+				});
+				continue;
+			}
+
+			const installation = findSteamInstallationForExecutable(executablePath, installations);
+			if (!installation) continue;
+			if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {
+				continue;
+			}
+			runningGames.set(installation.appId, {
+				id: `steam:${installation.appId}`,
+				name: installation.name,
 				platform: 'computer',
 			});
-			continue;
 		}
-
-		const installation = findSteamInstallationForExecutable(executablePath, installations);
-		if (!installation) continue;
-		if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {
-			continue;
-		}
-		runningGames.set(installation.appId, {
-			id: `steam:${installation.appId}`,
-			name: installation.name,
-			platform: 'computer',
-		});
+	} catch {
+		// Ignore Steam detection failure
 	}
 
 	return [...runningGames.values()].sort((left, right) => left.name.localeCompare(right.name));

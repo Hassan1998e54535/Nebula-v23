@@ -316,6 +316,8 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 				if (updates.color !== undefined) updateData.color = updates.color;
 				if (updates.hoist !== undefined) updateData.hoist = updates.hoist;
 				if (updates.mentionable !== undefined) updateData.mentionable = updates.mentionable;
+				if (updates.icon !== undefined) updateData.icon = updates.icon;
+				if (updates.unicode_emoji !== undefined) updateData.unicode_emoji = updates.unicode_emoji;
 				if (updates.permissions !== undefined) {
 					updateData.permissions = (updates.permissions & ~retiredPermissions).toString();
 				}
@@ -367,7 +369,9 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 					(merged.color !== undefined && merged.color !== originalRole.color) ||
 					(merged.hoist !== undefined && merged.hoist !== originalRole.hoist) ||
 					(merged.mentionable !== undefined && merged.mentionable !== originalRole.mentionable) ||
-					(merged.permissions !== undefined && merged.permissions !== originalRole.permissions);
+					(merged.permissions !== undefined && merged.permissions !== originalRole.permissions) ||
+					(merged.icon !== undefined && merged.icon !== originalRole.icon) ||
+					(merged.unicode_emoji !== undefined && merged.unicode_emoji !== originalRole.unicodeEmoji);
 				if (hasChanges) newMap.set(roleId, merged);
 				else newMap.delete(roleId);
 				return newMap;

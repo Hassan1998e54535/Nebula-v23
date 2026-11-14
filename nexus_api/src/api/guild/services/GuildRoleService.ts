@@ -602,6 +602,12 @@ export class GuildRoleService {
 		if (data.mentionable !== undefined && !isEveryoneRole) {
 			updateData.mentionable = data.mentionable;
 		}
+		if (data.icon !== undefined) {
+			updateData.iconHash = data.icon;
+		}
+		if (data.unicode_emoji !== undefined) {
+			updateData.unicodeEmoji = data.unicode_emoji;
+		}
 		if (data.permissions !== undefined) {
 			updateData.permissions = await this.resolveRequestedPermissions({
 				requestedPermissions: data.permissions,

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Nebula
 
-import {fetchGuildGaming} from '@app/features/gaming/GamingClient';
+import {fetchGamingProfile} from '@app/features/gaming/GamingClient';
 import {GameArtwork} from '@app/features/gaming/GameArtwork';
-import type {GuildGamingPlayer} from '@app/features/gaming/GamingTypes';
+import type {GamingProfile} from '@app/features/gaming/GamingTypes';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
+import Authentication from '@app/features/auth/state/Authentication';
 import styles from '@app/features/gaming/GamingActivityCard.module.css';
 import {Trans, useLingui} from '@lingui/react/macro';
 import {useEffect, useState} from 'react';
@@ -14,57 +16,75 @@ interface GamingActivityCardProps {
 
 export function GamingActivityCard({guildId, userId}: GamingActivityCardProps) {
 	const {i18n} = useLingui();
-	const [player, setPlayer] = useState<GuildGamingPlayer | null>(null);
+	const activeGame = useUserActiveGame(guildId, userId);
+	const isCurrentUser = Boolean(userId && Authentication.currentUserId && userId === Authentication.currentUserId);
+	const [profile, setProfile] = useState<GamingProfile | null>(null);
 
 	useEffect(() => {
-		if (!guildId || !userId) {
-			setPlayer(null);
-			return;
-		}
-
+		if (!userId) return;
 		let mounted = true;
-		const load = async () => {
-			try {
-				const result = await fetchGuildGaming(guildId);
-				if (mounted) setPlayer(result.players.find((entry) => entry.user_id === userId) ?? null);
-			} catch {
-				if (mounted) setPlayer(null);
-			}
-		};
-
-		void load();
-		const timer = window.setInterval(() => void load(), 30_000);
+		if (isCurrentUser) {
+			void fetchGamingProfile()
+				.then((data) => {
+					if (mounted) setProfile(data);
+				})
+				.catch(() => undefined);
+		}
 		return () => {
 			mounted = false;
-			window.clearInterval(timer);
 		};
-	}, [guildId, userId]);
+	}, [userId, isCurrentUser]);
 
-	if (!player) return null;
+	if (!activeGame && (!profile?.games || profile.games.length === 0)) {
+		return null;
+	}
 
 	return (
-		<section className={styles.card} aria-label={i18n._('Gaming Infinity activity')}>
-			<div className={styles.artwork}>
-				<GameArtwork game={player.game} variant="wide" showTitle={false} />
-			</div>
-			<div className={styles.details}>
-				<div className={styles.liveLabel}>
-					<span className={styles.liveDot} />
-					<Trans>GAMING INFINITY · PLAYING NOW</Trans>
+		<div style={{display: 'flex', flexDirection: 'column', gap: '8px', margin: '10px 0'}}>
+			{profile && profile.games.length > 0 && (
+				<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px'}}>
+					<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)'}}>
+						<Trans>Game Collection</Trans>
+					</span>
+					<div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+						{profile.games.slice(0, 4).map((g) => (
+							<div key={g.id} style={{width: 24, height: 24, borderRadius: 6, overflow: 'hidden'}} title={g.name}>
+								<GameArtwork game={g} variant="compact" showTitle={false} />
+							</div>
+						))}
+						{profile.games.length > 4 && (
+							<span style={{fontSize: '0.7rem', color: 'var(--text-muted)'}}>
+								+{profile.games.length - 4}
+							</span>
+						)}
+					</div>
 				</div>
-				<strong className={styles.gameName}>{player.game.name}</strong>
-				<span className={styles.platform}>
-					{player.game.platform === 'computer' ? (
-						<Trans>Computer</Trans>
-					) : player.game.platform === 'mobile' ? (
-						<Trans>Mobile</Trans>
-					) : player.game.platform === 'console' ? (
-						<Trans>Console</Trans>
-					) : (
-						<Trans>Other platform</Trans>
-					)}
-				</span>
-			</div>
-		</section>
+			)}
+			{activeGame && (
+				<section className={styles.card} aria-label={i18n._('Gaming Infinity activity')}>
+					<div className={styles.artwork}>
+						<GameArtwork game={activeGame} variant="wide" showTitle={false} />
+					</div>
+					<div className={styles.details}>
+						<div className={styles.liveLabel}>
+							<span className={styles.liveDot} />
+							<Trans>PLAYING NOW</Trans>
+						</div>
+						<strong className={styles.gameName}>{activeGame.name}</strong>
+						<span className={styles.platform}>
+							{activeGame.platform === 'computer' ? (
+								<Trans>Computer</Trans>
+							) : activeGame.platform === 'mobile' ? (
+								<Trans>Mobile</Trans>
+							) : activeGame.platform === 'console' ? (
+								<Trans>Console</Trans>
+							) : (
+								<Trans>Other platform</Trans>
+							)}
+						</span>
+					</div>
+				</section>
+			)}
+		</div>
 	);
 }

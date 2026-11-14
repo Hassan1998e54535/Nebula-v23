@@ -53,13 +53,8 @@ class FeatureDiscovery {
 			: parseFeatureDiscoveryHistory(null);
 	}
 
-	startTour(tour: FeatureDiscoveryTour, options: {force?: boolean} = {}): boolean {
-		if (!this.accountId || tour.steps.length === 0) return false;
-		if (this.activeTour) return false;
-		if (!options.force && hasCompletedFeatureDiscoveryTour(this.history, tour.id)) return false;
-		this.activeTour = tour;
-		this.activeStepIndex = 0;
-		return true;
+	startTour(_tour: FeatureDiscoveryTour, _options: {force?: boolean} = {}): boolean {
+		return false;
 	}
 
 	get activeStep(): FeatureDiscoveryStep | null {

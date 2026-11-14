@@ -192,6 +192,8 @@ export const GuildRoleUpdateRequest = z.object({
 	hoist: z.boolean().optional().describe('Whether the role should be displayed separately in the member list'),
 	hoist_position: z.number().int().nullish().describe('The position of the role in the hoisted member list'),
 	mentionable: z.boolean().optional().describe('Whether the role can be mentioned by anyone'),
+	icon: z.string().nullish().describe('The icon data URL or URL for the role'),
+	unicode_emoji: z.string().nullish().describe('The unicode emoji for the role'),
 });
 
 export type GuildRoleUpdateRequest = z.infer<typeof GuildRoleUpdateRequest>;

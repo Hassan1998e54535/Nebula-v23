@@ -450,15 +450,6 @@ export const DesktopSettingsView: React.FC<DesktopSettingsViewProps> = observer(
 		);
 		const sidebarHeader = (
 			<>
-				<div className={styles.searchContainer} data-flx="app.desktop-settings-view.search-container">
-					<SettingsSearch
-						value={searchQuery}
-						onChange={setSearchQuery}
-						placeholder={i18n._(SEARCH_SETTINGS_PLACEHOLDER_DESCRIPTOR)}
-						className={styles.fullWidth}
-						data-flx="app.desktop-settings-view.full-width.set-search-query"
-					/>
-				</div>
 				<button
 					type="button"
 					className={clsx(
@@ -466,11 +457,7 @@ export const DesktopSettingsView: React.FC<DesktopSettingsViewProps> = observer(
 						selectedTab === PROFILE_SETTINGS_TAB && userSettingsStyles.userProfileSelected,
 					)}
 					onClick={() => {
-						if (currentUser?.isClaimed() ?? true) {
-							handleTabSelect(PROFILE_SETTINGS_TAB);
-						} else {
-							openClaimAccountModal({force: true});
-						}
+						handleTabSelect(PROFILE_SETTINGS_TAB);
 					}}
 					data-flx="app.desktop-settings-view.user-profile.profile-tab-select"
 				>
@@ -484,27 +471,28 @@ export const DesktopSettingsView: React.FC<DesktopSettingsViewProps> = observer(
 								className={userSettingsStyles.userProfileHint}
 								data-flx="app.desktop-settings-view.user-profile-hint"
 							>
-								{(currentUser?.isClaimed() ?? true) ? (
-									<>
-										<PencilIcon
-											size={remFromPx(12)}
-											weight="bold"
-											className={userSettingsStyles.userProfileHintIcon}
-											data-flx="app.desktop-settings-view.user-profile-hint-icon"
-										/>
-										<span className={userSettingsStyles.userProfileHintText}>
-											<Trans>Edit your profile</Trans>
-										</span>
-									</>
-								) : (
-									<span className={userSettingsStyles.userProfileHintText}>
-										<Trans>Claim your account to edit your profile</Trans>
-									</span>
-								)}
+								<span className={userSettingsStyles.userProfileHintText}>
+									<Trans>Edit Profiles</Trans>
+								</span>
+								<PencilIcon
+									size={remFromPx(12)}
+									weight="bold"
+									className={userSettingsStyles.userProfileHintIcon}
+									data-flx="app.desktop-settings-view.user-profile-hint-icon"
+								/>
 							</div>
 						</div>
 					</div>
 				</button>
+				<div className={styles.searchContainer} data-flx="app.desktop-settings-view.search-container">
+					<SettingsSearch
+						value={searchQuery}
+						onChange={setSearchQuery}
+						placeholder={i18n._(SEARCH_SETTINGS_PLACEHOLDER_DESCRIPTOR)}
+						className={styles.fullWidth}
+						data-flx="app.desktop-settings-view.full-width.set-search-query"
+					/>
+				</div>
 			</>
 		);
 		const content = (

@@ -202,6 +202,7 @@ export function storeGamingActivity(
 			source: source ?? (existing?.game.id === game.id && existing.source === 'auto' ? 'auto' : 'manual'),
 		};
 		window.localStorage.setItem(`${STORAGE_PREFIX}${userId}`, JSON.stringify(value));
+		window.dispatchEvent(new CustomEvent('nexus:gaming:activity-changed', {detail: value}));
 	} catch {
 		// Private browsing may disable local storage; the initial API request still succeeds.
 	}
@@ -210,6 +211,7 @@ export function storeGamingActivity(
 export function clearStoredGamingActivity(userId: string): void {
 	try {
 		window.localStorage.removeItem(`${STORAGE_PREFIX}${userId}`);
+		window.dispatchEvent(new CustomEvent('nexus:gaming:activity-changed', {detail: null}));
 	} catch {
 		// Ignore unavailable local storage.
 	}
@@ -233,9 +235,71 @@ function heartbeat(userId: string): void {
 	}
 }
 
+export const KNOWN_GAME_PROCESSES_MAP: Record<string, {id: string; name: string}> = {
+	'arcraiders.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'arcraiders-win64-shipping.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'pioneer.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'pioneer-win64-shipping.exe': {id: 'arc-raiders', name: 'ARC Raiders'},
+	'discovery.exe': {id: 'the-finals', name: 'THE FINALS'},
+	'discovery-win64-shipping.exe': {id: 'the-finals', name: 'THE FINALS'},
+	'robrun.exe': {id: 'rob-run', name: 'ROB RUN'},
+	'robrun-win64-shipping.exe': {id: 'rob-run', name: 'ROB RUN'},
+	'soundpad.exe': {id: 'soundpad', name: 'Soundpad'},
+	'blender.exe': {id: 'blender', name: 'Blender'},
+	'wallpaper32.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
+	'wallpaper64.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
+	'beamng.drive.x64.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
+	'beamng.drive.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
+	'cs2.exe': {id: 'cs2', name: 'Counter-Strike 2'},
+	'csgo.exe': {id: 'csgo', name: 'Counter-Strike: Global Offensive'},
+	'gta5.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'gtav.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'playgtav.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'cod.exe': {id: 'cod', name: 'Call of Duty'},
+	'modernwarfare.exe': {id: 'cod-mw', name: 'Call of Duty: Modern Warfare'},
+	'blackops6.exe': {id: 'cod-bo6', name: 'Call of Duty: Black Ops 6'},
+	'bootstrapper.exe': {id: 'cod', name: 'Call of Duty'},
+	'fc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
+	'eafc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
+	'fc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
+	'eafc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
+	'fifa23.exe': {id: 'fifa-23', name: 'FIFA 23'},
+	'fifa22.exe': {id: 'fifa-22', name: 'FIFA 22'},
+	'fifa21.exe': {id: 'fifa-21', name: 'FIFA 21'},
+	'bodycam.exe': {id: 'bodycam', name: 'Bodycam'},
+	'bodycam-win64-shipping.exe': {id: 'bodycam', name: 'Bodycam'},
+	'acs.exe': {id: 'assetto-corsa', name: 'Assetto Corsa'},
+	'assettocorsa.exe': {id: 'assetto-corsa', name: 'Assetto Corsa'},
+	'ac2-win64-shipping.exe': {id: 'assetto-corsa-evo', name: 'Assetto Corsa EVO'},
+	'fortniteclient-win64-shipping.exe': {id: 'fortnite', name: 'Fortnite'},
+	'valorant-win64-shipping.exe': {id: 'valorant', name: 'VALORANT'},
+	'valorant.exe': {id: 'valorant', name: 'VALORANT'},
+	'robloxplayerbeta.exe': {id: 'roblox', name: 'Roblox'},
+	'robloxplayerlauncher.exe': {id: 'roblox', name: 'Roblox'},
+	'javaw.exe': {id: 'minecraft', name: 'Minecraft'},
+	'minecraft.exe': {id: 'minecraft', name: 'Minecraft'},
+	'leagueclient.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'leagueclientux.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'league of legends.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'rocketleague.exe': {id: 'rocket-league', name: 'Rocket League'},
+	'overwatch.exe': {id: 'overwatch-2', name: 'Overwatch 2'},
+	'r5apex.exe': {id: 'apex-legends', name: 'Apex Legends'},
+	'tslgame.exe': {id: 'pubg', name: 'PUBG: BATTLEGROUNDS'},
+	'genshinimpact.exe': {id: 'genshin-impact', name: 'Genshin Impact'},
+	'cyberpunk2077.exe': {id: 'cyberpunk-2077', name: 'Cyberpunk 2077'},
+	'eurotrucks2.exe': {id: 'euro-truck-simulator-2', name: 'Euro Truck Simulator 2'},
+	'forzahorizon5.exe': {id: 'forza-horizon-5', name: 'Forza Horizon 5'},
+	'dota2.exe': {id: 'dota-2', name: 'Dota 2'},
+	'rainbowsix.exe': {id: 'rainbow-six-siege', name: "Tom Clancy's Rainbow Six Siege"},
+	'destiny2.exe': {id: 'destiny-2', name: 'Destiny 2'},
+	'rustclient.exe': {id: 'rust', name: 'Rust'},
+	'palworld-win64-shipping.exe': {id: 'palworld', name: 'Palworld'},
+	'helldivers2.exe': {id: 'helldivers-2', name: 'HELLDIVERS 2'},
+};
+
 async function reconcileDetectedGame(userId: string): Promise<void> {
 	const electronApi = getElectronAPI();
-		if (!electronApi?.getRunningGameProcessNames || detectionInFlight.has(userId)) return;
+	if (!electronApi?.getRunningGameProcessNames || detectionInFlight.has(userId)) return;
 	detectionInFlight.add(userId);
 
 	try {
@@ -249,9 +313,18 @@ async function reconcileDetectedGame(userId: string): Promise<void> {
 			return;
 		}
 
-		const runningProcessNames = new Set(
-			(await electronApi.getRunningGameProcessNames()).map(normalizeProcessName).filter(Boolean),
-		);
+		const rawProcesses = (await electronApi.getRunningGameProcessNames()) ?? [];
+		const runningProcessNamesList = rawProcesses.map(normalizeProcessName).filter(Boolean);
+		const runningProcessNames = new Set(runningProcessNamesList);
+
+		const knownGamesDetected: Array<GamingEntry> = [];
+		for (const proc of runningProcessNamesList) {
+			const known = KNOWN_GAME_PROCESSES_MAP[proc];
+			if (known && !knownGamesDetected.some((g) => g.id === known.id)) {
+				knownGamesDetected.push({id: known.id, name: known.name, platform: 'computer'});
+			}
+		}
+
 		let runningSteamGames: Array<GamingEntry> = [];
 		try {
 			runningSteamGames = (await electronApi.getRunningSteamGames?.()) ?? [];
@@ -265,7 +338,11 @@ async function reconcileDetectedGame(userId: string): Promise<void> {
 				runningProcessNames.has(normalizeProcessName(registration.process_name)) &&
 				!suppressedProcessNames.has(normalizeProcessName(registration.process_name)),
 		);
-		const runningGames = [...(gameRegistration ? [gameRegistration.game] : []), ...runningSteamGames];
+		const runningGames = [
+			...(gameRegistration ? [gameRegistration.game] : []),
+			...knownGamesDetected,
+			...runningSteamGames,
+		];
 		const runningGameIds = new Set(runningGames.map((game) => game.id));
 		const runningGameNames = new Set(runningGames.map((game) => normalizeGameTitle(game.name)));
 		const stillSuppressedGameIds = preferences.suppressed_game_ids.filter((id) => runningGameIds.has(id));

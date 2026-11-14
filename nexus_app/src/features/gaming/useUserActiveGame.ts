@@ -78,11 +78,19 @@ export function useUserActiveGame(guildId?: string, userId?: string): GamingEntr
 			}
 		};
 
+		const onActivityChange = () => {
+			readLocal();
+		};
+		window.addEventListener('nexus:gaming:activity-changed', onActivityChange);
+		window.addEventListener('storage', onActivityChange);
+
 		void refresh();
 		const interval = window.setInterval(() => void refresh(), 25_000);
 		return () => {
 			mounted = false;
 			window.clearInterval(interval);
+			window.removeEventListener('nexus:gaming:activity-changed', onActivityChange);
+			window.removeEventListener('storage', onActivityChange);
 		};
 	}, [guildId, userId, isCurrentUser]);
 

@@ -175,6 +175,137 @@ export const RoleEditor: React.FC<RoleEditorProps> = observer(
 									</div>
 								</div>
 								{!selectedRoleWithUpdates.isEveryone && (
+									<div style={{marginTop: 16, marginBottom: 16, padding: '12px 16px', background: 'var(--background-secondary, rgba(255,255,255,0.03))', borderRadius: 8, border: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'}}>
+										<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10}}>
+											<div>
+												<div style={{fontSize: 14, fontWeight: 600, color: 'var(--text-normal, #fff)'}}>
+													Role Icon (Free)
+												</div>
+												<div style={{fontSize: 12, color: 'var(--text-muted, #949ba4)', marginTop: 2}}>
+													Choose an image or emoji for this role. It will appear next to the role and member names.
+												</div>
+											</div>
+											{(selectedRoleWithUpdates.icon || selectedRoleWithUpdates.unicodeEmoji) && (
+												<Button
+													variant="secondary"
+													small={true}
+													onClick={() => selectedRole && onRoleUpdate(selectedRole.id, {icon: null, unicode_emoji: null})}
+													disabled={selectedRoleLocked || !canManageRoles}
+												>
+													Remove Icon
+												</Button>
+											)}
+										</div>
+										<div style={{display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap'}}>
+											<div style={{
+												width: 48,
+												height: 48,
+												borderRadius: 8,
+												background: 'var(--background-tertiary, rgba(0,0,0,0.3))',
+												border: '1px dashed var(--border-subtle, rgba(255,255,255,0.2))',
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												overflow: 'hidden',
+												flexShrink: 0
+											}}>
+												{selectedRoleWithUpdates.icon ? (
+													<img
+														src={selectedRoleWithUpdates.icon}
+														alt="Role Icon"
+														style={{width: '100%', height: '100%', objectFit: 'contain'}}
+													/>
+												) : selectedRoleWithUpdates.unicodeEmoji ? (
+													<span style={{fontSize: 28, lineHeight: 1}}>{selectedRoleWithUpdates.unicodeEmoji}</span>
+												) : (
+													<span style={{fontSize: 11, color: 'var(--text-muted, #888)'}}>None</span>
+												)}
+											</div>
+											<div style={{display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap'}}>
+												<label style={{cursor: selectedRoleLocked || !canManageRoles ? 'not-allowed' : 'pointer'}}>
+													<input
+														type="file"
+														accept="image/*"
+														style={{display: 'none'}}
+														disabled={selectedRoleLocked || !canManageRoles}
+														onChange={(e) => {
+															const file = e.target.files?.[0];
+															if (!file || !selectedRole) return;
+															const reader = new FileReader();
+															reader.onload = () => {
+																const img = new Image();
+																img.onload = () => {
+																	const canvas = document.createElement('canvas');
+																	const maxDim = 64;
+																	let width = img.width;
+																	let height = img.height;
+																	if (width > maxDim || height > maxDim) {
+																		if (width > height) {
+																			height = Math.round((height * maxDim) / width);
+																			width = maxDim;
+																		} else {
+																			width = Math.round((width * maxDim) / height);
+																			height = maxDim;
+																		}
+																	}
+																	canvas.width = width;
+																	canvas.height = height;
+																	const ctx = canvas.getContext('2d');
+																	if (ctx) {
+																		ctx.drawImage(img, 0, 0, width, height);
+																		const dataUrl = canvas.toDataURL('image/png');
+																		onRoleUpdate(selectedRole.id, {icon: dataUrl, unicode_emoji: null});
+																	}
+																};
+																if (typeof reader.result === 'string') {
+																	img.src = reader.result;
+																}
+															};
+															reader.readAsDataURL(file);
+															e.target.value = '';
+														}}
+													/>
+													<span style={{
+														display: 'inline-flex',
+														alignItems: 'center',
+														padding: '6px 12px',
+														fontSize: 13,
+														fontWeight: 500,
+														borderRadius: 4,
+														background: 'var(--button-secondary-background, #4e5058)',
+														color: 'var(--button-secondary-text, #fff)',
+														cursor: 'pointer'
+													}}>
+														Choose Image
+													</span>
+												</label>
+												<div style={{display: 'flex', alignItems: 'center', gap: 4}}>
+													{['👑', '🛡️', '⚔️', '🎮', '💎', '🌟', '⚡', '🔥', '🏆', '🚀'].map((emoji) => (
+														<button
+															key={emoji}
+															type="button"
+															style={{
+																background: selectedRoleWithUpdates.unicodeEmoji === emoji ? 'rgba(255,255,255,0.2)' : 'transparent',
+																border: 'none',
+																borderRadius: 4,
+																cursor: 'pointer',
+																fontSize: 18,
+																padding: '4px 6px',
+																lineHeight: 1
+															}}
+															onClick={() => selectedRole && onRoleUpdate(selectedRole.id, {unicode_emoji: emoji, icon: null})}
+															disabled={selectedRoleLocked || !canManageRoles}
+															title={`Use ${emoji}`}
+														>
+															{emoji}
+														</button>
+													))}
+												</div>
+											</div>
+										</div>
+									</div>
+								)}
+								{!selectedRoleWithUpdates.isEveryone && (
 									<div className={styles.settingsGroup} data-flx="guild.guild-tabs.guild-roles-tab.settings-group">
 										<Switch
 											label={i18n._(SHOW_THIS_ROLE_SEPARATELY_DESCRIPTOR)}

@@ -96,6 +96,16 @@ export const MemberListItem: React.FC<MemberListItemProps> = observer((props) =>
 	});
 	const memberListCustomStatus = providedCustomStatus !== undefined ? providedCustomStatus : hookCustomStatus;
 	const activeGame = useUserActiveGame(guildId, user.id);
+	const memberRoleWithIcon = useMemo(() => {
+		if (!guildId || !guildMember) return null;
+		const guild = Guilds.getGuild(guildId);
+		if (!guild) return null;
+		const memberRoles = Array.from(guildMember.roles)
+			.map((id) => guild.getRole(id))
+			.filter((r): r is import('@app/features/guild/models/GuildRole').GuildRole => Boolean(r && (r.icon || r.unicodeEmoji)))
+			.sort((a, b) => b.position - a.position);
+		return memberRoles[0] ?? null;
+	}, [guildId, guildMember]);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
 	const contextMenuTicketRef = useRef(0);
 	const isCurrentUser = user.id === Authentication.currentUserId;
@@ -253,6 +263,18 @@ const profileCustomization = UserProfile.getProfile(user.id, guildId)?.getEffect
 										</Tooltip>
 									</div>
 								)}
+								{memberRoleWithIcon?.icon ? (
+									<img
+										src={memberRoleWithIcon.icon}
+										alt=""
+										style={{width: 16, height: 16, borderRadius: 3, objectFit: 'contain', marginLeft: 4, flexShrink: 0}}
+										title={memberRoleWithIcon.name}
+									/>
+								) : memberRoleWithIcon?.unicodeEmoji ? (
+									<span style={{fontSize: 14, marginLeft: 4, flexShrink: 0}} title={memberRoleWithIcon.name}>
+										{memberRoleWithIcon.unicodeEmoji}
+									</span>
+								) : null}
 								{user.bot && (
 									<UserTag
 										className={styles.userTag}
