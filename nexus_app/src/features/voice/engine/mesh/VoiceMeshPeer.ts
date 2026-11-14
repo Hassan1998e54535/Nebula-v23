@@ -322,7 +322,20 @@ export class VoiceMeshPeer {
 	}
 
 	private createTransport(g: number): RTCPeerConnection {
-		const pc = new RTCPeerConnection({iceServers: this.engine.iceServers, bundlePolicy: 'max-bundle'});
+		const iceServers =
+			this.engine.iceServers && this.engine.iceServers.length > 0
+				? this.engine.iceServers
+				: [
+						{
+							urls: [
+								'stun:stun.l.google.com:19302',
+								'stun:stun1.l.google.com:19302',
+								'stun:stun2.l.google.com:19302',
+								'stun:stun.cloudflare.com:3478',
+							],
+						},
+					];
+		const pc = new RTCPeerConnection({iceServers, bundlePolicy: 'max-bundle'});
 		pc.onicecandidate = (event) => {
 			if (this.pc !== pc) return;
 			this.send({t: 'ice', g, c: event.candidate ? event.candidate.toJSON() : null});
