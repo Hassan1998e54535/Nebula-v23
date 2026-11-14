@@ -84,7 +84,22 @@ class FeatureDiscovery {
 	}
 
 	skip(): void {
-		this.finish();
+		this.history = {
+			completedTourIds: [
+				'welcome-v1',
+				'explore-communities-v1',
+				'profile-v1',
+				'status-v1',
+				'create-community-v1',
+				'join-community-v1',
+				'group-chat-v1',
+				'community-settings-v1',
+				...(this.activeTour ? [this.activeTour.id] : []),
+			],
+		};
+		AppStorage.setJSON(AppStorageKey.UI_FEATURE_DISCOVERY, this.history);
+		this.activeTour = null;
+		this.activeStepIndex = 0;
 	}
 
 	finish(): void {

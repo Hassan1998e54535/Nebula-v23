@@ -12,7 +12,7 @@ import {
 } from '@app/features/voice/utils/VoiceMessageDescriptors';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
-import {MicrophoneSlashIcon, SpeakerSlashIcon, VideoCameraIcon} from '@phosphor-icons/react';
+import {GameControllerIcon, MicrophoneSlashIcon, SpeakerSlashIcon, VideoCameraIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 
@@ -32,6 +32,7 @@ interface Props {
 	isCameraOn?: boolean;
 	isScreenSharing?: boolean;
 	className?: string;
+	gameName?: string | null;
 }
 
 export const VoiceStateIcons = observer(
@@ -45,6 +46,7 @@ export const VoiceStateIcons = observer(
 		isCameraOn,
 		isScreenSharing,
 		className,
+		gameName,
 	}: Props) => {
 		const {i18n} = useLingui();
 		const muteLabel = isGuildMuted
@@ -86,6 +88,13 @@ export const VoiceStateIcons = observer(
 					</Tooltip>
 				)}
 				{isScreenSharing && <LiveBadge data-flx="app.voice-state-icons.live-badge" />}
+				{gameName && (
+					<Tooltip text={`Playing ${gameName}`} data-flx="app.voice-state-icons.game-tooltip">
+						<span className={styles.gameBadge} title={gameName}>
+							<GameControllerIcon weight="fill" className={styles.gameIcon} size={15} />
+						</span>
+					</Tooltip>
+				)}
 			</div>
 		);
 	},

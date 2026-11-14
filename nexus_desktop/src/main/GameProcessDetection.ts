@@ -333,6 +333,49 @@ async function getRunningExecutablePaths(): Promise<Array<string>> {
 	return [];
 }
 
+export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = {
+	'beamng.drive.x64.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
+	'beamng.drive.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
+	'cs2.exe': {id: 'cs2', name: 'Counter-Strike 2'},
+	'csgo.exe': {id: 'csgo', name: 'Counter-Strike: Global Offensive'},
+	'gta5.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'gtav.exe': {id: 'gta5', name: 'Grand Theft Auto V'},
+	'cod.exe': {id: 'cod', name: 'Call of Duty'},
+	'modernwarfare.exe': {id: 'cod-mw', name: 'Call of Duty: Modern Warfare'},
+	'blackops6.exe': {id: 'cod-bo6', name: 'Call of Duty: Black Ops 6'},
+	'fc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
+	'fc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
+	'fifa23.exe': {id: 'fifa-23', name: 'FIFA 23'},
+	'fifa22.exe': {id: 'fifa-22', name: 'FIFA 22'},
+	'fifa21.exe': {id: 'fifa-21', name: 'FIFA 21'},
+	'bodycam.exe': {id: 'bodycam', name: 'Bodycam'},
+	'bodycam-win64-shipping.exe': {id: 'bodycam', name: 'Bodycam'},
+	'acs.exe': {id: 'assetto-corsa', name: 'Assetto Corsa'},
+	'assettocorsa.exe': {id: 'assetto-corsa', name: 'Assetto Corsa'},
+	'ac2-win64-shipping.exe': {id: 'assetto-corsa-evo', name: 'Assetto Corsa EVO'},
+	'fortniteclient-win64-shipping.exe': {id: 'fortnite', name: 'Fortnite'},
+	'valorant-win64-shipping.exe': {id: 'valorant', name: 'VALORANT'},
+	'robloxplayerbeta.exe': {id: 'roblox', name: 'Roblox'},
+	'javaw.exe': {id: 'minecraft', name: 'Minecraft'},
+	'minecraft.exe': {id: 'minecraft', name: 'Minecraft'},
+	'leagueclient.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'league of legends.exe': {id: 'league-of-legends', name: 'League of Legends'},
+	'rocketleague.exe': {id: 'rocket-league', name: 'Rocket League'},
+	'overwatch.exe': {id: 'overwatch-2', name: 'Overwatch 2'},
+	'r5apex.exe': {id: 'apex-legends', name: 'Apex Legends'},
+	'tslgame.exe': {id: 'pubg', name: 'PUBG: BATTLEGROUNDS'},
+	'genshinimpact.exe': {id: 'genshin-impact', name: 'Genshin Impact'},
+	'cyberpunk2077.exe': {id: 'cyberpunk-2077', name: 'Cyberpunk 2077'},
+	'eurotrucks2.exe': {id: 'euro-truck-simulator-2', name: 'Euro Truck Simulator 2'},
+	'forzahorizon5.exe': {id: 'forza-horizon-5', name: 'Forza Horizon 5'},
+	'dota2.exe': {id: 'dota-2', name: 'Dota 2'},
+	'rainbowsix.exe': {id: 'rainbow-six-siege', name: "Tom Clancy's Rainbow Six Siege"},
+	'destiny2.exe': {id: 'destiny-2', name: 'Destiny 2'},
+	'rustclient.exe': {id: 'rust', name: 'Rust'},
+	'palworld-win64-shipping.exe': {id: 'palworld', name: 'Palworld'},
+	'helldivers2.exe': {id: 'helldivers-2', name: 'HELLDIVERS 2'},
+};
+
 export async function getRunningSteamGames(): Promise<Array<RunningSteamGame>> {
 	if (process.platform !== 'win32' && process.platform !== 'linux') return [];
 
@@ -340,6 +383,17 @@ export async function getRunningSteamGames(): Promise<Array<RunningSteamGame>> {
 	const runningGames = new Map<string, RunningSteamGame>();
 
 	for (const executablePath of executablePaths) {
+		const baseName = path.basename(executablePath).toLowerCase();
+		const known = KNOWN_GAME_PROCESSES[baseName];
+		if (known && !runningGames.has(known.id)) {
+			runningGames.set(known.id, {
+				id: known.id,
+				name: known.name,
+				platform: 'computer',
+			});
+			continue;
+		}
+
 		const installation = findSteamInstallationForExecutable(executablePath, installations);
 		if (!installation) continue;
 		if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {

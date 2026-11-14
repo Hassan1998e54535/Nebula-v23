@@ -3,6 +3,7 @@
 import Authentication from '@app/features/auth/state/Authentication';
 import {UserTag} from '@app/features/channel/components/ChannelUserTag';
 import {CompactMemberCustomStatus} from '@app/features/channel/components/CompactMemberCustomStatus';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import styles from '@app/features/channel/components/MemberListItem.module.css';
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
 import Guilds from '@app/features/guild/state/Guilds';
@@ -31,7 +32,7 @@ import type {StatusType} from '@nexus/constants/src/StatusConstants';
 import {isOfflineStatus} from '@nexus/constants/src/StatusConstants';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
-import {CrownIcon} from '@phosphor-icons/react';
+import {CrownIcon, GameControllerIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -94,6 +95,7 @@ export const MemberListItem: React.FC<MemberListItemProps> = observer((props) =>
 		enabled: guildId !== undefined && providedCustomStatus === undefined,
 	});
 	const memberListCustomStatus = providedCustomStatus !== undefined ? providedCustomStatus : hookCustomStatus;
+	const activeGame = useUserActiveGame(guildId, user.id);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
 	const contextMenuTicketRef = useRef(0);
 	const isCurrentUser = user.id === Authentication.currentUserId;
@@ -259,12 +261,26 @@ const profileCustomization = UserProfile.getProfile(user.id, guildId)?.getEffect
 									/>
 								)}
 							</div>
-							<CompactMemberCustomStatus
-								customStatus={memberListCustomStatus}
-								userId={user.id}
-								className={styles.memberCustomStatus}
-								data-flx="channel.member-list-item.member-custom-status"
-							/>
+							{activeGame?.name ? (
+								<div
+									className={styles.memberCustomStatus}
+									style={{display: 'flex', alignItems: 'center', gap: '4px'}}
+									title={`Playing ${activeGame.name}`}
+									data-flx="channel.member-list-item.active-game"
+								>
+									<GameControllerIcon size={13} weight="fill" style={{flexShrink: 0, color: 'var(--accent-primary, #5865f2)'}} />
+									<span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+										Playing {activeGame.name}
+									</span>
+								</div>
+							) : (
+								<CompactMemberCustomStatus
+									customStatus={memberListCustomStatus}
+									userId={user.id}
+									className={styles.memberCustomStatus}
+									data-flx="channel.member-list-item.member-custom-status"
+								/>
+							)}
 						</div>
 					</span>
 				</div>

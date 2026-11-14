@@ -18,3 +18,15 @@
 .iconGuildAction {
 	color: rgb(239 68 68);
 }
+
+.gameBadge {
+	display: inline-flex;
+	align-items: center;
+	color: var(--brand-primary, #5865f2);
+}
+
+.gameIcon {
+	height: 1rem;
+	width: 1rem;
+	color: var(--brand-primary, #5865f2);
+}
