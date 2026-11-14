@@ -13,9 +13,58 @@ interface GameArtworkProps {
 	showTitle?: boolean;
 }
 
+const POPULAR_COVERS: Record<string, string> = {
+	'roblox': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
+	'rob': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
+	'rob run': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
+	'arc raiders': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co68cf.webp',
+	'ea sports fc 27': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+	'ea sports fc 26': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+	'ea sports fc 25': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+	'ea sports fc 24': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+	'fifa': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+	'honkai: star rail': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co49wy.webp',
+	'honkai star rail': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co49wy.webp',
+	'grand theft auto v': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+	'grand theft auto v enhanced': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+	'gta v': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+	'gta 5': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+	'minecraft': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co8fv5.webp',
+	'counter-strike 2': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6b79.webp',
+	'cs2': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6b79.webp',
+	'counter strike': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6b79.webp',
+	'valorant': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.webp',
+	'league of legends': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4805.webp',
+	'lol': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4805.webp',
+	'fortnite': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1u8v.webp',
+	'call of duty': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co72f9.webp',
+	'call of duty: black ops 6': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co72f9.webp',
+	'apex legends': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20af.webp',
+	'rocket league': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4a2m.webp',
+	'genshin impact': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20au.webp',
+	'wuthering waves': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co88h1.webp',
+	'beamng.drive': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20au.webp',
+	'pubg mobile': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20av.webp',
+	'helldivers 2': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co7082.webp',
+	'the finals': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co7083.webp',
+};
+
+function resolveCoverUrl(game: Pick<GamingEntry, 'name' | 'cover_url'>): string | null {
+	if (game.cover_url) {
+		return game.cover_url.startsWith('//') ? `https:${game.cover_url}` : game.cover_url;
+	}
+	const norm = game.name.trim().toLowerCase();
+	if (POPULAR_COVERS[norm]) return POPULAR_COVERS[norm];
+	for (const [key, url] of Object.entries(POPULAR_COVERS)) {
+		if (norm.includes(key) || key.includes(norm)) return url;
+	}
+	return null;
+}
+
 export function GameArtwork({game, variant = 'portrait', showTitle = true}: GameArtworkProps) {
 	const [failedCoverUrl, setFailedCoverUrl] = useState<string | null>(null);
-	const hasCover = game.provider === 'igdb' && Boolean(game.cover_url) && failedCoverUrl !== game.cover_url;
+	const resolvedCover = resolveCoverUrl(game);
+	const hasCover = Boolean(resolvedCover) && failedCoverUrl !== resolvedCover;
 
 	return (
 		<div className={`${styles.artwork} ${styles[variant]}`}>
@@ -26,9 +75,9 @@ export function GameArtwork({game, variant = 'portrait', showTitle = true}: Game
 					className={styles.coverImage}
 					decoding="async"
 					loading="lazy"
-					onError={() => setFailedCoverUrl(game.cover_url ?? null)}
+					onError={() => setFailedCoverUrl(resolvedCover)}
 					referrerPolicy="no-referrer"
-					src={game.cover_url!}
+					src={resolvedCover!}
 				/>
 			) : (
 				<div className={styles.placeholder}>

@@ -20,6 +20,7 @@ import {
 import type {GuildRole} from '@app/features/guild/models/GuildRole';
 import Guilds from '@app/features/guild/state/Guilds';
 import {createSubmittableRoleOrderIds} from '@app/features/guild/utils/GuildRoleOrderUtils';
+import {roleIconStorage} from '@app/features/guild/utils/RoleIconStorage';
 import {CANCEL_DESCRIPTOR, TRY_AGAIN_IN_A_MOMENT_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import GuildMembers from '@app/features/member/state/GuildMembers';
 import Permission from '@app/features/permissions/state/Permission';
@@ -320,6 +321,16 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 				if (updates.unicode_emoji !== undefined) updateData.unicode_emoji = updates.unicode_emoji;
 				if (updates.permissions !== undefined) {
 					updateData.permissions = (updates.permissions & ~retiredPermissions).toString();
+				}
+				if (updates.icon !== undefined || updates.unicode_emoji !== undefined) {
+					roleIconStorage.setRoleIcon(roleId, {
+						icon: updates.icon,
+						unicodeEmoji: updates.unicode_emoji,
+					});
+				}
+				const currentRole = guild.roles[roleId];
+				if (currentRole) {
+					guild.roles[roleId] = currentRole.withUpdates(updateData as any);
 				}
 				await GuildCommands.updateRole(guild.id, roleId, updateData);
 			}

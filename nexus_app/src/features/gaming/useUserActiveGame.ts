@@ -52,14 +52,11 @@ export function useUserActiveGame(guildId?: string, userId?: string): GamingEntr
 			return false;
 		};
 
-		if (readLocal() && !guildId) return;
-
-		if (!guildId) return;
+		readLocal();
 
 		const refresh = async () => {
-			if (readLocal()) {
-				// Current user has local detection, but also fetch guild for others
-			}
+			readLocal();
+			if (!guildId) return;
 			const cached = guildCache.get(guildId);
 			if (cached && cached.expires > Date.now()) {
 				if (mounted) setGame(cached.players.get(userId) ?? null);
@@ -78,17 +75,26 @@ export function useUserActiveGame(guildId?: string, userId?: string): GamingEntr
 			}
 		};
 
-		const onActivityChange = () => {
-			readLocal();
+		const onActivityChange = (event?: any) => {
+			if (event?.detail?.game) {
+				if (mounted) setGame(event.detail.game as GamingEntry);
+			} else if (event?.detail === null) {
+				if (mounted) setGame(null);
+			} else {
+				readLocal();
+			}
 		};
 		window.addEventListener('nexus:gaming:activity-changed', onActivityChange);
 		window.addEventListener('storage', onActivityChange);
 
 		void refresh();
-		const interval = window.setInterval(() => void refresh(), 25_000);
+		let interval: number | null = null;
+		if (guildId) {
+			interval = window.setInterval(() => void refresh(), 25_000);
+		}
 		return () => {
 			mounted = false;
-			window.clearInterval(interval);
+			if (interval) window.clearInterval(interval);
 			window.removeEventListener('nexus:gaming:activity-changed', onActivityChange);
 			window.removeEventListener('storage', onActivityChange);
 		};

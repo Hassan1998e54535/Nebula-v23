@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
+import {roleIconStorage} from '@app/features/guild/utils/RoleIconStorage';
 import {noteText} from '@app/features/theme/fonts/ScriptFontLoader';
 import type {GuildRole as WireGuildRole} from '@nexus/schema/src/domains/guild/GuildRoleSchemas';
 
@@ -33,8 +34,8 @@ export class GuildRole {
 		this.permissions = BigInt(guildRole.permissions);
 		this.hoist = guildRole.hoist;
 		this.mentionable = guildRole.mentionable;
-		this.icon = (guildRole as any).icon ?? (guildRole as any).icon_hash ?? null;
-		this.unicodeEmoji = guildRole.unicode_emoji ?? null;
+		this.icon = (guildRole as any).icon ?? (guildRole as any).icon_hash ?? roleIconStorage.getRoleIcon(this.id);
+		this.unicodeEmoji = guildRole.unicode_emoji ?? roleIconStorage.getRoleEmoji(this.id);
 		noteText(this.name);
 	}
 

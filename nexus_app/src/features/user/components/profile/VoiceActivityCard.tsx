@@ -43,7 +43,7 @@ import {ME} from '@nexus/constants/src/AppConstants';
 import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {msg} from '@lingui/core/macro';
 import {Trans, useLingui} from '@lingui/react/macro';
-import {CaretRightIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
+import {CaretRightIcon, MonitorPlayIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -278,6 +278,7 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					<Tooltip text={cannotJoinReason} maxWidth="xl" data-flx="user.profile.voice-activity-card.tooltip">
 						<div style={{width: '100%'}} data-flx="user.profile.voice-activity-card.div">
 							<Button
+								variant="secondary"
 								compact
 								fitContainer
 								disabled={true}
@@ -297,6 +298,7 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					</Tooltip>
 				) : (
 					<Button
+						variant="secondary"
 						compact
 						fitContainer
 						onClick={handleJoinOrOpenVoice}
@@ -503,7 +505,12 @@ const StreamPreviewSection: React.FC<StreamPreviewSectionProps> = observer(
 						{isPreviewLoading ? (
 							<Spinner size="small" data-flx="user.profile.voice-activity-card.stream-preview-section.spinner" />
 						) : (
-							i18n._(NO_PREVIEW_YET_DESCRIPTOR)
+							<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center'}}>
+								<MonitorPlayIcon size={32} weight="duotone" style={{color: 'rgba(255, 255, 255, 0.7)'}} />
+								<span style={{fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)'}}>
+									<Trans>Stream just started. Get in here!</Trans>
+								</span>
+							</div>
 						)}
 					</div>
 				)}

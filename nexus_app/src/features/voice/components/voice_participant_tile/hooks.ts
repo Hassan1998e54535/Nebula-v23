@@ -7,6 +7,7 @@ import {HttpError} from '@app/features/platform/types/EndpointError';
 import {observeResize} from '@app/features/platform/utils/SharedResizeObserver';
 import ContextMenu from '@app/features/ui/state/ContextMenu';
 import PrivacyPreferences from '@app/features/user/state/PrivacyPreferences';
+import VoiceSettings from '@app/features/voice/state/VoiceSettings';
 import {parseStreamKey} from '@app/features/voice/components/StreamKeys';
 import {
 	buildPreviewBlobFromDataUrl,
@@ -746,7 +747,7 @@ export function useScreensharePreviewUploader(
 				pendingUploadAfterCurrent = true;
 				return false;
 			}
-			if (PrivacyPreferences.getDisableStreamPreviews()) {
+			if (PrivacyPreferences.getDisableStreamPreviews() || VoiceSettings.getHideStreamPreview()) {
 				logger.debug('useScreensharePreviewUploader: stream previews disabled by user preference');
 				return false;
 			}
@@ -859,7 +860,7 @@ export function useScreensharePreviewUploader(
 				stopInitialFrameProbe();
 				return;
 			}
-			if (PrivacyPreferences.getDisableStreamPreviews()) return;
+			if (PrivacyPreferences.getDisableStreamPreviews() || VoiceSettings.getHideStreamPreview()) return;
 			clearInitialFrameProbeTimer();
 			observeInitialFrameVideo(videoRef.current);
 			requestInitialFrameUpload();
@@ -876,7 +877,7 @@ export function useScreensharePreviewUploader(
 				hasUploadedOnce: hasUploadedPreviewRef.current,
 				initialAttempts: initialUploadAttemptsRef.current,
 				hasSpectatorDemand: hasSpectatorDemandRef.current,
-				previewsDisabled: PrivacyPreferences.getDisableStreamPreviews(),
+				previewsDisabled: PrivacyPreferences.getDisableStreamPreviews() || VoiceSettings.getHideStreamPreview(),
 			});
 		const scheduleDriver = (delayMs: number) => {
 			if (!isUploadActive()) return;

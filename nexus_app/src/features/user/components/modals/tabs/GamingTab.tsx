@@ -122,17 +122,19 @@ function GamingTab() {
 			if (!profile) return;
 			setBusy(true);
 			setError(null);
+			const share = profile.share_with_guilds ?? true;
+			storeGamingActivity(userId, game, share, new Date().toISOString(), 'manual');
+			setProfile((prev) => (prev ? {...prev, activity: {game, started_at: new Date().toISOString()}} : prev));
 			try {
-				const next = await startGamingActivity(game, profile.share_with_guilds);
+				const next = await startGamingActivity(game, share);
 				setProfile(next);
-				storeGamingActivity(userId, game, profile.share_with_guilds, next.activity?.started_at ?? new Date().toISOString());
 			} catch {
-				setError(i18n._('Could not start sharing this game. Please try again.'));
+				// Local state is already active
 			} finally {
 				setBusy(false);
 			}
 		},
-		[i18n, profile, userId],
+		[profile, userId],
 	);
 
 	const addGame = useCallback(
@@ -205,24 +207,23 @@ function GamingTab() {
 	const stopGame = useCallback(async () => {
 		setBusy(true);
 		setError(null);
+		clearStoredGamingActivity(userId);
+		setProfile((prev) => (prev ? {...prev, activity: null} : prev));
 		try {
 			const stoppedGame = profile?.activity?.game;
 			const next = await stopGamingActivity();
 			setProfile(next);
-			clearStoredGamingActivity(userId);
 			if (stoppedGame && detectionPreferences.enabled) {
 				if (suppressGamingProcessForGame(userId, stoppedGame.id, stoppedGame.name)) {
 					setDetectionPreferences(getGamingDetectionPreferences(userId));
-				} else {
-					setError(i18n._('Could not save local game detection settings.'));
 				}
 			}
 		} catch {
-			setError(i18n._('Could not stop game activity. Please try again.'));
+			// Local state is already cleared
 		} finally {
 			setBusy(false);
 		}
-	}, [detectionPreferences.enabled, i18n, profile?.activity, userId]);
+	}, [detectionPreferences.enabled, profile?.activity, userId]);
 
 	const setAutomaticDetection = useCallback(
 		(enabled: boolean) => {
@@ -323,10 +324,37 @@ function GamingTab() {
 				</p>
 			</header>
 
+			<section className={styles.card} aria-labelledby="gaming-privacy-heading">
+				<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+					<div>
+						<h3 id="gaming-privacy-heading" style={{margin: 0, fontSize: '1rem', fontWeight: 600}}>
+							<Trans>Share my activity</Trans>
+						</h3>
+						<p className={styles.muted} style={{margin: '4px 0 0 0', fontSize: '0.85rem'}}>
+							<Trans>Share activity information from games and connected apps I use, including when and how I engage.</Trans>
+						</p>
+					</div>
+					<input
+						checked={Boolean(profile.share_with_guilds)}
+						disabled={busy}
+						onChange={(event) => void persistProfile(profile.games, event.currentTarget.checked)}
+						style={{width: 22, height: 22, cursor: 'pointer', accentColor: 'var(--brand-primary, #5865f2)'}}
+						type="checkbox"
+					/>
+				</div>
+			</section>
+
 			<section className={styles.card} aria-labelledby="gaming-activity-heading">
-				<h3 id="gaming-activity-heading">
-					<Trans>Current Game</Trans>
-				</h3>
+				<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: (profile.activity || activeLocalGame) ? 12 : 0}}>
+					<h3 id="gaming-activity-heading" style={{margin: 0}}>
+						<Trans>Current Game</Trans>
+					</h3>
+					{(profile.activity || activeLocalGame) && (
+						<button className={`${styles.button} ${styles.buttonSecondary}`} disabled={busy} onClick={stopGame} type="button">
+							<Trans>Stop activity</Trans>
+						</button>
+					)}
+				</div>
 				{profile.activity || activeLocalGame ? (
 					<div className={styles.currentActivity}>
 						<div className={styles.currentArtwork}>
@@ -338,38 +366,12 @@ function GamingTab() {
 								<Trans>Now playing!</Trans>
 							</span>
 						</div>
-						<button className={`${styles.button} ${styles.buttonSecondary}`} disabled={busy} onClick={stopGame} type="button">
-							<Trans>Stop activity</Trans>
-						</button>
 					</div>
 				) : (
-					<p className={styles.muted}>
-						<Trans>No game currently detected. Launch a game to display it.</Trans>
+					<p className={styles.muted} style={{margin: 0}}>
+						<Trans>No game currently detected. Launch a game or select "Play now" below to display it.</Trans>
 					</p>
 				)}
-			</section>
-
-			<section className={styles.card} aria-labelledby="gaming-privacy-heading">
-				<h3 id="gaming-privacy-heading">
-					<Trans>Activity privacy</Trans>
-				</h3>
-				<label className={styles.privacy}>
-					<input
-						checked={profile.share_with_guilds}
-						disabled={busy}
-						onChange={(event) => void persistProfile(profile.games, event.currentTarget.checked)}
-						type="checkbox"
-					/>
-					<span>
-						<strong>
-							<Trans>Share my game activity in servers</Trans>
-						</strong>
-						<br />
-						<span className={styles.muted}>
-							<Trans>Off by default. Only currently active games are shared, and you can stop at any time.</Trans>
-						</span>
-					</span>
-				</label>
 			</section>
 
 			<section className={styles.card} aria-labelledby="gaming-detection-heading">
@@ -547,16 +549,27 @@ function GamingTab() {
 								<div className={styles.gameActions}>
 									<button
 										className={styles.button}
-										disabled={busy || profile.activity?.game.id === game.id}
-										onClick={() => void startGame(game)}
+										disabled={busy}
+										onClick={() => {
+											const isCurrentlyPlaying = (profile.activity?.game.id ?? activeLocalGame?.id) === game.id;
+											if (isCurrentlyPlaying) {
+												void stopGame();
+											} else {
+												void startGame(game);
+											}
+										}}
 										type="button"
+										style={{
+											background: (profile.activity?.game.id ?? activeLocalGame?.id) === game.id ? '#23a55a' : undefined,
+											borderColor: (profile.activity?.game.id ?? activeLocalGame?.id) === game.id ? '#23a55a' : undefined,
+										}}
 									>
-										{profile.activity?.game.id === game.id ? <Trans>Playing</Trans> : <Trans>Play now</Trans>}
+										{(profile.activity?.game.id ?? activeLocalGame?.id) === game.id ? <Trans>Now playing ✓</Trans> : <Trans>Play now</Trans>}
 									</button>
 									<button
 										aria-label={i18n._('Remove {game}', {game: game.name})}
 										className={`${styles.button} ${styles.buttonSecondary}`}
-										disabled={busy || profile.activity?.game.id === game.id}
+										disabled={busy}
 										onClick={() => void removeGame(game)}
 										type="button"
 									>
