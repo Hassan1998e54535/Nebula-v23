@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import {NativeWindowControls} from '@app/features/app/components/layout/NativeWindowControls';
+import {UpdaterIcon} from '@app/features/channel/components/channel_header_components/UpdaterIcon';
 import {NEXUSWordmark} from '@app/features/ui/components/icons/NexusWordmark';
 import {getElectronAPI, type NativePlatform} from '@app/features/ui/utils/NativeUtils';
 import {NATIVE_TITLEBAR_CLASS} from '@nexus/desktop_ipc/src/NativeTitlebarShell';
@@ -43,12 +44,18 @@ export const NativeTitlebar: React.FC<NativeTitlebarProps> = ({platform}) => {
 			{isMacOS ? (
 				<>
 					<div className={NATIVE_TITLEBAR_CLASS.spacer} data-flx="app.native-titlebar.spacer" />
+					<div style={{display: 'flex', alignItems: 'center', height: '100%', WebkitAppRegion: 'no-drag'}} data-no-drag="">
+						<UpdaterIcon data-flx="app.native-titlebar.updater-icon" />
+					</div>
 					{brand}
 				</>
 			) : (
 				<>
 					{brand}
 					<div className={NATIVE_TITLEBAR_CLASS.spacer} data-flx="app.native-titlebar.spacer" />
+					<div style={{display: 'flex', alignItems: 'center', height: '100%', WebkitAppRegion: 'no-drag'}} data-no-drag="">
+						<UpdaterIcon data-flx="app.native-titlebar.updater-icon" />
+					</div>
 					<NativeWindowControls data-flx="app.native-titlebar.controls" />
 				</>
 			)}
