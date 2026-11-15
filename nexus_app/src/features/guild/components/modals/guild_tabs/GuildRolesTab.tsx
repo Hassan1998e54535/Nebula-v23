@@ -20,6 +20,7 @@ import {
 import type {GuildRole} from '@app/features/guild/models/GuildRole';
 import Guilds from '@app/features/guild/state/Guilds';
 import {createSubmittableRoleOrderIds} from '@app/features/guild/utils/GuildRoleOrderUtils';
+import {roleIconStorage} from '@app/features/guild/utils/RoleIconStorage';
 import {CANCEL_DESCRIPTOR, TRY_AGAIN_IN_A_MOMENT_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import GuildMembers from '@app/features/member/state/GuildMembers';
 import Permission from '@app/features/permissions/state/Permission';
@@ -316,10 +317,37 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 				if (updates.color !== undefined) updateData.color = updates.color;
 				if (updates.hoist !== undefined) updateData.hoist = updates.hoist;
 				if (updates.mentionable !== undefined) updateData.mentionable = updates.mentionable;
+				if (updates.icon !== undefined) updateData.icon = updates.icon;
+				if (updates.unicode_emoji !== undefined) updateData.unicode_emoji = updates.unicode_emoji;
 				if (updates.permissions !== undefined) {
 					updateData.permissions = (updates.permissions & ~retiredPermissions).toString();
 				}
-				await GuildCommands.updateRole(guild.id, roleId, updateData);
+				if (updates.icon !== undefined || updates.unicode_emoji !== undefined) {
+					roleIconStorage.setRoleIcon(roleId, {
+						icon: updates.icon,
+						unicodeEmoji: updates.unicode_emoji,
+					});
+				}
+				const currentRole = guild.roles[roleId];
+				if (currentRole) {
+					guild.roles[roleId] = currentRole.withUpdates(updateData as any);
+				}
+				try {
+					await GuildCommands.updateRole(guild.id, roleId, updateData);
+				} catch (serverError) {
+					logger.warn('Server rejected role update with custom icon, attempting fallback without icon fields', serverError);
+					const fallbackData = {...updateData};
+					delete fallbackData.icon;
+					delete fallbackData.unicode_emoji;
+					if (Object.keys(fallbackData).length > 0) {
+						try {
+							await GuildCommands.updateRole(guild.id, roleId, fallbackData);
+						} catch (fallbackError) {
+							logger.error('Failed to update role even with fallback data', fallbackError);
+							throw fallbackError;
+						}
+					}
+				}
 			}
 			setRoleUpdates(new Map());
 			setPendingRoleOrder(null);
@@ -367,7 +395,9 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 					(merged.color !== undefined && merged.color !== originalRole.color) ||
 					(merged.hoist !== undefined && merged.hoist !== originalRole.hoist) ||
 					(merged.mentionable !== undefined && merged.mentionable !== originalRole.mentionable) ||
-					(merged.permissions !== undefined && merged.permissions !== originalRole.permissions);
+					(merged.permissions !== undefined && merged.permissions !== originalRole.permissions) ||
+					(merged.icon !== undefined && merged.icon !== originalRole.icon) ||
+					(merged.unicode_emoji !== undefined && merged.unicode_emoji !== originalRole.unicodeEmoji);
 				if (hasChanges) newMap.set(roleId, merged);
 				else newMap.delete(roleId);
 				return newMap;

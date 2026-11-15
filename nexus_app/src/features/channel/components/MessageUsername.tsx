@@ -19,7 +19,7 @@ import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
-import {useCallback, useRef} from 'react';
+import {useCallback, useMemo, useRef} from 'react';
 
 export const MessageUsername = observer(
 	({
@@ -48,6 +48,14 @@ UserProfile.getProfile(user.id, guild?.id)?.getEffectiveProfile().profile_appear
 const nameplateSettings = profileAppearance?.nameplateSettings;
 		const color = previewColor || member?.getColorString();
 		const onPopoutToggle = useMaybeMessageViewContext()?.onPopoutToggle;
+		const memberRoleWithIcon = useMemo(() => {
+			if (!guild || !member) return null;
+			const memberRoles = Array.from(member.roles)
+				.map((id) => guild.getRole(id))
+				.filter((r): r is import('@app/features/guild/models/GuildRole').GuildRole => Boolean(r && (r.icon || r.unicodeEmoji)))
+				.sort((a, b) => b.position - a.position);
+			return memberRoles[0] ?? null;
+		}, [guild, member]);
 		const handlePopoutOpen = useCallback(() => onPopoutToggle?.(true), [onPopoutToggle]);
 		const handlePopoutClose = useCallback(() => onPopoutToggle?.(false), [onPopoutToggle]);
 		const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -83,6 +91,18 @@ appearance={profileAppearance?.appearance}
 ) : (
 <ProfileDisplayName name={displayName} appearance={profileAppearance?.appearance} />
 )}
+{memberRoleWithIcon?.icon ? (
+	<img
+		src={memberRoleWithIcon.icon}
+		alt=""
+		style={{width: 16, height: 16, borderRadius: 3, objectFit: 'contain', marginLeft: 4, verticalAlign: 'middle', display: 'inline-block'}}
+		title={memberRoleWithIcon.name}
+	/>
+) : memberRoleWithIcon?.unicodeEmoji ? (
+	<span style={{fontSize: 14, marginLeft: 4, verticalAlign: 'middle', display: 'inline-block'}} title={memberRoleWithIcon.name}>
+		{memberRoleWithIcon.unicodeEmoji}
+	</span>
+) : null}
 				</span>
 			</FocusRing>
 		);

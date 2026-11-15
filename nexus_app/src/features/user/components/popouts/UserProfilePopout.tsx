@@ -422,38 +422,36 @@ profileFrameLayers={profileFrameLayers}
 						{showProfileFooter && (
 							<ProfileCardFooter data-flx="user.user-profile-popout.profile-card-footer">
 								{isCurrentUser ? (
-									user.isClaimed() ? (
-										<div className={styles.popoutFooterActions}>
-											<Button
-												className={styles.glassActionButton}
-												small={true}
-												fitContainer={true}
-												leftIcon={
-													<PencilIcon className={styles.iconSmall} data-flx="user.user-profile-popout.icon-small--2" />
+									<div className={styles.popoutFooterActions}>
+										<Button
+											className={styles.glassActionButton}
+											small={true}
+											fitContainer={true}
+											leftIcon={
+												<PencilIcon className={styles.iconSmall} data-flx="user.user-profile-popout.icon-small--2" />
+											}
+											onClick={handleEditProfile}
+											data-flx="user.user-profile-popout.button.edit-profile"
+										>
+											<Trans>Edit Profile</Trans>
+										</Button>
+										<Button
+											className={styles.glassActionButton}
+											small={true}
+											fitContainer={true}
+											rightIcon={
+												<IdentificationBadgeIcon className={styles.iconSmall} />
+											}
+											onClick={() => {
+												if (user?.id) {
+													void navigator.clipboard?.writeText(user.id);
 												}
-												onClick={handleEditProfile}
-												data-flx="user.user-profile-popout.button.edit-profile"
-											>
-												<Trans>Edit Profile</Trans>
-											</Button>
-											<Button
-												className={styles.glassActionButton}
-												small={true}
-												fitContainer={true}
-												rightIcon={
-													<IdentificationBadgeIcon className={styles.iconSmall} />
-												}
-												onClick={() => {
-													if (user?.id) {
-														void navigator.clipboard?.writeText(user.id);
-													}
-												}}
-												data-flx="user.user-profile-popout.button.copy-user-id"
-											>
-												<Trans>Copy User ID</Trans>
-											</Button>
-										</div>
-									) : null
+											}}
+											data-flx="user.user-profile-popout.button.copy-user-id"
+										>
+											<Trans>Copy User ID</Trans>
+										</Button>
+									</div>
 								) : (
 									<div className={styles.messageFooterActions}>
 										<Button

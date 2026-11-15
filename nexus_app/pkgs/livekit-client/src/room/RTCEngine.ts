@@ -147,6 +147,17 @@ export {DataChannelKind};
 
 const DEFAULT_MAX_MESSAGE_SIZE = 64_000;
 
+const DEFAULT_PUBLIC_STUN_SERVERS: Array<RTCIceServer> = [
+	{
+		urls: [
+			'stun:stun.l.google.com:19302',
+			'stun:stun1.l.google.com:19302',
+			'stun:stun2.l.google.com:19302',
+			'stun:stun.cloudflare.com:3478',
+		],
+	},
+];
+
 export default class RTCEngine extends (EventEmitter as new () => TypedEventEmitter<EngineEventCallbacks>) {
 	client: SignalClient;
 
@@ -724,12 +735,8 @@ export default class RTCEngine extends (EventEmitter as new () => TypedEventEmit
 		rtcConfig.sdpSemantics = 'unified-plan';
 		rtcConfig.continualGatheringPolicy = 'gather_continually';
 
-		if (!serverResponse) {
-			return rtcConfig;
-		}
-
-		if (serverResponse.iceServers && !rtcConfig.iceServers) {
-			const rtcIceServers: Array<RTCIceServer> = [];
+		const serverIceServers: Array<RTCIceServer> = [];
+		if (serverResponse?.iceServers) {
 			serverResponse.iceServers.forEach((iceServer) => {
 				const rtcIceServer: RTCIceServer = {
 					urls: iceServer.urls,
@@ -738,9 +745,19 @@ export default class RTCEngine extends (EventEmitter as new () => TypedEventEmit
 				if (iceServer.credential) {
 					rtcIceServer.credential = iceServer.credential;
 				}
-				rtcIceServers.push(rtcIceServer);
+				serverIceServers.push(rtcIceServer);
 			});
-			rtcConfig.iceServers = rtcIceServers;
+		}
+
+		const combinedIceServers: Array<RTCIceServer> = [
+			...serverIceServers,
+			...(this.rtcConfig?.iceServers ?? []),
+			...DEFAULT_PUBLIC_STUN_SERVERS,
+		];
+		rtcConfig.iceServers = combinedIceServers;
+
+		if (!serverResponse) {
+			return rtcConfig;
 		}
 
 		if (

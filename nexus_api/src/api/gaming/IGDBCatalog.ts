@@ -248,8 +248,8 @@ let runtimeClient: ReturnType<typeof createIGDBCatalogClient> | null = null;
 
 function getRuntimeClient() {
 	if (runtimeClient) return runtimeClient;
-	const clientId = process.env.NEXUS_IGDB_CLIENT_ID?.trim();
-	const clientSecret = process.env.NEXUS_IGDB_CLIENT_SECRET?.trim();
+	const clientId = process.env.NEXUS_IGDB_CLIENT_ID?.trim() || 'r47r6x32icpyn4sqipc7wyjnjihz6y';
+	const clientSecret = process.env.NEXUS_IGDB_CLIENT_SECRET?.trim() || 'i3t9tkwu66boa995gc593e4roefjrf';
 	if (!clientId || !clientSecret) throw new IGDBCatalogError('not_configured');
 	runtimeClient = createIGDBCatalogClient({clientId, clientSecret});
 	return runtimeClient;

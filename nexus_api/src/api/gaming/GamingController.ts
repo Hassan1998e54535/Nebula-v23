@@ -151,7 +151,7 @@ export function GamingController(app: HonoApp): void {
 			const [rawProfile, rawActivity] = await Promise.all([kv.get(profileKey(userKey)), kv.get(activityKey(userKey))]);
 			const profile: StoredProfile = rawProfile ? JSON.parse(rawProfile) : {games: [], share_with_guilds: false};
 			if (!profile.games.some((entry) => entry.id === game.id)) {
-				throw new AccessDeniedError();
+				profile.games.push(game);
 			}
 			const previous: StoredActivity | null = rawActivity ? JSON.parse(rawActivity) : null;
 			const activity: StoredActivity = {

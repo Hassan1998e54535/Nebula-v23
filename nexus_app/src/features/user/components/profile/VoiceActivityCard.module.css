@@ -5,12 +5,14 @@
 	flex-direction: column;
 	gap: var(--active-now-card-gap);
 	padding: var(--active-now-card-padding-block) var(--active-now-card-padding-inline);
-	border-radius: var(--active-now-card-radius);
-	background-color: var(--background-secondary);
-	border: 0.0625rem solid var(--border-color, rgba(255, 255, 255, 0.04));
+	border-radius: var(--active-now-card-radius, 12px);
+	background: rgba(0, 0, 0, 0.32) !important;
+	border: 1px solid rgba(255, 255, 255, 0.08) !important;
 	width: 100%;
 	align-self: stretch;
-	box-shadow: var(--active-now-card-shadow);
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+	-webkit-backdrop-filter: blur(20px) saturate(160%);
+	backdrop-filter: blur(20px) saturate(160%);
 }
 
 .headerContextGroup {
@@ -177,11 +179,28 @@
 .actionButton {
 	width: 100%;
 	justify-content: center;
+	border: 1px solid rgba(255, 255, 255, 0.16) !important;
+	border-radius: 0.75rem !important;
+	background: rgba(255, 255, 255, 0.08) !important;
+	background-color: rgba(255, 255, 255, 0.08) !important;
+	background-image: none !important;
+	outline: none !important;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+	-webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+	backdrop-filter: blur(16px) saturate(160%) !important;
+	color: #ffffff !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
+	min-height: 2.25rem !important;
+	font-weight: 600 !important;
+	transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease !important;
 }
 
-.card {
-	background-color: color-mix(in srgb, var(--background-secondary) 94%, var(--brand-primary) 6%);
-	border-color: color-mix(in srgb, var(--brand-primary) 25%, var(--background-modifier-accent));
+.actionButton:hover:not(:disabled) {
+	background: rgba(255, 255, 255, 0.16) !important;
+	background-color: rgba(255, 255, 255, 0.16) !important;
+	border-color: rgba(255, 255, 255, 0.32) !important;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+	transform: translateY(-1px) !important;
 }
 
 .activityLabel {
@@ -194,5 +213,5 @@
 }
 
 .previewFallback {
-	background-color: color-mix(in srgb, var(--background-tertiary) 86%, var(--brand-primary) 14%);
+	background-color: rgba(0, 0, 0, 0.25);
 }

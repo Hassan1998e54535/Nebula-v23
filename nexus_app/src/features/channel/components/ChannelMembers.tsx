@@ -140,12 +140,31 @@ function useGroupHeadingWidthTracking(): GroupHeadingWidthTracking {
 interface MemberListGroupHeaderContentProps {
 	name: string;
 	count: number;
+	role?: GuildRole | null;
 }
 
-function MemberListGroupHeaderContent({name, count}: MemberListGroupHeaderContentProps) {
+function MemberListGroupHeaderContent({name, count, role}: MemberListGroupHeaderContentProps) {
 	const {i18n} = useLingui();
 	return (
 		<>
+			{role?.icon ? (
+				<img
+					src={role.icon}
+					alt=""
+					style={{
+						width: 16,
+						height: 16,
+						borderRadius: 3,
+						objectFit: 'contain',
+						display: 'inline-block',
+						verticalAlign: 'middle',
+						marginRight: 6,
+						flexShrink: 0,
+					}}
+				/>
+			) : role?.unicodeEmoji ? (
+				<span style={{marginRight: 6, fontSize: 14, verticalAlign: 'middle'}}>{role.unicodeEmoji}</span>
+			) : null}
 			<span
 				className={styles.groupHeaderLabel}
 				data-flx="channel.channel-members.member-list-group-header-content.group-header-label"
@@ -473,6 +492,7 @@ const LazyMemberList = observer(function LazyMemberList({guild, channel}: LazyMe
 						<MemberListGroupHeaderContent
 							name={groupName}
 							count={group.count}
+							role={role}
 							data-flx="channel.channel-members.lazy-member-list.member-list-group-header-content"
 						/>
 					);

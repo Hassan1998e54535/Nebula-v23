@@ -3,6 +3,7 @@
 import Authentication from '@app/features/auth/state/Authentication';
 import {UserTag} from '@app/features/channel/components/ChannelUserTag';
 import {CompactMemberCustomStatus} from '@app/features/channel/components/CompactMemberCustomStatus';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import styles from '@app/features/channel/components/MemberListItem.module.css';
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
 import Guilds from '@app/features/guild/state/Guilds';
@@ -31,7 +32,7 @@ import type {StatusType} from '@nexus/constants/src/StatusConstants';
 import {isOfflineStatus} from '@nexus/constants/src/StatusConstants';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
-import {CrownIcon} from '@phosphor-icons/react';
+import {CrownIcon, GameControllerIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -94,6 +95,17 @@ export const MemberListItem: React.FC<MemberListItemProps> = observer((props) =>
 		enabled: guildId !== undefined && providedCustomStatus === undefined,
 	});
 	const memberListCustomStatus = providedCustomStatus !== undefined ? providedCustomStatus : hookCustomStatus;
+	const activeGame = useUserActiveGame(guildId, user.id);
+	const memberRoleWithIcon = useMemo(() => {
+		if (!guildId || !guildMember) return null;
+		const guild = Guilds.getGuild(guildId);
+		if (!guild) return null;
+		const memberRoles = Array.from(guildMember.roles)
+			.map((id) => guild.getRole(id))
+			.filter((r): r is import('@app/features/guild/models/GuildRole').GuildRole => Boolean(r && (r.icon || r.unicodeEmoji)))
+			.sort((a, b) => b.position - a.position);
+		return memberRoles[0] ?? null;
+	}, [guildId, guildMember]);
 	const [contextMenuOpen, setContextMenuOpen] = useState(false);
 	const contextMenuTicketRef = useRef(0);
 	const isCurrentUser = user.id === Authentication.currentUserId;
@@ -251,6 +263,18 @@ const profileCustomization = UserProfile.getProfile(user.id, guildId)?.getEffect
 										</Tooltip>
 									</div>
 								)}
+								{memberRoleWithIcon?.icon ? (
+									<img
+										src={memberRoleWithIcon.icon}
+										alt=""
+										style={{width: 16, height: 16, borderRadius: 3, objectFit: 'contain', marginLeft: 4, flexShrink: 0}}
+										title={memberRoleWithIcon.name}
+									/>
+								) : memberRoleWithIcon?.unicodeEmoji ? (
+									<span style={{fontSize: 14, marginLeft: 4, flexShrink: 0}} title={memberRoleWithIcon.name}>
+										{memberRoleWithIcon.unicodeEmoji}
+									</span>
+								) : null}
 								{user.bot && (
 									<UserTag
 										className={styles.userTag}
@@ -259,12 +283,26 @@ const profileCustomization = UserProfile.getProfile(user.id, guildId)?.getEffect
 									/>
 								)}
 							</div>
-							<CompactMemberCustomStatus
-								customStatus={memberListCustomStatus}
-								userId={user.id}
-								className={styles.memberCustomStatus}
-								data-flx="channel.member-list-item.member-custom-status"
-							/>
+							{activeGame?.name ? (
+								<div
+									className={styles.memberCustomStatus}
+									style={{display: 'flex', alignItems: 'center', gap: '4px'}}
+									title={`Playing ${activeGame.name}`}
+									data-flx="channel.member-list-item.active-game"
+								>
+									<GameControllerIcon size={13} weight="fill" style={{flexShrink: 0, color: 'var(--accent-primary, #5865f2)'}} />
+									<span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+										Playing {activeGame.name}
+									</span>
+								</div>
+							) : (
+								<CompactMemberCustomStatus
+									customStatus={memberListCustomStatus}
+									userId={user.id}
+									className={styles.memberCustomStatus}
+									data-flx="channel.member-list-item.member-custom-status"
+								/>
+							)}
 						</div>
 					</span>
 				</div>

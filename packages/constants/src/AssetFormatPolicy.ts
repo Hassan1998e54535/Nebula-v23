@@ -104,7 +104,7 @@ export const ASSET_FORMAT_POLICY: Readonly<Record<AssetKind, AssetFormatPolicyEn
 		mimes: pickMimes(RASTER_FULL),
 		storeAs: STORE_ANIMATED,
 		animated: 'premium',
-		maxBytes: 10 * 1024 * 1024,
+		maxBytes: 1024 * 1024 * 1024,
 		dims: {min: 128, max: 1024},
 	},
 	guild_icon: {
@@ -112,7 +112,7 @@ export const ASSET_FORMAT_POLICY: Readonly<Record<AssetKind, AssetFormatPolicyEn
 		mimes: pickMimes(RASTER_FULL),
 		storeAs: STORE_ANIMATED,
 		animated: 'premium',
-		maxBytes: 10 * 1024 * 1024,
+		maxBytes: 1024 * 1024 * 1024,
 		dims: {min: 128, max: 1024},
 	},
 	banner: {
@@ -120,7 +120,7 @@ export const ASSET_FORMAT_POLICY: Readonly<Record<AssetKind, AssetFormatPolicyEn
 		mimes: pickMimes(RASTER_FULL),
 		storeAs: STORE_ANIMATED,
 		animated: 'premium',
-		maxBytes: 10 * 1024 * 1024,
+		maxBytes: 1024 * 1024 * 1024,
 		dims: {min: 480, max: 2400},
 	},
 	splash: {
@@ -128,7 +128,7 @@ export const ASSET_FORMAT_POLICY: Readonly<Record<AssetKind, AssetFormatPolicyEn
 		mimes: pickMimes(RASTER_STATIC_ONLY),
 		storeAs: STORE_STATIC,
 		animated: 'never',
-		maxBytes: 10 * 1024 * 1024,
+		maxBytes: 1024 * 1024 * 1024,
 		dims: {min: 480, max: 2400},
 	},
 	embed_splash: {
@@ -136,7 +136,7 @@ export const ASSET_FORMAT_POLICY: Readonly<Record<AssetKind, AssetFormatPolicyEn
 		mimes: pickMimes(RASTER_STATIC_ONLY),
 		storeAs: STORE_STATIC,
 		animated: 'never',
-		maxBytes: 10 * 1024 * 1024,
+		maxBytes: 1024 * 1024 * 1024,
 		dims: {min: 480, max: 2400},
 	},
 	emoji: {

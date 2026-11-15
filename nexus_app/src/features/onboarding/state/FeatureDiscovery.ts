@@ -53,13 +53,8 @@ class FeatureDiscovery {
 			: parseFeatureDiscoveryHistory(null);
 	}
 
-	startTour(tour: FeatureDiscoveryTour, options: {force?: boolean} = {}): boolean {
-		if (!this.accountId || tour.steps.length === 0) return false;
-		if (this.activeTour) return false;
-		if (!options.force && hasCompletedFeatureDiscoveryTour(this.history, tour.id)) return false;
-		this.activeTour = tour;
-		this.activeStepIndex = 0;
-		return true;
+	startTour(_tour: FeatureDiscoveryTour, _options: {force?: boolean} = {}): boolean {
+		return false;
 	}
 
 	get activeStep(): FeatureDiscoveryStep | null {
@@ -84,7 +79,22 @@ class FeatureDiscovery {
 	}
 
 	skip(): void {
-		this.finish();
+		this.history = {
+			completedTourIds: [
+				'welcome-v1',
+				'explore-communities-v1',
+				'profile-v1',
+				'status-v1',
+				'create-community-v1',
+				'join-community-v1',
+				'group-chat-v1',
+				'community-settings-v1',
+				...(this.activeTour ? [this.activeTour.id] : []),
+			],
+		};
+		AppStorage.setJSON(AppStorageKey.UI_FEATURE_DISCOVERY, this.history);
+		this.activeTour = null;
+		this.activeStepIndex = 0;
 	}
 
 	finish(): void {

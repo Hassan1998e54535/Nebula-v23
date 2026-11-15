@@ -3,6 +3,7 @@
 import styles from '@app/features/app/components/layout/GroupedVoiceParticipant.module.css';
 import {VoiceParticipantItem} from '@app/features/app/components/layout/VoiceParticipantItem';
 import {VoiceStateIcons} from '@app/features/app/components/layout/VoiceStateIcons';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {useContextMenuHoverState} from '@app/features/app/hooks/useContextMenuHoverState';
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
 import type {VoiceState} from '@app/features/gateway/types/GatewayVoiceTypes';
@@ -59,6 +60,7 @@ export const GroupedVoiceParticipant = observer(function GroupedVoiceParticipant
 }: GroupedVoiceParticipantProps) {
 	const openProfileAriaLabel = useOpenProfileAriaLabel(user, guildId);
 	const mediaEngineVersion = useMediaEngineVersion();
+	const activeGame = useUserActiveGame(guildId, user.id);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const currentUser = Users.getCurrentUser();
 	const isCurrentUser = currentUser?.id === user.id;
@@ -330,6 +332,7 @@ export const GroupedVoiceParticipant = observer(function GroupedVoiceParticipant
 								isCurrentUser={isCurrentUser}
 								isCameraOn={stateAgg.anyCameraOn}
 								isScreenSharing={stateAgg.anyLive}
+								gameName={activeGame?.name}
 								className={styles.flexShrinkZero}
 								data-flx="app.grouped-voice-participant.flex-shrink-zero"
 							/>

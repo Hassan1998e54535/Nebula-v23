@@ -8,7 +8,7 @@
 	--discovery-muted: var(--text-primary-muted);
 	--discovery-line: color-mix(in srgb, var(--text-primary) 12%, transparent);
 	position: fixed;
-	z-index: var(--z-index-modal, 1000);
+	z-index: 100001;
 	inset: 0;
 	display: grid;
 	align-items: center;
@@ -17,11 +17,13 @@
 	background: color-mix(in srgb, var(--background-primary) 66%, transparent);
 	-webkit-backdrop-filter: blur(0.25rem);
 	backdrop-filter: blur(0.25rem);
+	-webkit-app-region: no-drag;
+	pointer-events: auto;
 }
 
 .dialog {
 	position: relative;
-	z-index: 1;
+	z-index: 100002;
 	display: grid;
 	grid-template-columns: 10rem minmax(0, 1fr);
 	column-gap: 1.55rem;
@@ -38,6 +40,8 @@
 		inset 0 1px 0 color-mix(in srgb, var(--text-primary) 7%, transparent);
 	outline: none;
 	animation: dialog-arrive 300ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+	-webkit-app-region: no-drag;
+	pointer-events: auto;
 }
 
 .dialog:focus-visible {
@@ -230,12 +234,16 @@
 	gap: 1rem;
 	padding-top: 1.2rem;
 	border-top: 1px solid var(--discovery-line);
+	-webkit-app-region: no-drag;
+	pointer-events: auto;
 }
 
 .secondaryActions {
 	display: flex;
 	align-items: center;
 	gap: 0.4rem;
+	-webkit-app-region: no-drag;
+	pointer-events: auto;
 }
 
 .backButton,
@@ -254,6 +262,8 @@
 	font-weight: 650;
 	line-height: 1;
 	cursor: pointer;
+	-webkit-app-region: no-drag;
+	pointer-events: auto;
 	transition:
 		background-color 150ms ease,
 		border-color 150ms ease,

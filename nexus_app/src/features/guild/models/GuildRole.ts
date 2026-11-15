@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
+import {roleIconStorage} from '@app/features/guild/utils/RoleIconStorage';
 import {noteText} from '@app/features/theme/fonts/ScriptFontLoader';
 import type {GuildRole as WireGuildRole} from '@nexus/schema/src/domains/guild/GuildRoleSchemas';
 
@@ -19,6 +20,8 @@ export class GuildRole {
 	readonly permissions: bigint;
 	readonly hoist: boolean;
 	readonly mentionable: boolean;
+	readonly icon: string | null;
+	readonly unicodeEmoji: string | null;
 
 	constructor(guildId: string, guildRole: WireGuildRole, options?: GuildRoleRecordOptions) {
 		this.instanceId = options?.instanceId ?? RuntimeConfig.localInstanceDomain;
@@ -31,6 +34,8 @@ export class GuildRole {
 		this.permissions = BigInt(guildRole.permissions);
 		this.hoist = guildRole.hoist;
 		this.mentionable = guildRole.mentionable;
+		this.icon = (guildRole as any).icon ?? (guildRole as any).icon_hash ?? roleIconStorage.getRoleIcon(this.id);
+		this.unicodeEmoji = guildRole.unicode_emoji ?? roleIconStorage.getRoleEmoji(this.id);
 		noteText(this.name);
 	}
 
@@ -50,6 +55,8 @@ export class GuildRole {
 				permissions: updates.permissions ?? this.permissions.toString(),
 				hoist: updates.hoist ?? this.hoist,
 				mentionable: updates.mentionable ?? this.mentionable,
+				icon: updates.icon !== undefined ? updates.icon : this.icon,
+				unicode_emoji: updates.unicode_emoji !== undefined ? updates.unicode_emoji : this.unicodeEmoji,
 			},
 			{instanceId: this.instanceId},
 		);
@@ -69,6 +76,8 @@ export class GuildRole {
 			permissions: this.permissions.toString(),
 			hoist: this.hoist,
 			mentionable: this.mentionable,
+			icon: this.icon,
+			unicode_emoji: this.unicodeEmoji,
 		};
 	}
 }

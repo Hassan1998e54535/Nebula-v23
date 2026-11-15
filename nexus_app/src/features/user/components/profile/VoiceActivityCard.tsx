@@ -27,6 +27,7 @@ import Users from '@app/features/user/state/Users';
 import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
 import {STREAM_PREVIEW_DESCRIPTOR} from '@app/features/user/utils/UserMessageDescriptors';
 import * as VoiceStreamWatchCommands from '@app/features/voice/commands/VoiceStreamWatchCommands';
+import {StreamStartedIllustration} from '@app/features/voice/components/StreamStartedIllustration';
 import {useStreamPreview} from '@app/features/voice/components/useStreamPreview';
 import {useStreamWatchState} from '@app/features/voice/components/useStreamWatchState';
 import {
@@ -43,7 +44,7 @@ import {ME} from '@nexus/constants/src/AppConstants';
 import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {msg} from '@lingui/core/macro';
 import {Trans, useLingui} from '@lingui/react/macro';
-import {CaretRightIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
+import {CaretRightIcon, MonitorPlayIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -278,6 +279,7 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					<Tooltip text={cannotJoinReason} maxWidth="xl" data-flx="user.profile.voice-activity-card.tooltip">
 						<div style={{width: '100%'}} data-flx="user.profile.voice-activity-card.div">
 							<Button
+								variant="secondary"
 								compact
 								fitContainer
 								disabled={true}
@@ -297,6 +299,7 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					</Tooltip>
 				) : (
 					<Button
+						variant="secondary"
 						compact
 						fitContainer
 						onClick={handleJoinOrOpenVoice}
@@ -503,7 +506,7 @@ const StreamPreviewSection: React.FC<StreamPreviewSectionProps> = observer(
 						{isPreviewLoading ? (
 							<Spinner size="small" data-flx="user.profile.voice-activity-card.stream-preview-section.spinner" />
 						) : (
-							i18n._(NO_PREVIEW_YET_DESCRIPTOR)
+							<StreamStartedIllustration />
 						)}
 					</div>
 				)}

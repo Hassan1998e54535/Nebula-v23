@@ -7,12 +7,13 @@ import {Button} from '@app/features/ui/button/Button';
 import {Spinner} from '@app/features/ui/components/Spinner';
 import {Tooltip} from '@app/features/ui/tooltip/Tooltip';
 import styles from '@app/features/voice/components/StreamWatchHoverCard.module.css';
+import {StreamStartedIllustration} from '@app/features/voice/components/StreamStartedIllustration';
 import {
 	ADD_STREAM_DESCRIPTOR,
 	WATCHING_STREAM_DESCRIPTOR,
 } from '@app/features/voice/utils/VoiceSharedMessageDescriptors';
 import {msg} from '@lingui/core/macro';
-import {useLingui} from '@lingui/react/macro';
+import {Trans, useLingui} from '@lingui/react/macro';
 import {MonitorPlayIcon, PlusIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import type React from 'react';
@@ -125,7 +126,7 @@ export const StreamWatchHoverCard: React.FC<StreamWatchHoverCardProps> = ({
 						{isPreviewLoading ? (
 							<Spinner size="small" data-flx="voice.stream-watch-hover-card.spinner" />
 						) : (
-							i18n._(NO_PREVIEW_YET_DESCRIPTOR)
+							<StreamStartedIllustration compact={isCompact} />
 						)}
 					</div>
 				)}
@@ -139,6 +140,7 @@ export const StreamWatchHoverCard: React.FC<StreamWatchHoverCardProps> = ({
 				{isCompact && (
 					<div className={styles.compactButtonWrap} data-flx="voice.stream-watch-hover-card.compact-button-wrap">
 						<Button
+							variant="secondary"
 							fitContent
 							leftIcon={
 								<MonitorPlayIcon
@@ -162,6 +164,7 @@ export const StreamWatchHoverCard: React.FC<StreamWatchHoverCardProps> = ({
 				<div className={styles.actionRow} data-flx="voice.stream-watch-hover-card.action-row">
 					<div className={styles.actionButtons} data-flx="voice.stream-watch-hover-card.action-buttons">
 						<Button
+							variant="secondary"
 							fitContent
 							leftIcon={
 								<MonitorPlayIcon

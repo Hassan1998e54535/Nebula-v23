@@ -5,6 +5,7 @@ import channelItemSurfaceStyles from '@app/features/app/components/layout/Channe
 import {DragItemType} from '@app/features/app/components/layout/types/DndTypes';
 import styles from '@app/features/app/components/layout/VoiceParticipantItem.module.css';
 import {VoiceStateIcons} from '@app/features/app/components/layout/VoiceStateIcons';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {useContextMenuHoverState} from '@app/features/app/hooks/useContextMenuHoverState';
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
 import type {VoiceState} from '@app/features/gateway/types/GatewayVoiceTypes';
@@ -137,8 +138,9 @@ export const VoiceParticipantItem = observer(function VoiceParticipantItem({
 		[guildId, currentChannelId, connectionId],
 	);
 	const showStreamHover = displayLive && Boolean(connectionId);
+	const activeGame = useUserActiveGame(guildId, user.id);
 	const hasVoiceStateIcons =
-		displayCameraOn || displayLive || isSelfMuted || isSelfDeafened || isGuildMuted || isGuildDeafened;
+		displayCameraOn || displayLive || isSelfMuted || isSelfDeafened || isGuildMuted || isGuildDeafened || Boolean(activeGame?.name);
 	const streamWatchStateArgs = useMemo(
 		() => ({streamKey, guildId, channelId: currentChannelId}),
 		[streamKey, guildId, currentChannelId],
@@ -280,6 +282,7 @@ export const VoiceParticipantItem = observer(function VoiceParticipantItem({
 							isCurrentUser={isCurrentUser}
 							isCameraOn={displayCameraOn}
 							isScreenSharing={displayLive}
+							gameName={activeGame?.name}
 							className={styles.flexShrinkZero}
 							data-flx="app.voice-participant-item.flex-shrink-zero"
 						/>

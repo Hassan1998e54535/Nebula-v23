@@ -222,7 +222,19 @@ function createRoomConnectOptions(): RoomConnectOptions {
 	const connectOptions: RoomConnectOptions = {
 		autoSubscribe: false,
 		websocketTimeout: 15_000,
-		peerConnectionTimeout: 15_000,
+		peerConnectionTimeout: 20_000,
+		rtcConfig: {
+			iceServers: [
+				{
+					urls: [
+						'stun:stun.l.google.com:19302',
+						'stun:stun1.l.google.com:19302',
+						'stun:stun2.l.google.com:19302',
+						'stun:stun.cloudflare.com:3478',
+					],
+				},
+			],
+		},
 	};
 	assert.equal(connectOptions.autoSubscribe, false, 'LiveKit connect options must not auto-subscribe');
 	return connectOptions;

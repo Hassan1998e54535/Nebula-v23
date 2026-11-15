@@ -154,6 +154,11 @@ export function FeatureDiscovery({
 			style={rectStyle}
 			data-has-target={!!targetRect}
 			data-target-placement={targetPlacement}
+			onClick={(event) => {
+				if (event.target === event.currentTarget) {
+					onSkip();
+				}
+			}}
 		>
 			{targetRect && <div className={styles.targetWindow} aria-hidden="true" />}
 			<section
