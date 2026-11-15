@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "phase": "renderer-started",
-  "conclusion": "in_progress",
+  "phase": "renderer-completed",
+  "conclusion": "success",
   "runner": "Linux",
   "job": "shared_assets",
   "runId": "43771635983",
