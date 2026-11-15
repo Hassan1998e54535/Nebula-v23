@@ -125,7 +125,9 @@
 	border-radius: 999px;
 	inset: 0;
 	position: absolute;
-	transition: background 150ms ease, border-color 150ms ease;
+	transition:
+		background 150ms ease,
+		border-color 150ms ease;
 }
 
 .switchThumb {
@@ -135,7 +137,9 @@
 	left: 3px;
 	position: absolute;
 	top: 3px;
-	transition: background 150ms ease, transform 150ms ease;
+	transition:
+		background 150ms ease,
+		transform 150ms ease;
 	width: 19px;
 }
 
@@ -207,7 +211,10 @@
 	font-weight: 650;
 	min-height: 34px;
 	padding: 0 10px;
-	transition: background 140ms ease, border-color 140ms ease, opacity 140ms ease;
+	transition:
+		background 140ms ease,
+		border-color 140ms ease,
+		opacity 140ms ease;
 }
 
 .bulkButton:hover:not(:disabled),
@@ -489,6 +496,187 @@
 	width: 1px;
 }
 
+.manualLink {
+	border: 1px solid var(--border-subtle);
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.manualSummary {
+	align-items: center;
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	list-style: none;
+	padding: 14px 16px;
+}
+
+.manualSummary::-webkit-details-marker {
+	display: none;
+}
+
+.manualSummary::after {
+	border-right: 2px solid var(--text-muted);
+	border-top: 2px solid var(--text-muted);
+	content: '';
+	height: 7px;
+	margin-left: 12px;
+	transform: rotate(45deg);
+	transition: transform 140ms ease;
+	width: 7px;
+}
+
+.manualLink[open] .manualSummary::after {
+	transform: rotate(135deg);
+}
+
+.manualSummary > span {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.manualSummary strong {
+	font-size: 0.85rem;
+}
+
+.manualSummary span span,
+.manualContent > p {
+	color: var(--text-muted);
+	font-size: 0.77rem;
+	line-height: 1.45;
+}
+
+.manualContent {
+	border-top: 1px solid var(--border-subtle);
+	padding: 13px 15px 15px;
+}
+
+.manualContent > p {
+	margin: 0 0 12px;
+}
+
+.processForm {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.processForm label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.processForm label > span {
+	color: var(--text-secondary);
+	font-size: 0.73rem;
+	font-weight: 650;
+}
+
+.processForm input,
+.processForm select {
+	background: var(--background-secondary, var(--background-primary));
+	border: 1px solid var(--border-subtle);
+	border-radius: 8px;
+	color: var(--text-primary);
+	font: inherit;
+	font-size: 0.8rem;
+	min-height: 38px;
+	min-width: 0;
+	padding: 0 9px;
+}
+
+.processForm input:focus-visible,
+.processForm select:focus-visible,
+.manualLink button:focus-visible,
+.manualSummary:focus-visible {
+	outline: 2px solid var(--activity-accent);
+	outline-offset: 2px;
+}
+
+.processActions {
+	align-items: end;
+	display: flex;
+	gap: 8px;
+	grid-column: 1 / -1;
+}
+
+.processActions button,
+.registeredList button {
+	background: transparent;
+	border: 1px solid var(--border-subtle);
+	border-radius: 8px;
+	color: var(--text-primary);
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.76rem;
+	font-weight: 650;
+	min-height: 36px;
+	padding: 0 11px;
+}
+
+.processActions button:hover:not(:disabled),
+.registeredList button:hover:not(:disabled) {
+	background: var(--background-tertiary);
+}
+
+.processActions button:disabled,
+.registeredList button:disabled {
+	cursor: not-allowed;
+	opacity: 0.48;
+}
+
+.processActions .primaryAction {
+	background: var(--activity-accent);
+	border-color: var(--activity-accent);
+	color: var(--background-primary);
+}
+
+.registeredList {
+	border-top: 1px solid var(--border-subtle);
+	list-style: none;
+	margin: 13px 0 0;
+	padding: 2px 0 0;
+}
+
+.registeredList li {
+	align-items: center;
+	border-bottom: 1px solid var(--border-subtle);
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	padding: 10px 0;
+}
+
+.registeredList li:last-child {
+	border-bottom: 0;
+}
+
+.registeredList li > span {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.registeredList strong {
+	font-size: 0.8rem;
+}
+
+.registeredList small {
+	color: var(--text-muted);
+	font-size: 0.7rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.registeredList button {
+	flex: 0 0 auto;
+	min-height: 31px;
+}
+
 @keyframes softPulse {
 	from {
 		opacity: 0.55;
@@ -532,6 +720,15 @@
 		flex: 1;
 	}
 
+	.processForm {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.processActions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
 	.guildRow {
 		gap: 8px;
 		min-height: 64px;
@@ -566,7 +763,8 @@
 	.switchTrack,
 	.switchThumb,
 	.bulkButton,
-	.clearSearch {
+	.clearSearch,
+	.manualSummary::after {
 		transition: none;
 	}
 

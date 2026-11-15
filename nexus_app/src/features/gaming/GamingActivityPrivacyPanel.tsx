@@ -2,12 +2,7 @@
 
 import styles from '@app/features/gaming/GamingActivityPrivacyPanel.module.css';
 import {Trans, useLingui} from '@lingui/react/macro';
-import {
-	GameControllerIcon,
-	MagnifyingGlassIcon,
-	ShieldCheckIcon,
-	UsersThreeIcon,
-} from '@phosphor-icons/react';
+import {GameControllerIcon, MagnifyingGlassIcon, ShieldCheckIcon, UsersThreeIcon} from '@phosphor-icons/react';
 
 export interface GamingActivityGuildRow {
 	id: string;
@@ -19,9 +14,16 @@ export interface GamingActivityGuildRow {
 
 export interface GamingActivityPrivacyPanelProps {
 	detectionEnabled: boolean;
+	detectionAvailable: boolean;
 	shareWithServers: boolean;
-	guilds: GamingActivityGuildRow[];
+	guilds: Array<GamingActivityGuildRow>;
+	runningProcesses: Array<string>;
+	registeredProcesses: Array<{gameId: string; gameName: string; processName: string}>;
+	processTitle: string;
+	selectedProcess: string;
 	searchQuery: string;
+	busy?: boolean;
+	processLoading?: boolean;
 	loading?: boolean;
 	error?: string | null;
 	onDetectionEnabledChange: (enabled: boolean) => void;
@@ -29,6 +31,11 @@ export interface GamingActivityPrivacyPanelProps {
 	onGuildSharingChange: (guildId: string, isSharing: boolean) => void;
 	onSearchChange: (query: string) => void;
 	onToggleAllGuilds: (isSharing: boolean) => void;
+	onRefreshProcesses: () => void;
+	onProcessTitleChange: (title: string) => void;
+	onProcessSelectionChange: (processName: string) => void;
+	onLinkProcess: () => void;
+	onRemoveProcess: (gameId: string) => void;
 }
 
 function initials(name: string): string {
@@ -43,9 +50,16 @@ function initials(name: string): string {
 
 function GamingActivityPrivacyPanel({
 	detectionEnabled,
+	detectionAvailable,
 	shareWithServers,
 	guilds,
+	runningProcesses,
+	registeredProcesses,
+	processTitle,
+	selectedProcess,
 	searchQuery,
+	busy = false,
+	processLoading = false,
 	loading = false,
 	error,
 	onDetectionEnabledChange,
@@ -53,9 +67,16 @@ function GamingActivityPrivacyPanel({
 	onGuildSharingChange,
 	onSearchChange,
 	onToggleAllGuilds,
+	onRefreshProcesses,
+	onProcessTitleChange,
+	onProcessSelectionChange,
+	onLinkProcess,
+	onRemoveProcess,
 }: GamingActivityPrivacyPanelProps) {
 	const {i18n} = useLingui();
-	const visibleGuilds = guilds.filter((guild) => guild.name.toLocaleLowerCase().includes(searchQuery.trim().toLocaleLowerCase()));
+	const visibleGuilds = guilds.filter((guild) =>
+		guild.name.toLocaleLowerCase().includes(searchQuery.trim().toLocaleLowerCase()),
+	);
 	const allGuildsSharing = guilds.length > 0 && guilds.every((guild) => guild.isSharing);
 
 	return (
@@ -84,13 +105,19 @@ function GamingActivityPrivacyPanel({
 							<Trans>Detect games on this device</Trans>
 						</h3>
 						<p>
-							<Trans>When on, NEXUS checks supported games locally and can show the game you are playing.</Trans>
+							{detectionAvailable ? (
+								<Trans>
+									Steam games and supported PC games are detected locally. Detection runs only on this computer.
+								</Trans>
+							) : (
+								<Trans>Automatic detection needs the NEXUS desktop app on the computer where you play.</Trans>
+							)}
 						</p>
 					</div>
 					<label className={styles.switch} aria-label={i18n._('Detect games on this device')}>
 						<input
 							checked={detectionEnabled}
-							disabled={loading}
+							disabled={!detectionAvailable || loading || busy}
 							onChange={(event) => onDetectionEnabledChange(event.currentTarget.checked)}
 							type="checkbox"
 						/>
@@ -109,13 +136,15 @@ function GamingActivityPrivacyPanel({
 							<Trans>Share with your servers</Trans>
 						</h3>
 						<p>
-							<Trans>Allow server members to see your game activity. You can still turn sharing off for individual servers below.</Trans>
+							<Trans>
+								This master switch controls all servers. You can keep activity hidden in individual servers below.
+							</Trans>
 						</p>
 					</div>
 					<label className={styles.switch} aria-label={i18n._('Share game activity with your servers')}>
 						<input
 							checked={shareWithServers}
-							disabled={loading}
+							disabled={loading || busy}
 							onChange={(event) => onShareWithServersChange(event.currentTarget.checked)}
 							type="checkbox"
 						/>
@@ -142,7 +171,7 @@ function GamingActivityPrivacyPanel({
 					<div className={styles.bulkActions}>
 						<button
 							className={styles.bulkButton}
-							disabled={loading || guilds.length === 0 || allGuildsSharing}
+							disabled={loading || busy || guilds.length === 0 || allGuildsSharing}
 							onClick={() => onToggleAllGuilds(true)}
 							type="button"
 						>
@@ -150,7 +179,7 @@ function GamingActivityPrivacyPanel({
 						</button>
 						<button
 							className={styles.bulkButton}
-							disabled={loading || guilds.length === 0 || guilds.every((guild) => !guild.isSharing)}
+							disabled={loading || busy || guilds.length === 0 || guilds.every((guild) => !guild.isSharing)}
 							onClick={() => onToggleAllGuilds(false)}
 							type="button"
 						>
@@ -166,7 +195,7 @@ function GamingActivityPrivacyPanel({
 					</span>
 					<input
 						autoComplete="off"
-						disabled={loading}
+						disabled={loading || busy}
 						onChange={(event) => onSearchChange(event.currentTarget.value)}
 						placeholder={i18n._('Find a server')}
 						type="search"
@@ -192,7 +221,7 @@ function GamingActivityPrivacyPanel({
 				)}
 
 				{loading ? (
-					<div className={styles.skeletonList} aria-label={i18n._('Loading server sharing settings')}>
+					<div className={styles.skeletonList} aria-label={i18n._('Loading server sharing settings')} role="status">
 						{[0, 1, 2].map((item) => (
 							<div className={styles.skeletonRow} key={item}>
 								<span className={styles.skeletonIcon} />
@@ -221,12 +250,23 @@ function GamingActivityPrivacyPanel({
 								</div>
 								<div className={styles.guildControl}>
 									<span className={styles.sharingState} data-sharing={guild.isSharing}>
-										{guild.isSharing ? <Trans>Shared</Trans> : <Trans>Hidden</Trans>}
+										{guild.isSharing ? (
+											shareWithServers ? (
+												<Trans>Shared</Trans>
+											) : (
+												<Trans>Allowed when enabled</Trans>
+											)
+										) : (
+											<Trans>Hidden</Trans>
+										)}
 									</span>
-									<label className={styles.switch} aria-label={i18n._('Share game activity in {serverName}', {serverName: guild.name})}>
+									<label
+										className={styles.switch}
+										aria-label={i18n._('Share game activity in {serverName}', {serverName: guild.name})}
+									>
 										<input
 											checked={guild.isSharing}
-											disabled={loading}
+											disabled={loading || busy}
 											onChange={(event) => onGuildSharingChange(guild.id, event.currentTarget.checked)}
 											type="checkbox"
 										/>
@@ -242,7 +282,11 @@ function GamingActivityPrivacyPanel({
 					<div className={styles.emptyState}>
 						<UsersThreeIcon aria-hidden="true" size={24} />
 						<strong>
-							{guilds.length === 0 ? <Trans>No servers to manage yet</Trans> : <Trans>No servers match that search</Trans>}
+							{guilds.length === 0 ? (
+								<Trans>No servers to manage yet</Trans>
+							) : (
+								<Trans>No servers match that search</Trans>
+							)}
 						</strong>
 						<p>
 							{guilds.length === 0 ? (
@@ -255,13 +299,103 @@ function GamingActivityPrivacyPanel({
 				)}
 			</section>
 
+			{detectionAvailable && (
+				<details className={styles.manualLink}>
+					<summary className={styles.manualSummary}>
+						<span>
+							<strong>
+								<Trans>Not detecting a game?</Trans>
+							</strong>
+							<span>
+								<Trans>Link a running app once for games outside Steam.</Trans>
+							</span>
+						</span>
+					</summary>
+					<div className={styles.manualContent}>
+						<p>
+							<Trans>
+								Steam games are detected automatically. For another PC game, scan running apps and link its process to a
+								display name. This list stays on this computer.
+							</Trans>
+						</p>
+						<div className={styles.processForm}>
+							<label>
+								<span>
+									<Trans>Game name</Trans>
+								</span>
+								<input
+									autoComplete="off"
+									maxLength={80}
+									onChange={(event) => onProcessTitleChange(event.currentTarget.value)}
+									placeholder={i18n._('For example, a game title')}
+									value={processTitle}
+								/>
+							</label>
+							<label>
+								<span>
+									<Trans>Running app</Trans>
+								</span>
+								<select
+									onChange={(event) => onProcessSelectionChange(event.currentTarget.value)}
+									value={selectedProcess}
+								>
+									<option value="">
+										{i18n._(processLoading ? 'Scanning running apps…' : 'Scan to find a running app')}
+									</option>
+									{runningProcesses.map((processName) => (
+										<option key={processName} value={processName}>
+											{processName}
+										</option>
+									))}
+								</select>
+							</label>
+							<div className={styles.processActions}>
+								<button disabled={busy || processLoading} onClick={onRefreshProcesses} type="button">
+									{processLoading ? <Trans>Scanning…</Trans> : <Trans>Scan running apps</Trans>}
+								</button>
+								<button
+									className={styles.primaryAction}
+									disabled={busy || !processTitle.trim() || !selectedProcess}
+									onClick={onLinkProcess}
+									type="button"
+								>
+									<Trans>Link game</Trans>
+								</button>
+							</div>
+						</div>
+						{registeredProcesses.length > 0 && (
+							<ul className={styles.registeredList}>
+								{registeredProcesses.map((registration) => (
+									<li key={registration.gameId}>
+										<span>
+											<strong>{registration.gameName}</strong>
+											<small>{registration.processName}</small>
+										</span>
+										<button
+											aria-label={i18n._('Remove {gameName} app link', {gameName: registration.gameName})}
+											disabled={busy}
+											onClick={() => onRemoveProcess(registration.gameId)}
+											type="button"
+										>
+											<Trans>Remove</Trans>
+										</button>
+									</li>
+								))}
+							</ul>
+						)}
+					</div>
+				</details>
+			)}
+
 			<aside className={styles.privacyNote}>
 				<ShieldCheckIcon aria-hidden="true" size={18} weight="duotone" />
 				<p>
 					<strong>
 						<Trans>Private by default</Trans>
 					</strong>
-					<Trans> Turning off sharing hides your game activity from that server without changing detection on this device.</Trans>
+					<Trans>
+						Turning off a server hides your game activity there without changing detection or other server settings.
+					</Trans>
 				</p>
 			</aside>
 		</div>

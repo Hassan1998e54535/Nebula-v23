@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Nebula
 
 import type {UserID} from '@app/api/BrandedTypes';
-import {IGDBCatalogError, searchIGDBGames} from '@app/api/gaming/IGDBCatalog';
 import {resolveHiddenGamingGuildIds, shouldShareGamingActivityInGuild} from '@app/api/gaming/GamingPrivacy';
+import {IGDBCatalogError, searchIGDBGames} from '@app/api/gaming/IGDBCatalog';
 import {DefaultUserOnly} from '@app/api/middleware/AuthMiddleware';
 import {RateLimitMiddleware} from '@app/api/middleware/RateLimitMiddleware';
 import {OpenAPI} from '@app/api/middleware/ResponseTypeMiddleware';
@@ -117,7 +117,7 @@ export function GamingController(app: HonoApp): void {
 			const guilds = await getMemberGuilds(ctx, userId);
 			const memberGuildIds = new Set(guilds.map((guild) => String(guild.id)));
 			const hiddenGuildIds = resolveHiddenGamingGuildIds(
-				requestedHiddenGuildIds,
+				requestedHiddenGuildIds?.map(String),
 				previousProfile.hidden_guild_ids,
 				memberGuildIds,
 			);
@@ -159,8 +159,7 @@ export function GamingController(app: HonoApp): void {
 		OpenAPI({
 			operationId: 'start_my_game_activity',
 			summary: 'Start or refresh current game activity',
-			description:
-				'Starts or refreshes the current game activity and publishes it only to guilds when opted in.',
+			description: 'Starts or refreshes the current game activity and publishes it only to guilds when opted in.',
 			responseSchema: GamingProfileResponse,
 			statusCode: 200,
 			security: ['sessionToken', 'bearerToken'],
@@ -302,12 +301,12 @@ export function GamingController(app: HonoApp): void {
 					const activity: StoredActivity = JSON.parse(raw);
 					return {playerId, activity};
 				})
-			.filter(
-				({activity}) =>
-					now - activity.updated_at <= ACTIVITY_MAX_AGE_MS &&
-					activity.share_with_guilds &&
-					!(activity.hidden_guild_ids ?? []).includes(guildId),
-			);
+				.filter(
+					({activity}) =>
+						now - activity.updated_at <= ACTIVITY_MAX_AGE_MS &&
+						activity.share_with_guilds &&
+						!(activity.hidden_guild_ids ?? []).includes(guildId),
+				);
 			const activePlayerIds = new Set(players.map((player) => player.playerId));
 			const stalePlayers = Object.keys(storedPlayers).filter((playerId) => !activePlayerIds.has(playerId));
 			if (stalePlayers.length > 0) {

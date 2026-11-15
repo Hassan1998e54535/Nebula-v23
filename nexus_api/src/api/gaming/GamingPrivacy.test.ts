@@ -5,13 +5,7 @@ import {describe, expect, it} from 'vitest';
 
 describe('gaming activity privacy', () => {
 	it('keeps only unique hidden servers the user still belongs to', () => {
-		expect(
-			resolveHiddenGamingGuildIds(
-				['20', '10', '20', '99'],
-				[],
-				['10', '20', '30'],
-			),
-		).toEqual(['10', '20']);
+		expect(resolveHiddenGamingGuildIds(['20', '10', '20', '99'], [], ['10', '20', '30'])).toEqual(['10', '20']);
 	});
 
 	it('preserves saved server choices when an older client omits them', () => {
