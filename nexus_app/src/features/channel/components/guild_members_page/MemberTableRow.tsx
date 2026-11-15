@@ -4,6 +4,7 @@ import styles from '@app/features/channel/components/GuildMembersPage.module.css
 import {VANITY_URL_DESCRIPTOR} from '@app/features/channel/components/guild_members_page/GuildMembersPageDescriptors';
 import {formatRecentOrFallback} from '@app/features/channel/components/guild_members_page/GuildMembersPageFormatting';
 import type {MemberTableRowProps} from '@app/features/channel/components/guild_members_page/GuildMembersPageShared';
+import {GuildRoleIcon} from '@app/features/guild/components/GuildRoleIcon';
 import type {GuildRole} from '@app/features/guild/models/GuildRole';
 import Guilds from '@app/features/guild/state/Guilds';
 import {isKeyboardActivationKey} from '@app/features/input/utils/KeyboardUtils';
@@ -20,9 +21,9 @@ import {Tooltip} from '@app/features/ui/tooltip/Tooltip';
 import Users from '@app/features/user/state/Users';
 import * as AvatarUtils from '@app/features/user/utils/AvatarUtils';
 import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
-import {JoinSourceTypes} from '@nexus/constants/src/GuildConstants';
 import {msg} from '@lingui/core/macro';
 import {Trans, useLingui} from '@lingui/react/macro';
+import {JoinSourceTypes} from '@nexus/constants/src/GuildConstants';
 import {CrownIcon, DotsThreeVerticalIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {DateTime} from 'luxon';
@@ -233,13 +234,7 @@ export const MemberTableRow: React.FC<MemberTableRowProps> = observer(
 											className={styles.readonlyRoleLabel}
 											data-flx="channel.guild-members-page.handle-overflow-roles-click.readonly-role-label"
 										>
-											<span
-												className={styles.readonlyRoleDot}
-												style={{
-													backgroundColor: role.color ? ColorUtils.int2rgb(role.color) : 'var(--text-tertiary)',
-												}}
-												data-flx="channel.guild-members-page.handle-overflow-roles-click.readonly-role-dot"
-											/>
+											<GuildRoleIcon role={role} size={14} />
 											<span data-flx="channel.guild-members-page.handle-overflow-roles-click.span">{role.name}</span>
 										</div>
 										<div
@@ -395,11 +390,7 @@ export const MemberTableRow: React.FC<MemberTableRowProps> = observer(
 								onContextMenu={handleTopRoleContextMenu}
 								data-flx="channel.guild-members-page.member-table-row.role-pill.top-role-context-menu"
 							>
-								<span
-									className={styles.roleDot}
-									style={{backgroundColor: topRoleColor ?? 'var(--text-tertiary)'}}
-									data-flx="channel.guild-members-page.member-table-row.role-dot"
-								/>
+								<GuildRoleIcon role={topRole} size={13} />
 								{topRole.name}
 							</span>
 						)}

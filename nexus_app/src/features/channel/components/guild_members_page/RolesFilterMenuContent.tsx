@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Nebula
 
 import styles from '@app/features/channel/components/GuildMembersPage.module.css';
+import {GuildRoleIcon} from '@app/features/guild/components/GuildRoleIcon';
 import type {GuildRole} from '@app/features/guild/models/GuildRole';
-import * as ColorUtils from '@app/features/theme/utils/ColorUtils';
 import {CheckboxItem, ContextMenuCloseProvider, MenuItem} from '@app/features/ui/action_menu/ContextMenu';
 import {MenuGroup} from '@app/features/ui/action_menu/MenuGroup';
 import {openRoleContextMenu} from '@app/features/ui/action_menu/RoleContextMenu';
@@ -72,11 +72,7 @@ export function RolesFilterMenuContent({
 							onContextMenu={(event) => openRoleContextMenu(event, role.id)}
 							data-flx="channel.guild-members-page.roles-filter-menu-content.role-filter-item.open-role-context-menu"
 						>
-							<span
-								className={styles.roleFilterDot}
-								style={{backgroundColor: role.color ? ColorUtils.int2rgb(role.color) : 'var(--text-tertiary)'}}
-								data-flx="channel.guild-members-page.roles-filter-menu-content.role-filter-dot"
-							/>
+							<GuildRoleIcon role={role} size={16} />
 							{role.name}
 						</div>
 					</CheckboxItem>

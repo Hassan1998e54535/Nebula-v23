@@ -28,7 +28,9 @@ import {
 } from '@app/features/channel/components/MemberListSkeleton';
 import {MemberListUnavailableFallback} from '@app/features/channel/components/shared/MemberListUnavailableFallback';
 import type {Channel} from '@app/features/channel/models/Channel';
+import {GuildRoleIcon} from '@app/features/guild/components/GuildRoleIcon';
 import type {Guild} from '@app/features/guild/models/Guild';
+import type {GuildRole} from '@app/features/guild/models/GuildRole';
 import {OFFLINE_DESCRIPTOR, ONLINE_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import {getCachedNumberFormat} from '@app/features/i18n/utils/IntlCache';
 import {useMemberListSubscription} from '@app/features/member/hooks/useMemberListSubscription';
@@ -59,12 +61,12 @@ import {getAppRemScale} from '@app/features/ui/utils/AppZoomUtils';
 import type {User} from '@app/features/user/models/User';
 import Users from '@app/features/user/state/Users';
 import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
+import {useLingui as useLinguiRuntime} from '@lingui/react';
+import {useLingui} from '@lingui/react/macro';
 import {ChannelTypes, Permissions} from '@nexus/constants/src/ChannelConstants';
 import {MEMBER_LIST_RANGE_MAX_SPAN} from '@nexus/constants/src/GatewayConstants';
 import {GuildOperations} from '@nexus/constants/src/GuildConstants';
 import {MEDIA_PROXY_AVATAR_SIZE_DEFAULT} from '@nexus/constants/src/MediaProxyAssetSizes';
-import {useLingui as useLinguiRuntime} from '@lingui/react';
-import {useLingui} from '@lingui/react/macro';
 import clsx from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type {ReactNode, UIEvent} from 'react';
@@ -147,24 +149,7 @@ function MemberListGroupHeaderContent({name, count, role}: MemberListGroupHeader
 	const {i18n} = useLingui();
 	return (
 		<>
-			{role?.icon ? (
-				<img
-					src={role.icon}
-					alt=""
-					style={{
-						width: 16,
-						height: 16,
-						borderRadius: 3,
-						objectFit: 'contain',
-						display: 'inline-block',
-						verticalAlign: 'middle',
-						marginRight: 6,
-						flexShrink: 0,
-					}}
-				/>
-			) : role?.unicodeEmoji ? (
-				<span style={{marginRight: 6, fontSize: 14, verticalAlign: 'middle'}}>{role.unicodeEmoji}</span>
-			) : null}
+			{role && (role.icon || role.unicodeEmoji) && <GuildRoleIcon role={role} size={16} style={{marginRight: 6}} />}
 			<span
 				className={styles.groupHeaderLabel}
 				data-flx="channel.channel-members.member-list-group-header-content.group-header-label"

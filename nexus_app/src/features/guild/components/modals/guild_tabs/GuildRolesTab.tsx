@@ -35,10 +35,10 @@ import * as UnsavedChangesCommands from '@app/features/ui/commands/UnsavedChange
 import MobileLayout from '@app/features/ui/state/MobileLayout';
 import SettingsSidebar from '@app/features/ui/state/SettingsSidebar';
 import Users from '@app/features/user/state/Users';
-import {Permissions} from '@nexus/constants/src/ChannelConstants';
-import {THREAD_PERMISSIONS, withImplicitThreadBits} from '@nexus/constants/src/ThreadPermissionUtils';
 import {msg} from '@lingui/core/macro';
 import {Trans, useLingui} from '@lingui/react/macro';
+import {Permissions} from '@nexus/constants/src/ChannelConstants';
+import {THREAD_PERMISSIONS, withImplicitThreadBits} from '@nexus/constants/src/ThreadPermissionUtils';
 import {matchSorter} from 'match-sorter';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -322,31 +322,16 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 				if (updates.permissions !== undefined) {
 					updateData.permissions = (updates.permissions & ~retiredPermissions).toString();
 				}
+				const currentRole = guild.roles[roleId];
+				await GuildCommands.updateRole(guild.id, roleId, updateData);
 				if (updates.icon !== undefined || updates.unicode_emoji !== undefined) {
 					roleIconStorage.setRoleIcon(roleId, {
 						icon: updates.icon,
 						unicodeEmoji: updates.unicode_emoji,
 					});
 				}
-				const currentRole = guild.roles[roleId];
 				if (currentRole) {
 					guild.roles[roleId] = currentRole.withUpdates(updateData as any);
-				}
-				try {
-					await GuildCommands.updateRole(guild.id, roleId, updateData);
-				} catch (serverError) {
-					logger.warn('Server rejected role update with custom icon, attempting fallback without icon fields', serverError);
-					const fallbackData = {...updateData};
-					delete fallbackData.icon;
-					delete fallbackData.unicode_emoji;
-					if (Object.keys(fallbackData).length > 0) {
-						try {
-							await GuildCommands.updateRole(guild.id, roleId, fallbackData);
-						} catch (fallbackError) {
-							logger.error('Failed to update role even with fallback data', fallbackError);
-							throw fallbackError;
-						}
-					}
 				}
 			}
 			setRoleUpdates(new Map());

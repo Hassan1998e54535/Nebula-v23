@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import styles from '@app/features/gaming/GamingActivityPrivacyPanel.module.css';
+import {Switch} from '@app/features/ui/components/form/FormSwitch';
 import {Trans, useLingui} from '@lingui/react/macro';
 import {GameControllerIcon, MagnifyingGlassIcon, ShieldCheckIcon, UsersThreeIcon} from '@phosphor-icons/react';
 
@@ -114,17 +115,14 @@ function GamingActivityPrivacyPanel({
 							)}
 						</p>
 					</div>
-					<label className={styles.switch} aria-label={i18n._('Detect games on this device')}>
-						<input
-							checked={detectionEnabled}
-							disabled={!detectionAvailable || loading || busy}
-							onChange={(event) => onDetectionEnabledChange(event.currentTarget.checked)}
-							type="checkbox"
-						/>
-						<span className={styles.switchTrack} aria-hidden="true">
-							<span className={styles.switchThumb} />
-						</span>
-					</label>
+					<Switch
+						ariaLabel={i18n._('Detect games on this device')}
+						className={styles.switchControl}
+						compact
+						disabled={!detectionAvailable || loading || busy}
+						onChange={onDetectionEnabledChange}
+						value={detectionEnabled}
+					/>
 				</div>
 
 				<div className={styles.settingRow}>
@@ -141,17 +139,14 @@ function GamingActivityPrivacyPanel({
 							</Trans>
 						</p>
 					</div>
-					<label className={styles.switch} aria-label={i18n._('Share game activity with your servers')}>
-						<input
-							checked={shareWithServers}
-							disabled={loading || busy}
-							onChange={(event) => onShareWithServersChange(event.currentTarget.checked)}
-							type="checkbox"
-						/>
-						<span className={styles.switchTrack} aria-hidden="true">
-							<span className={styles.switchThumb} />
-						</span>
-					</label>
+					<Switch
+						ariaLabel={i18n._('Share game activity with your servers')}
+						className={styles.switchControl}
+						compact
+						disabled={loading || busy}
+						onChange={onShareWithServersChange}
+						value={shareWithServers}
+					/>
 				</div>
 			</section>
 
@@ -260,20 +255,14 @@ function GamingActivityPrivacyPanel({
 											<Trans>Hidden</Trans>
 										)}
 									</span>
-									<label
-										className={styles.switch}
-										aria-label={i18n._('Share game activity in {serverName}', {serverName: guild.name})}
-									>
-										<input
-											checked={guild.isSharing}
-											disabled={loading || busy}
-											onChange={(event) => onGuildSharingChange(guild.id, event.currentTarget.checked)}
-											type="checkbox"
-										/>
-										<span className={styles.switchTrack} aria-hidden="true">
-											<span className={styles.switchThumb} />
-										</span>
-									</label>
+									<Switch
+										ariaLabel={i18n._('Share game activity in {serverName}', {serverName: guild.name})}
+										className={styles.switchControl}
+										compact
+										disabled={loading || busy}
+										onChange={(isSharing) => onGuildSharingChange(guild.id, isSharing)}
+										value={guild.isSharing}
+									/>
 								</div>
 							</li>
 						))}

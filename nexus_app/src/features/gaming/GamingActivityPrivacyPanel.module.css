@@ -1,5 +1,5 @@
 .root {
-	--activity-accent: var(--status-positive, #48c9a6);
+	--activity-accent: var(--brand-primary, var(--text-link, #5865f2));
 	--activity-accent-soft: color-mix(in srgb, var(--activity-accent) 12%, var(--background-primary));
 	box-sizing: border-box;
 	color: var(--text-primary);
@@ -57,8 +57,10 @@
 }
 
 .globalSettings {
-	border-bottom: 1px solid var(--border-subtle);
-	border-top: 1px solid var(--border-subtle);
+	background: var(--background-secondary-alt);
+	border: 1px solid var(--background-header-secondary);
+	border-radius: 0.5rem;
+	padding: 0 1rem;
 }
 
 .settingRow {
@@ -103,64 +105,8 @@
 	max-width: 570px;
 }
 
-.switch {
-	cursor: pointer;
-	display: block;
-	flex: 0 0 46px;
-	height: 27px;
-	position: relative;
-	width: 46px;
-}
-
-.switch input {
-	height: 1px;
-	opacity: 0;
-	position: absolute;
-	width: 1px;
-}
-
-.switchTrack {
-	background: var(--background-tertiary);
-	border: 1px solid var(--border-subtle);
-	border-radius: 999px;
-	inset: 0;
-	position: absolute;
-	transition:
-		background 150ms ease,
-		border-color 150ms ease;
-}
-
-.switchThumb {
-	background: var(--text-muted);
-	border-radius: 50%;
-	height: 19px;
-	left: 3px;
-	position: absolute;
-	top: 3px;
-	transition:
-		background 150ms ease,
-		transform 150ms ease;
-	width: 19px;
-}
-
-.switch input:checked + .switchTrack {
-	background: var(--activity-accent);
-	border-color: var(--activity-accent);
-}
-
-.switch input:checked + .switchTrack .switchThumb {
-	background: var(--background-primary);
-	transform: translateX(19px);
-}
-
-.switch input:focus-visible + .switchTrack {
-	outline: 2px solid var(--activity-accent);
-	outline-offset: 3px;
-}
-
-.switch input:disabled + .switchTrack {
-	cursor: not-allowed;
-	opacity: 0.52;
+.switchControl {
+	flex: 0 0 auto;
 }
 
 .guildSection {
@@ -286,10 +232,13 @@
 }
 
 .guildList {
-	border-bottom: 1px solid var(--border-subtle);
+	background: var(--background-secondary-alt);
+	border: 1px solid var(--background-header-secondary);
+	border-radius: 0.5rem;
 	list-style: none;
 	margin: 11px 0 0;
-	padding: 0;
+	overflow: hidden;
+	padding: 0 0.875rem;
 }
 
 .guildRow {
@@ -497,6 +446,7 @@
 }
 
 .manualLink {
+	background: var(--background-secondary-alt);
 	border: 1px solid var(--border-subtle);
 	border-radius: 12px;
 	overflow: hidden;
@@ -697,6 +647,10 @@
 		padding: 17px 1px;
 	}
 
+	.globalSettings {
+		padding-inline: 0.75rem;
+	}
+
 	.settingMark {
 		flex-basis: 37px;
 		height: 37px;
@@ -760,8 +714,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.switchTrack,
-	.switchThumb,
 	.bulkButton,
 	.clearSearch,
 	.manualSummary::after {

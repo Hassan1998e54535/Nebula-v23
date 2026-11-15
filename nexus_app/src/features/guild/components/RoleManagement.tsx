@@ -2,6 +2,7 @@
 
 import {ConfirmModal} from '@app/features/app/components/dialogs/ConfirmModal';
 import {GuildSettingsModal} from '@app/features/app/components/dialogs/LoadableSettingsModals';
+import {GuildRoleIcon} from '@app/features/guild/components/GuildRoleIcon';
 import {COLLAPSED_ROLE_PREVIEW_COUNT, getRoleListDisplay} from '@app/features/guild/components/RoleListUtils';
 import styles from '@app/features/guild/components/RoleManagement.module.css';
 import type {GuildRole} from '@app/features/guild/models/GuildRole';
@@ -65,7 +66,6 @@ const RoleBadge: React.FC<{
 	isNewlyRevealed?: boolean;
 }> = observer(function RoleBadge({role, canRemove, guildId, userId, isNewlyRevealed = false}) {
 	const {i18n} = useLingui();
-	const roleColor = ColorUtils.int2rgb(role.color);
 	const iconColor = ColorUtils.getBestContrastColor(role.color);
 	const removeRoleLabel = i18n._(REMOVE_ROLE_DESCRIPTOR, {roleName: role.name});
 	const handleContextMenu = useCallback(
@@ -77,13 +77,7 @@ const RoleBadge: React.FC<{
 	const handleRemoveRole = () => {
 		GuildMemberCommands.removeRole(guildId, userId, role.id);
 	};
-	const roleIndicator = (
-		<span
-			className={styles.roleIndicator}
-			style={{backgroundColor: roleColor}}
-			data-flx="guild.role-management.role-badge.role-indicator"
-		/>
-	);
+	const roleIndicator = <GuildRoleIcon className={styles.roleIndicator} role={role} size={12} />;
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: context-menu affordance on role badge.
 		<div
