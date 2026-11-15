@@ -5,5 +5,5 @@
 - [PowerShell smart quotes](powershell-smart-quotes.md) — Curly apostrophes in quoted PowerShell text can cause a misleading unterminated-string parse error.
 - [Windows app-control and passkeys](windows-app-control-passkeys.md) — Keep WebAuthn optional on Windows so application-control policies can block passkeys without blocking app startup.
 - [NEXUS product branding](nexus-product-branding.md) — User-facing app identity should say NEXUS throughout; preserve required legal and source attribution.
-- [Gaming activity settings](gaming-activity-settings.md) — Keep game settings focused on global detection and sharing, not a catalog of game cards; show rich activity on profiles.
+- [Gaming activity settings](gaming-activity-settings.md) — Keep game controls concise and per-server; theme settings and profile activity with app and profile accents.
 - [Replit workflow orphan cleanup](replit-workflow-orphan-cleanup.md) — Interrupted native runs can leave NEXUS child services bound to ports; identify exact stale processes before restarting.
