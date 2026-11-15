@@ -235,11 +235,21 @@ export const RoleItem: React.FC<RoleItemProps> = observer(
 					onContextMenu={handleContextMenu}
 					data-flx="guild.guild-tabs.guild-roles-tab.role-item.overwrite-item.click.button"
 				>
-					<div
-						className={styles.roleDot}
-						style={{backgroundColor: role.color === 0 ? DEFAULT_ROLE_COLOR_HEX : getRoleColor(role.color)}}
-						data-flx="guild.guild-tabs.guild-roles-tab.role-item.role-dot"
-					/>
+					{role.icon ? (
+						<img
+							src={role.icon}
+							alt=""
+							style={{width: 16, height: 16, borderRadius: 3, objectFit: 'contain', flexShrink: 0}}
+						/>
+					) : role.unicodeEmoji ? (
+						<span style={{fontSize: 14, lineHeight: 1, flexShrink: 0}}>{role.unicodeEmoji}</span>
+					) : (
+						<div
+							className={styles.roleDot}
+							style={{backgroundColor: role.color === 0 ? DEFAULT_ROLE_COLOR_HEX : getRoleColor(role.color)}}
+							data-flx="guild.guild-tabs.guild-roles-tab.role-item.role-dot"
+						/>
+					)}
 					<span className={styles.overwriteName} data-flx="guild.guild-tabs.guild-roles-tab.role-item.overwrite-name">
 						{role.name || '\u00A0'}
 					</span>

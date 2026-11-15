@@ -332,7 +332,22 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 				if (currentRole) {
 					guild.roles[roleId] = currentRole.withUpdates(updateData as any);
 				}
-				await GuildCommands.updateRole(guild.id, roleId, updateData);
+				try {
+					await GuildCommands.updateRole(guild.id, roleId, updateData);
+				} catch (serverError) {
+					logger.warn('Server rejected role update with custom icon, attempting fallback without icon fields', serverError);
+					const fallbackData = {...updateData};
+					delete fallbackData.icon;
+					delete fallbackData.unicode_emoji;
+					if (Object.keys(fallbackData).length > 0) {
+						try {
+							await GuildCommands.updateRole(guild.id, roleId, fallbackData);
+						} catch (fallbackError) {
+							logger.error('Failed to update role even with fallback data', fallbackError);
+							throw fallbackError;
+						}
+					}
+				}
 			}
 			setRoleUpdates(new Map());
 			setPendingRoleOrder(null);
