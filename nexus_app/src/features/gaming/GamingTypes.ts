@@ -22,6 +22,7 @@ export interface GamingActivity {
 export interface GamingProfile {
 	games: Array<GamingEntry>;
 	share_with_guilds: boolean;
+	hidden_guild_ids: Array<string>;
 	activity: GamingActivity | null;
 }
 

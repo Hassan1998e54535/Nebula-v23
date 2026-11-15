@@ -2,6 +2,7 @@
 
 import type {UserID} from '@app/api/BrandedTypes';
 import {IGDBCatalogError, searchIGDBGames} from '@app/api/gaming/IGDBCatalog';
+import {resolveHiddenGamingGuildIds, shouldShareGamingActivityInGuild} from '@app/api/gaming/GamingPrivacy';
 import {DefaultUserOnly} from '@app/api/middleware/AuthMiddleware';
 import {RateLimitMiddleware} from '@app/api/middleware/RateLimitMiddleware';
 import {OpenAPI} from '@app/api/middleware/ResponseTypeMiddleware';
@@ -35,6 +36,7 @@ const guildPlayersKey = (guildId: string) => `nexus:gaming:guild:${guildId}:play
 interface StoredProfile {
 	games: Array<GamingEntry>;
 	share_with_guilds: boolean;
+	hidden_guild_ids: Array<string>;
 }
 
 interface StoredActivity {
@@ -43,10 +45,22 @@ interface StoredActivity {
 	started_at: string;
 	updated_at: number;
 	share_with_guilds: boolean;
+	hidden_guild_ids?: Array<string>;
 }
 
 async function getMemberGuilds(ctx: Context<HonoEnv>, userId: UserID) {
 	return ctx.get('guildService').data.operations.getUserGuilds(userId, {});
+}
+
+function parseStoredProfile(rawProfile: string | null): StoredProfile {
+	const stored = rawProfile ? (JSON.parse(rawProfile) as Partial<StoredProfile>) : null;
+	return {
+		games: Array.isArray(stored?.games) ? stored.games : [],
+		share_with_guilds: stored?.share_with_guilds === true,
+		hidden_guild_ids: Array.isArray(stored?.hidden_guild_ids)
+			? stored.hidden_guild_ids.filter((guildId): guildId is string => typeof guildId === 'string')
+			: [],
+	};
 }
 
 export function GamingController(app: HonoApp): void {
@@ -68,11 +82,12 @@ export function GamingController(app: HonoApp): void {
 			const userKey = String(userId);
 			const kv = getKVClient();
 			const [rawProfile, rawActivity] = await Promise.all([kv.get(profileKey(userKey)), kv.get(activityKey(userKey))]);
-			const profile: StoredProfile = rawProfile ? JSON.parse(rawProfile) : {games: [], share_with_guilds: false};
+			const profile = parseStoredProfile(rawProfile);
 			const activity: StoredActivity | null = rawActivity ? JSON.parse(rawActivity) : null;
 			return ctx.json({
 				games: profile.games,
 				share_with_guilds: profile.share_with_guilds,
+				hidden_guild_ids: profile.hidden_guild_ids,
 				activity: activity
 					? {game: activity.game, started_at: activity.started_at, share_with_guilds: activity.share_with_guilds}
 					: null,
@@ -96,26 +111,33 @@ export function GamingController(app: HonoApp): void {
 		async (ctx) => {
 			const userId = ctx.get('user').id;
 			const userKey = String(userId);
-			const {games, share_with_guilds} = ctx.req.valid('json');
-			const profile: StoredProfile = {games, share_with_guilds};
+			const {games, share_with_guilds, hidden_guild_ids: requestedHiddenGuildIds} = ctx.req.valid('json');
 			const kv = getKVClient();
+			const previousProfile = parseStoredProfile(await kv.get(profileKey(userKey)));
+			const guilds = await getMemberGuilds(ctx, userId);
+			const memberGuildIds = new Set(guilds.map((guild) => String(guild.id)));
+			const hiddenGuildIds = resolveHiddenGamingGuildIds(
+				requestedHiddenGuildIds,
+				previousProfile.hidden_guild_ids,
+				memberGuildIds,
+			);
+			const profile: StoredProfile = {games, share_with_guilds, hidden_guild_ids: hiddenGuildIds};
 			await kv.set(profileKey(userKey), JSON.stringify(profile));
 			const rawActivity = await kv.get(activityKey(userKey));
 			let activity: StoredActivity | null = rawActivity ? JSON.parse(rawActivity) : null;
 			if (activity && !games.some((entry) => entry.id === activity?.game.id)) {
 				await kv.del(activityKey(userKey));
-				const guilds = await getMemberGuilds(ctx, userId);
 				await Promise.all(guilds.map((guild) => kv.hdel(guildPlayersKey(guild.id), userKey)));
 				activity = null;
 			}
 			if (activity) {
 				activity.share_with_guilds = share_with_guilds;
+				activity.hidden_guild_ids = hiddenGuildIds;
 				activity.updated_at = Date.now();
 				await kv.setex(activityKey(userKey), ACTIVITY_TTL_SECONDS, JSON.stringify(activity));
-				const guilds = await getMemberGuilds(ctx, userId);
 				await Promise.all(
 					guilds.map((guild) =>
-						share_with_guilds
+						shouldShareGamingActivityInGuild(profile.share_with_guilds, profile.hidden_guild_ids, guild.id)
 							? kv.hset(guildPlayersKey(guild.id), userKey, JSON.stringify(activity))
 							: kv.hdel(guildPlayersKey(guild.id), userKey),
 					),
@@ -124,6 +146,7 @@ export function GamingController(app: HonoApp): void {
 			return ctx.json({
 				games,
 				share_with_guilds,
+				hidden_guild_ids: hiddenGuildIds,
 				activity: activity ? {game: activity.game, started_at: activity.started_at, share_with_guilds} : null,
 			});
 		},
@@ -149,7 +172,7 @@ export function GamingController(app: HonoApp): void {
 			const {game, share_with_guilds} = ctx.req.valid('json');
 			const kv = getKVClient();
 			const [rawProfile, rawActivity] = await Promise.all([kv.get(profileKey(userKey)), kv.get(activityKey(userKey))]);
-			const profile: StoredProfile = rawProfile ? JSON.parse(rawProfile) : {games: [], share_with_guilds: false};
+			const profile = parseStoredProfile(rawProfile);
 			if (!profile.games.some((entry) => entry.id === game.id)) {
 				profile.games.push(game);
 			}
@@ -160,6 +183,7 @@ export function GamingController(app: HonoApp): void {
 				started_at: previous?.game.id === game.id ? previous.started_at : new Date().toISOString(),
 				updated_at: Date.now(),
 				share_with_guilds,
+				hidden_guild_ids: profile.hidden_guild_ids,
 			};
 			await kv.setex(activityKey(userKey), ACTIVITY_TTL_SECONDS, JSON.stringify(activity));
 			profile.share_with_guilds = share_with_guilds;
@@ -167,7 +191,7 @@ export function GamingController(app: HonoApp): void {
 			const guilds = await getMemberGuilds(ctx, userId);
 			await Promise.all(
 				guilds.map((guild) =>
-					share_with_guilds
+					shouldShareGamingActivityInGuild(profile.share_with_guilds, profile.hidden_guild_ids, guild.id)
 						? kv.hset(guildPlayersKey(guild.id), userKey, JSON.stringify(activity))
 						: kv.hdel(guildPlayersKey(guild.id), userKey),
 				),
@@ -175,6 +199,7 @@ export function GamingController(app: HonoApp): void {
 			return ctx.json({
 				games: profile.games,
 				share_with_guilds,
+				hidden_guild_ids: profile.hidden_guild_ids,
 				activity: {game, started_at: activity.started_at, share_with_guilds},
 			});
 		},
@@ -197,11 +222,16 @@ export function GamingController(app: HonoApp): void {
 			const userKey = String(userId);
 			const kv = getKVClient();
 			const rawProfile = await kv.get(profileKey(userKey));
-			const profile: StoredProfile = rawProfile ? JSON.parse(rawProfile) : {games: [], share_with_guilds: false};
+			const profile = parseStoredProfile(rawProfile);
 			await kv.del(activityKey(userKey));
 			const guilds = await getMemberGuilds(ctx, userId);
 			await Promise.all(guilds.map((guild) => kv.hdel(guildPlayersKey(guild.id), userKey)));
-			return ctx.json({games: profile.games, share_with_guilds: profile.share_with_guilds, activity: null});
+			return ctx.json({
+				games: profile.games,
+				share_with_guilds: profile.share_with_guilds,
+				hidden_guild_ids: profile.hidden_guild_ids,
+				activity: null,
+			});
 		},
 	);
 
@@ -272,7 +302,12 @@ export function GamingController(app: HonoApp): void {
 					const activity: StoredActivity = JSON.parse(raw);
 					return {playerId, activity};
 				})
-				.filter(({activity}) => now - activity.updated_at <= ACTIVITY_MAX_AGE_MS);
+			.filter(
+				({activity}) =>
+					now - activity.updated_at <= ACTIVITY_MAX_AGE_MS &&
+					activity.share_with_guilds &&
+					!(activity.hidden_guild_ids ?? []).includes(guildId),
+			);
 			const activePlayerIds = new Set(players.map((player) => player.playerId));
 			const stalePlayers = Object.keys(storedPlayers).filter((playerId) => !activePlayerIds.has(playerId));
 			if (stalePlayers.length > 0) {

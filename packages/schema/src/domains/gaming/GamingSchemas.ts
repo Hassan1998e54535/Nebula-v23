@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import {z} from 'zod';
+import {SnowflakeType} from '@nexus/schema/src/primitives/SchemaPrimitives';
 
 export const GamingPlatformSchema = z.enum(['computer', 'mobile', 'console', 'other']);
 
@@ -70,6 +71,7 @@ export const GamingCatalogSearchResponseSchema = z.object({
 export const GamingProfileResponse = z.object({
 	games: z.array(GamingEntrySchema).max(100),
 	share_with_guilds: z.boolean(),
+	hidden_guild_ids: z.array(SnowflakeType).max(2000),
 	activity: z
 		.object({
 			game: GamingEntrySchema,
@@ -82,6 +84,7 @@ export const GamingProfileResponse = z.object({
 export const GamingProfileUpdateRequest = z.object({
 	games: z.array(GamingEntrySchema).max(100),
 	share_with_guilds: z.boolean(),
+	hidden_guild_ids: z.array(SnowflakeType).max(2000).optional(),
 });
 
 export const GamingActivityUpdateRequest = z.object({

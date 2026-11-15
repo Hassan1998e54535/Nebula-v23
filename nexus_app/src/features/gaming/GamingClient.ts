@@ -8,10 +8,18 @@ export async function fetchGamingProfile(): Promise<GamingProfile> {
 	return (await http.get<GamingProfile>(Endpoints.USER_GAMING)).body;
 }
 
-export async function saveGamingProfile(games: Array<GamingEntry>, shareWithGuilds: boolean): Promise<GamingProfile> {
+export async function saveGamingProfile(
+	games: Array<GamingEntry>,
+	shareWithGuilds: boolean,
+	hiddenGuildIds?: Array<string>,
+): Promise<GamingProfile> {
 	return (
 		await http.put<GamingProfile>(Endpoints.USER_GAMING, {
-			body: {games, share_with_guilds: shareWithGuilds},
+			body: {
+				games,
+				share_with_guilds: shareWithGuilds,
+				...(hiddenGuildIds === undefined ? {} : {hidden_guild_ids: hiddenGuildIds}),
+			},
 		})
 	).body;
 }

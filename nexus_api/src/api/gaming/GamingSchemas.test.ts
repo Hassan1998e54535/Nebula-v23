@@ -41,6 +41,24 @@ describe('Gaming request schemas', () => {
 			GamingProfileUpdateRequest.safeParse({
 				games,
 				share_with_guilds: false,
+				hidden_guild_ids: ['123456789012345678'],
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts only bounded snowflake IDs for per-server activity privacy', () => {
+		expect(
+			GamingProfileUpdateRequest.safeParse({
+				games: [],
+				share_with_guilds: true,
+				hidden_guild_ids: ['123456789012345678'],
+			}).success,
+		).toBe(true);
+		expect(
+			GamingProfileUpdateRequest.safeParse({
+				games: [],
+				share_with_guilds: true,
+				hidden_guild_ids: ['not-a-server-id'],
 			}).success,
 		).toBe(false);
 	});
