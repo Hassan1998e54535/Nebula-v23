@@ -310,7 +310,7 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 					await GuildCommands.setRoleHoistOrder(guild.id, submittableHoistOrder);
 				}
 			}
-			const retiredPermissions = ThreadGuilds.isActive(guild.id) ? 0n : THREAD_PERMISSIONS;
+			const retiredPermissions = ThreadGuilds.isActive(guild.id) ? 0n : BigInt(THREAD_PERMISSIONS);
 			for (const [roleId, updates] of roleUpdates.entries()) {
 				const updateData: Record<string, unknown> = {};
 				if (updates.name !== undefined) updateData.name = updates.name;
@@ -331,7 +331,10 @@ const GuildRolesTab: React.FC<{guildId: string}> = observer(({guildId}) => {
 					});
 				}
 				if (currentRole) {
-					guild.roles[roleId] = currentRole.withUpdates(updateData as any);
+					Guilds.handleGuildRoleUpdate({
+						guildId: guild.id,
+						role: currentRole.withUpdates(updateData as any).toJSON(),
+					});
 				}
 			}
 			setRoleUpdates(new Map());

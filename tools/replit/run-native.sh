@@ -93,6 +93,16 @@ service_origin="https://$REPLIT_DEV_DOMAIN:$service_port"
 # Keep the API/bootstrap client aligned with tools/dev/src/media_proxy.rs.
 export NEXUS_S3_ACCESS_KEY_ID=nexus
 export NEXUS_S3_SECRET_ACCESS_KEY=nexus-secret
+export NEXUS_S3_ENDPOINT=http://127.0.0.1:8333
+export NEXUS_S3_REGION=us-east-1
+export NEXUS_S3_FORCE_PATH_STYLE=true
+export NEXUS_S3_BUCKET_CDN=nexus
+export NEXUS_S3_BUCKET_UPLOADS=nexus-uploads
+export NEXUS_S3_BUCKET_DOWNLOADS=nexus-downloads
+export NEXUS_S3_BUCKET_REPORTS=nexus-reports
+export NEXUS_S3_BUCKET_HARVESTS=nexus-harvests
+export NEXUS_S3_BUCKET_STATIC=nexus-static
+export NEXUS_MEDIA_PROXY_STORAGE_BACKEND=s3
 # Web push is not configured for this local preview. Keep the API's required
 # VAPID validation satisfied with the public test pair already used by config
 # tests; never use this pair in a published deployment.
