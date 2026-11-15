@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Nebula
 
-import {fetchGamingProfile, saveGamingProfile} from '@app/features/gaming/GamingClient';
+import {fetchGamingProfile, saveGamingProfile, startGamingActivity} from '@app/features/gaming/GamingClient';
 import {
 	type GamingDetectionPreferences,
 	getGamingDetectionPreferences,
@@ -72,6 +72,7 @@ function GamingTab() {
 				setProfile(next);
 				if (next.activity) {
 					storeGamingActivity(userId, next.activity.game, shareWithGuilds, next.activity.started_at);
+					await startGamingActivity(next.activity.game, shareWithGuilds);
 				}
 			} catch {
 				setError(i18n._('Could not save your gaming settings. Please try again.'));
