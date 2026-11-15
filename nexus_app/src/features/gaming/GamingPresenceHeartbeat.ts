@@ -86,7 +86,7 @@ export function getGamingDetectionPreferences(userId: string): GamingDetectionPr
 		const raw = window.localStorage.getItem(detectionKey(userId));
 		if (!raw) {
 			return {
-				enabled: true,
+				enabled: false,
 				registrations: [],
 				suppressed_process_names: [],
 				suppressed_game_ids: [],
@@ -104,7 +104,7 @@ export function getGamingDetectionPreferences(userId: string): GamingDetectionPr
 				)
 			: [];
 		return {
-			enabled: parsed.enabled !== false,
+			enabled: parsed.enabled === true,
 			registrations,
 			suppressed_process_names: Array.isArray(parsed.suppressed_process_names)
 				? parsed.suppressed_process_names
@@ -154,7 +154,13 @@ export function saveGamingDetectionPreferences(userId: string, preferences: Gami
 		];
 		window.localStorage.setItem(
 			detectionKey(userId),
-			JSON.stringify({...preferences, registrations, suppressed_process_names, suppressed_game_ids, suppressed_game_names}),
+			JSON.stringify({
+				...preferences,
+				registrations,
+				suppressed_process_names,
+				suppressed_game_ids,
+				suppressed_game_names,
+			}),
 		);
 		window.dispatchEvent(new Event(DETECTION_SETTINGS_CHANGED_EVENT));
 		return true;
@@ -381,18 +387,12 @@ async function reconcileDetectedGame(userId: string): Promise<void> {
 					game.id === detectedGame.id || normalizeGameTitle(game.name) === normalizeGameTitle(detectedGame.name),
 			);
 			const game = existingGame ?? detectedGame;
-			const shareWithGuilds = true;
+			const shareWithGuilds = profile.share_with_guilds;
 			if (!existingGame) {
 				profile = await saveGamingProfile([...profile.games, game], shareWithGuilds);
 			}
 			const next = await startGamingActivity(game, shareWithGuilds);
-			storeGamingActivity(
-				userId,
-				game,
-				shareWithGuilds,
-				next.activity?.started_at ?? new Date().toISOString(),
-				'auto',
-			);
+			storeGamingActivity(userId, game, shareWithGuilds, next.activity?.started_at ?? new Date().toISOString(), 'auto');
 			return;
 		}
 

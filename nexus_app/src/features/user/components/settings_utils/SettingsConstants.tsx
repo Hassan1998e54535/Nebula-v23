@@ -113,8 +113,8 @@ const DESIGN_SYSTEM_DESCRIPTOR = msg({
 	comment: 'Developer settings tab showing UI component examples.',
 });
 const GAMING_INFINITY_DESCRIPTOR = msg({
-	message: 'Registered Games',
-	comment: 'User settings tab for the game library and game activity.',
+	message: 'Game detection',
+	comment: 'User settings tab for automatic game detection and activity sharing.',
 });
 export type UserSettingsSubtabType = SettingsSectionId;
 type UserSettingsTabCategories = 'user_settings' | 'billing' | 'app_settings' | 'developer';
