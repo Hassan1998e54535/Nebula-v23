@@ -7,6 +7,7 @@ import {Button} from '@app/features/ui/button/Button';
 import {Spinner} from '@app/features/ui/components/Spinner';
 import {Tooltip} from '@app/features/ui/tooltip/Tooltip';
 import styles from '@app/features/voice/components/StreamWatchHoverCard.module.css';
+import {StreamStartedIllustration} from '@app/features/voice/components/StreamStartedIllustration';
 import {
 	ADD_STREAM_DESCRIPTOR,
 	WATCHING_STREAM_DESCRIPTOR,
@@ -125,12 +126,7 @@ export const StreamWatchHoverCard: React.FC<StreamWatchHoverCardProps> = ({
 						{isPreviewLoading ? (
 							<Spinner size="small" data-flx="voice.stream-watch-hover-card.spinner" />
 						) : (
-							<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', padding: '0.5rem', textAlign: 'center'}}>
-								<MonitorPlayIcon size={remFromPx(28)} weight="duotone" style={{color: 'rgba(255, 255, 255, 0.7)'}} />
-								<span style={{fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-primary)'}}>
-									<Trans>Stream just started. Get in here!</Trans>
-								</span>
-							</div>
+							<StreamStartedIllustration compact={isCompact} />
 						)}
 					</div>
 				)}

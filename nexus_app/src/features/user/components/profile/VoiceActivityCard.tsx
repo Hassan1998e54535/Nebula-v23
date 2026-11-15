@@ -27,6 +27,7 @@ import Users from '@app/features/user/state/Users';
 import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
 import {STREAM_PREVIEW_DESCRIPTOR} from '@app/features/user/utils/UserMessageDescriptors';
 import * as VoiceStreamWatchCommands from '@app/features/voice/commands/VoiceStreamWatchCommands';
+import {StreamStartedIllustration} from '@app/features/voice/components/StreamStartedIllustration';
 import {useStreamPreview} from '@app/features/voice/components/useStreamPreview';
 import {useStreamWatchState} from '@app/features/voice/components/useStreamWatchState';
 import {
@@ -505,12 +506,7 @@ const StreamPreviewSection: React.FC<StreamPreviewSectionProps> = observer(
 						{isPreviewLoading ? (
 							<Spinner size="small" data-flx="user.profile.voice-activity-card.stream-preview-section.spinner" />
 						) : (
-							<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center'}}>
-								<MonitorPlayIcon size={32} weight="duotone" style={{color: 'rgba(255, 255, 255, 0.7)'}} />
-								<span style={{fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)'}}>
-									<Trans>Stream just started. Get in here!</Trans>
-								</span>
-							</div>
+							<StreamStartedIllustration />
 						)}
 					</div>
 				)}

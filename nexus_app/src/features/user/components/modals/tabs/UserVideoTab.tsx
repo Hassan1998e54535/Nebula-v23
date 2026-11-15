@@ -18,6 +18,7 @@ import {getAdvancedSettingsCategorySectionId} from '@app/features/user/component
 import {CompactComboboxRow} from '@app/features/user/components/modals/tabs/components/CompactComboboxRow';
 import {useMediaPermission} from '@app/features/user/components/modals/tabs/hooks/useMediaPermission';
 import styles from '@app/features/user/components/modals/tabs/UserVideoTab.module.css';
+import PrivacyPreferences from '@app/features/user/state/PrivacyPreferences';
 import {
 	resolveUserVideoTabScreenShareState,
 	SCREEN_SHARE_PRESET_DESCRIPTORS,
@@ -410,6 +411,20 @@ export const VideoTab: React.FC<VideoTabProps> = observer(({voiceSettings}) => {
 						data-flx="user.user-video-tab.video-tab.compact-combobox-row.screen-share-bitrate-change"
 					/>
 				)}
+				<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.875rem 0', marginTop: '0.5rem', borderTop: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'}}>
+					<div>
+						<div style={{fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)'}}>
+							<Trans>Hide my stream preview thumbnail</Trans>
+						</div>
+						<div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.15rem'}}>
+							<Trans>Hides your screen share preview from users outside the voice channel.</Trans>
+						</div>
+					</div>
+					<Switch
+						checked={PrivacyPreferences.getDisableStreamPreviews()}
+						onChange={(checked) => PrivacyPreferences.setDisableStreamPreviews(checked)}
+					/>
+				</div>
 			</div>
 			<div className={styles.actionRow} data-flx="user.video-tab.advanced-video-settings-section">
 				<span className={styles.actionLabel} data-flx="user.video-tab.advanced-video-settings-label">
