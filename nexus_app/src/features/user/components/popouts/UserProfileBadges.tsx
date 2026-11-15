@@ -103,7 +103,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					url: Routes.careers(),
 				});
 			}
-			if (!selfHosted && user.flags & PublicUserFlags.PARTNER) {
+			if (user.flags & PublicUserFlags.PARTNER) {
 				result.push({
 					type: 'icon',
 					key: 'partner',
@@ -112,7 +112,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					url: Routes.partners(),
 				});
 			}
-			if (!selfHosted && user.flags & PublicUserFlags.BUG_HUNTER) {
+			if (user.flags & PublicUserFlags.BUG_HUNTER) {
 				result.push({
 					type: 'icon',
 					key: 'bug_hunter',
@@ -125,7 +125,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 				let tooltipText = getPremiumProductFullName();
 				let badgeUrl: string | undefined = premiumInfoUrl ?? undefined;
 				const badgeOnClick = badgeUrl ? undefined : () => PremiumModalCommands.open();
-				if (!selfHosted && profile.premiumType === UserPremiumTypes.LIFETIME) {
+				if (profile.premiumType === UserPremiumTypes.LIFETIME) {
 					if (profile.premiumSince) {
 						const premiumSinceFormatted = DateUtils.getFormattedShortDate(profile.premiumSince);
 						tooltipText = i18n._(VISIONARY_SINCE_DESCRIPTOR, {
@@ -152,7 +152,6 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					onClick: badgeOnClick,
 				});
 				if (
-					!selfHosted &&
 					profile.premiumType === UserPremiumTypes.LIFETIME &&
 					profile.premiumLifetimeSequence != null
 				) {
