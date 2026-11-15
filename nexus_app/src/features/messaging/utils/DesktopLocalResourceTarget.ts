@@ -6,7 +6,8 @@ import {
 	LOCAL_APP_REMOTE_PROXY_URL_PARAMETER,
 } from '@nexus/desktop_ipc/src/LocalAppRouteContract';
 
-export function parseDesktopLocalResourceProxyTarget(value: string): string {
+export function parseDesktopLocalResourceProxyTarget(value: string | null | undefined): string {
+	if (typeof value !== 'string') return '';
 	if (value.length === 0) return value;
 	let parsedUrl: URL;
 	try {
@@ -20,6 +21,6 @@ export function parseDesktopLocalResourceProxyTarget(value: string): string {
 	return parsedUrl.searchParams.get(LOCAL_APP_REMOTE_PROXY_URL_PARAMETER) ?? value;
 }
 
-export function unwrapDesktopLocalResourceURL(value: string): string {
+export function unwrapDesktopLocalResourceURL(value: string | null | undefined): string {
 	return parseDesktopLocalResourceProxyTarget(value);
 }

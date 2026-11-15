@@ -8,6 +8,7 @@ import {CompactMemberCustomStatus} from '@app/features/channel/components/Compac
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
 import {MemberListUnavailableFallback} from '@app/features/channel/components/shared/MemberListUnavailableFallback';
 import type {Channel} from '@app/features/channel/models/Channel';
+import {GuildRoleIcon} from '@app/features/guild/components/GuildRoleIcon';
 import type {Guild} from '@app/features/guild/models/Guild';
 import {OFFLINE_DESCRIPTOR, ONLINE_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import {resolveMemberListCustomStatus} from '@app/features/member/hooks/useMemberListCustomStatus';
@@ -136,9 +137,10 @@ const MobileMemberListItem = observer(
 		const displayName = member.nick
 			? NicknameUtils.formatNicknameForStreamerMode(member.nick)
 			: NicknameUtils.getNickname(member.user, guild.id);
-const profileAppearance =
-UserProfile.getProfile(member.user.id, guild.id)?.getEffectiveProfile().profile_appearance ?? member.user.profileAppearance;
-const nameplateSettings = profileAppearance?.nameplateSettings;
+		const profileAppearance =
+			UserProfile.getProfile(member.user.id, guild.id)?.getEffectiveProfile().profile_appearance ??
+			member.user.profileAppearance;
+		const nameplateSettings = profileAppearance?.nameplateSettings;
 		const avatarUrl = useMemo(
 			() =>
 				AvatarUtils.getGuildMemberDisplayAvatarURL({
@@ -178,11 +180,11 @@ const nameplateSettings = profileAppearance?.nameplateSettings;
 					}`}
 					data-flx="channel.channel-details-bottom-sheet-member-list.mobile-member-list-item.member-list-item"
 				>
-{nameplateSettings?.nameplate && nameplateSettings.nameplate !== 'none' && (
-<div className={styles.memberNameplateLayer}>
-<NameplateMedia settings={nameplateSettings} />
-</div>
-)}
+					{nameplateSettings?.nameplate && nameplateSettings.nameplate !== 'none' && (
+						<div className={styles.memberNameplateLayer}>
+							<NameplateMedia settings={nameplateSettings} />
+						</div>
+					)}
 					<StatusAwareAvatar
 						user={member.user}
 						size={40}
@@ -209,7 +211,7 @@ const nameplateSettings = profileAppearance?.nameplateSettings;
 								style={{color: member.getColorString()}}
 								data-flx="channel.channel-details-bottom-sheet-member-list.mobile-member-list-item.member-name"
 							>
-<ProfileDisplayName name={displayName} appearance={profileAppearance?.appearance} />
+								<ProfileDisplayName name={displayName} appearance={profileAppearance?.appearance} />
 							</span>
 							{guild.isOwner(member.user.id) && !guild.features.has(GuildFeatures.HIDE_OWNER_CROWN) && (
 								<div
@@ -274,18 +276,19 @@ interface LazyMemberListGroupProps {
 const LazyMemberListGroup = observer(
 	({guild, group, channelId, members, onMemberLongPress}: LazyMemberListGroupProps) => {
 		const {i18n} = useLingui();
-		const groupName = (() => {
-			switch (group.id) {
-				case 'online':
-					return i18n._(ONLINE_DESCRIPTOR);
-				case 'offline':
-					return i18n._(OFFLINE_DESCRIPTOR);
-				default: {
-					const role = guild.getRole(group.id);
-					return role?.name ?? group.id;
+		const role = group.id === 'online' || group.id === 'offline' ? null : (guild.getRole(group.id) ?? null);
+		const groupName =
+			role?.name ??
+			(() => {
+				switch (group.id) {
+					case 'online':
+						return i18n._(ONLINE_DESCRIPTOR);
+					case 'offline':
+						return i18n._(OFFLINE_DESCRIPTOR);
+					default:
+						return group.id;
 				}
-			}
-		})();
+			})();
 		return (
 			<div
 				className={styles.memberGroupContainer}
@@ -295,7 +298,10 @@ const LazyMemberListGroup = observer(
 					className={styles.memberGroupHeader}
 					data-flx="channel.channel-details-bottom-sheet-member-list.lazy-member-list-group.member-group-header"
 				>
-					{groupName}—{group.count}
+					{role && (role.icon || role.unicodeEmoji) && <GuildRoleIcon role={role} size={18} />}
+					<span>{groupName}</span>
+					<span aria-hidden="true">—</span>
+					<span>{group.count}</span>
 				</div>
 				<div
 					className={styles.memberGroupList}

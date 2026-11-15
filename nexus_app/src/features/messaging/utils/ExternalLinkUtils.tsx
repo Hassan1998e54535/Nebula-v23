@@ -21,7 +21,8 @@ function isTrustedExternalUrl(url: string): boolean {
 	}
 }
 
-export function openUrlInBrowserWithWarning(url: string): void {
+export function openUrlInBrowserWithWarning(url: string | null | undefined): void {
+	if (typeof url !== 'string' || url.trim().length === 0) return;
 	const target = unwrapDesktopLocalResourceURL(url);
 	if (isTrustedExternalUrl(target)) {
 		void openExternalUrl(target);
@@ -37,7 +38,8 @@ export function openUrlInBrowserWithWarning(url: string): void {
 	);
 }
 
-export function openExternalUrlWithWarning(url: string): void {
+export function openExternalUrlWithWarning(url: string | null | undefined): void {
+	if (typeof url !== 'string' || url.trim().length === 0) return;
 	if (openOAuthAuthorizeModalFromUrl(url)) {
 		return;
 	}
