@@ -341,8 +341,18 @@ export function runNativeModulePreflight(): NativeModulePreflightResult {
 		return {degraded: []};
 	}
 	const failures = [...resolveFailures, ...outcome.failures];
-	const fatal = failures.filter((failure) => failure.severity === 'fatal');
-	const degraded = failures.filter((failure) => failure.severity === 'degraded');
+	const fatal = failures.filter((failure) => {
+		if (failure.severity !== 'fatal') return false;
+		if (process.platform === 'win32') {
+			const rawDiag = failure.diagnostic ? JSON.stringify(failure.diagnostic) : '';
+			if (rawDiag.includes('Application Control policy') || rawDiag.includes('ERR_DLOPEN_FAILED')) {
+				log.warn(`[NativeModulePreflight] ${failure.name} was blocked by Windows Application Control; falling back to JavaScript implementation.`);
+				return false;
+			}
+		}
+		return true;
+	});
+	const degraded = failures.filter((failure) => !fatal.includes(failure));
 	if (degraded.length > 0) {
 		log.warn(
 			'[NativeModulePreflight] Optional native modules are unavailable. The app continues without them',
