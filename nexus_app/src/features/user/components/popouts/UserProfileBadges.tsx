@@ -16,9 +16,9 @@ import bugHunterBadgeUrl from '@app/media/images/badges/bug-hunter.svg';
 import partnerBadgeUrl from '@app/media/images/badges/partner.svg';
 import plutoniumBadgeUrl from '@app/media/images/badges/plutonium.svg';
 import staffBadgeUrl from '@app/media/images/badges/staff.svg';
-import {PublicUserFlags, UserPremiumTypes} from '@nexus/constants/src/UserConstants';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
+import {PublicUserFlags, UserPremiumTypes} from '@nexus/constants/src/UserConstants';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -103,7 +103,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					url: Routes.careers(),
 				});
 			}
-			if (!selfHosted && user.flags & PublicUserFlags.PARTNER) {
+			if (user.flags & PublicUserFlags.PARTNER) {
 				result.push({
 					type: 'icon',
 					key: 'partner',
@@ -112,7 +112,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					url: Routes.partners(),
 				});
 			}
-			if (!selfHosted && user.flags & PublicUserFlags.BUG_HUNTER) {
+			if (user.flags & PublicUserFlags.BUG_HUNTER) {
 				result.push({
 					type: 'icon',
 					key: 'bug_hunter',
@@ -125,7 +125,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 				let tooltipText = getPremiumProductFullName();
 				let badgeUrl: string | undefined = premiumInfoUrl ?? undefined;
 				const badgeOnClick = badgeUrl ? undefined : () => PremiumModalCommands.open();
-				if (!selfHosted && profile.premiumType === UserPremiumTypes.LIFETIME) {
+				if (profile.premiumType === UserPremiumTypes.LIFETIME) {
 					if (profile.premiumSince) {
 						const premiumSinceFormatted = DateUtils.getFormattedShortDate(profile.premiumSince);
 						tooltipText = i18n._(VISIONARY_SINCE_DESCRIPTOR, {
@@ -151,11 +151,7 @@ export const UserProfileBadges: React.FC<UserProfileBadgesProps> = observer(
 					url: badgeUrl,
 					onClick: badgeOnClick,
 				});
-				if (
-					!selfHosted &&
-					profile.premiumType === UserPremiumTypes.LIFETIME &&
-					profile.premiumLifetimeSequence != null
-				) {
+				if (profile.premiumType === UserPremiumTypes.LIFETIME && profile.premiumLifetimeSequence != null) {
 					const visionaryIdLabel = `#${profile.premiumLifetimeSequence}`;
 					result.push({
 						type: 'text',

@@ -11,8 +11,13 @@
 	},
 	{
 		"name": "@nexus/platform-info",
-		"platforms": ["darwin", "linux", "win32"],
+		"platforms": ["darwin", "linux"],
 		"severity": "fatal"
+	},
+	{
+		"name": "@nexus/platform-info",
+		"platforms": ["win32"],
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/mac-app-audio",
@@ -72,22 +77,22 @@
 	{
 		"name": "@nexus/win-clipboard",
 		"platforms": ["win32"],
-		"severity": "fatal"
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/win-process-loopback",
 		"platforms": ["win32"],
-		"severity": "fatal"
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/win-shell",
 		"platforms": ["win32"],
-		"severity": "fatal"
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/windows-input-hook",
 		"platforms": ["win32"],
-		"severity": "fatal"
+		"severity": "degraded"
 	},
 	{
 		"name": "@nexus/app-store",
