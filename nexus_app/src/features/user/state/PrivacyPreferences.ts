@@ -3,9 +3,10 @@
 import {initializeStore} from '@app/features/platform/utils/StoreInitialization';
 import {makeSyncedField} from '@app/features/user/state/SyncedField';
 import Users from '@app/features/user/state/Users';
+import {syncLocalVoiceStateWithServer} from '@app/features/voice/engine/VoiceMediaEngineBridge';
 import {PrivacyPreferencesSchema} from '@nexus/schema/src/gen/nexus/user/preferences/v1/preferences_pb';
 import {extractTimestamp} from '@nexus/snowflake/src/SnowflakeUtils';
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, reaction} from 'mobx';
 
 const SHOW_ACTIVE_NOW_DEFAULT = true;
 const PREUPLOAD_MESSAGE_ATTACHMENTS_DEFAULT_ON_AFTER = '2026-06-04T16:10:00.000Z';
@@ -25,11 +26,16 @@ function currentUserIdSafe(): string | null | undefined {
 
 class PrivacyPreferences {
 	disableStreamPreviews = false;
+	hideStreamPreviewOutsideChannel = false;
 	showActiveNow = SHOW_ACTIVE_NOW_DEFAULT;
 	preuploadMessageAttachments: boolean | undefined = undefined;
 
 	constructor() {
 		makeAutoObservable(this, {}, {autoBind: true});
+		reaction(
+			() => this.hideStreamPreviewOutsideChannel,
+			(value) => syncLocalVoiceStateWithServer({hide_stream_preview_outside_channel: value}),
+		);
 		initializeStore(this, () => this.initPersistence());
 	}
 
@@ -37,9 +43,16 @@ class PrivacyPreferences {
 		await makeSyncedField(this, {
 			field: 'privacy',
 			schema: PrivacyPreferencesSchema,
-			persist: ['disableStreamPreviews', 'showActiveNow', 'preuploadMessageAttachments'],
+			persist: [
+				'disableStreamPreviews',
+				'hideStreamPreviewOutsideChannel',
+				'showActiveNow',
+				'preuploadMessageAttachments',
+			],
 			toMessage: (s) => ({
 				disableStreamPreviews: s.disableStreamPreviews,
+				hideStreamPreviewOutsideChannel:
+					s.hideStreamPreviewOutsideChannel === false ? undefined : s.hideStreamPreviewOutsideChannel,
 				showActiveNow: s.showActiveNow === SHOW_ACTIVE_NOW_DEFAULT ? undefined : s.showActiveNow,
 				preuploadMessageAttachments:
 					s.preuploadMessageAttachments === getPreuploadMessageAttachmentsDefaultForUserId(currentUserIdSafe())
@@ -48,6 +61,7 @@ class PrivacyPreferences {
 			}),
 			applyMessage: (s, m) => {
 				s.disableStreamPreviews = m.disableStreamPreviews;
+				s.hideStreamPreviewOutsideChannel = m.hideStreamPreviewOutsideChannel ?? false;
 				if (m.showActiveNow !== undefined) {
 					s.showActiveNow = m.showActiveNow;
 				}
@@ -70,6 +84,10 @@ class PrivacyPreferences {
 
 	setDisableStreamPreviews(value: boolean): void {
 		this.disableStreamPreviews = value;
+	}
+
+	setHideStreamPreviewOutsideChannel(value: boolean): void {
+		this.hideStreamPreviewOutsideChannel = value;
 	}
 
 	setShowActiveNow(value: boolean): void {

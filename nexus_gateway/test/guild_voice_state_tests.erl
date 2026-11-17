@@ -91,6 +91,62 @@ update_voice_state_data_change_bumps_version_and_refreshes_member_test() ->
     ?assertEqual(Member, maps:get(<<"member">>, ReplyVS)),
     ?assertEqual(5, maps:get(<<"version">>, ReplyVS)).
 
+update_voice_state_data_enables_private_stream_preview_test() ->
+    ExistingVS = existing_voice_state(#{}),
+    Flags = #{
+        self_mute => false,
+        self_deaf => false,
+        self_video => false,
+        self_stream => true,
+        hide_stream_preview_outside_channel => true,
+        is_mobile => false,
+        suppress => false
+    },
+    State = #{voice_states => #{<<"conn">> => ExistingVS}, sessions => #{}},
+    {reply, Reply, NewState} = guild_voice_state:update_voice_state_data(#{
+        connection_id => <<"conn">>,
+        channel_id => <<"100">>,
+        flags => Flags,
+        member => #{},
+        existing_voice_state => ExistingVS,
+        voice_states => #{<<"conn">> => ExistingVS},
+        state => State,
+        needs_token => false,
+        viewer_stream_keys => []
+    }),
+    StoredVS = maps:get(<<"conn">>, maps:get(voice_states, NewState)),
+    ReplyVS = maps:get(voice_state, Reply),
+    ?assertEqual(true, maps:get(<<"hide_stream_preview_outside_channel">>, StoredVS)),
+    ?assertEqual(true, maps:get(<<"hide_stream_preview_outside_channel">>, ReplyVS)).
+
+update_voice_state_data_disables_private_stream_preview_test() ->
+    ExistingVS = existing_voice_state(#{<<"hide_stream_preview_outside_channel">> => true}),
+    Flags = #{
+        self_mute => false,
+        self_deaf => false,
+        self_video => false,
+        self_stream => true,
+        hide_stream_preview_outside_channel => false,
+        is_mobile => false,
+        suppress => false
+    },
+    State = #{voice_states => #{<<"conn">> => ExistingVS}, sessions => #{}},
+    {reply, Reply, NewState} = guild_voice_state:update_voice_state_data(#{
+        connection_id => <<"conn">>,
+        channel_id => <<"100">>,
+        flags => Flags,
+        member => #{},
+        existing_voice_state => ExistingVS,
+        voice_states => #{<<"conn">> => ExistingVS},
+        state => State,
+        needs_token => false,
+        viewer_stream_keys => []
+    }),
+    StoredVS = maps:get(<<"conn">>, maps:get(voice_states, NewState)),
+    ReplyVS = maps:get(voice_state, Reply),
+    ?assertNot(maps:is_key(<<"hide_stream_preview_outside_channel">>, StoredVS)),
+    ?assertNot(maps:is_key(<<"hide_stream_preview_outside_channel">>, ReplyVS)).
+
 has_voice_state_change_no_change_test() ->
     ExistingVoiceState = existing_voice_state(#{<<"self_mute">> => true}),
     ?assertNot(default_self_mute_change(ExistingVoiceState)).
@@ -173,6 +229,7 @@ change_fields(Overrides) ->
             self_deaf => false,
             self_video => false,
             self_stream => false,
+            hide_stream_preview_outside_channel => false,
             is_mobile => false,
             suppress => false,
             viewer_stream_keys => []

@@ -110,6 +110,7 @@ export interface GatewayVoiceStateEntry {
 	connectionId: string;
 	userId: string;
 	channelId: string;
+	hideStreamPreviewOutsideChannel?: boolean;
 	regionId?: string;
 	serverId?: string;
 }

@@ -150,6 +150,20 @@
 	font-size: 0.8rem;
 }
 
+.previewLocked {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 1rem;
+	color: var(--text-primary-muted);
+	background: linear-gradient(135deg, rgba(19, 26, 42, 0.94), rgba(36, 45, 66, 0.9)), var(--background-tertiary);
+	text-align: center;
+	font-size: 0.8rem;
+	cursor: default;
+}
+
 .previewHoverOverlay {
 	position: absolute;
 	inset: 0;
@@ -192,7 +206,10 @@
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
 	min-height: 2.25rem !important;
 	font-weight: 600 !important;
-	transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease !important;
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease,
+		transform 150ms ease !important;
 }
 
 .actionButton:hover:not(:disabled) {

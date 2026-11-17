@@ -41566,3 +41566,19 @@ msgstr "Zoom in"
 #: src/features/user/components/settings_utils/search_index/KeybindsIndex.ts
 msgid "Zoom out"
 msgstr "Zoom out"
+
+#: src/features/user/components/modals/tabs/advanced_settings_tab/AdvancedVideoControls.tsx
+msgid "Disable stream preview thumbnails everywhere"
+msgstr "Disable stream preview thumbnails everywhere"
+
+#: src/features/user/components/profile/VoiceActivityCard.tsx
+msgid "Join the voice channel to view this stream"
+msgstr "Join the voice channel to view this stream"
+
+#: src/features/user/components/modals/tabs/UserVideoTab.tsx
+msgid "Lock my stream preview outside the voice channel"
+msgstr "Lock my stream preview outside the voice channel"
+
+#: src/features/user/components/modals/tabs/UserVideoTab.tsx
+msgid "People can see your preview after joining the voice channel."
+msgstr "People can see your preview after joining the voice channel."

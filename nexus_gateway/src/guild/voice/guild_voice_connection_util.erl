@@ -55,6 +55,8 @@ build_context(Request0) ->
         self_deaf => Norm(maps:get(self_deaf, Request, false)),
         self_video => Norm(maps:get(self_video, Request, false)),
         self_stream => Norm(maps:get(self_stream, Request, false)),
+        hide_stream_preview_outside_channel =>
+            Norm(maps:get(hide_stream_preview_outside_channel, Request, false)),
         is_mobile => Norm(maps:get(is_mobile, Request, false)),
         viewer_stream_keys => maps:get(viewer_stream_keys, Request, undefined),
         latitude => Coord(maps:get(latitude, Request, undefined)),
@@ -71,9 +73,13 @@ p2p_agreed(Context) ->
 
 -spec voice_flags_for_permissions(context(), voice_utils:voice_permissions()) -> voice_flags().
 voice_flags_for_permissions(Context, VoicePermissions) ->
-    voice_utils:apply_voice_permissions_to_flags(
+    Flags = voice_utils:apply_voice_permissions_to_flags(
         voice_state_utils:voice_flags_from_context(Context), VoicePermissions
-    ).
+    ),
+    Flags#{
+        hide_stream_preview_outside_channel =>
+            maps:get(hide_stream_preview_outside_channel, Context, false)
+    }.
 
 -spec resolve_guild_identity(guild_state()) ->
     {ok, integer(), binary()} | {error, atom()}.

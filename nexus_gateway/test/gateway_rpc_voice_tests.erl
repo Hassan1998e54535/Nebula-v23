@@ -60,3 +60,23 @@ normalize_voice_states_ignores_malformed_entries_test() ->
             #{<<"connection_id">> => undefined, <<"user_id">> => 84, <<"channel_id">> => 9}
         ])
     ).
+
+normalize_voice_states_preserves_stream_preview_privacy_test() ->
+    ?assertEqual(
+        [
+            #{
+                <<"connection_id">> => <<"conn">>,
+                <<"user_id">> => <<"42">>,
+                <<"channel_id">> => <<"9">>,
+                <<"hide_stream_preview_outside_channel">> => true
+            }
+        ],
+        gateway_rpc_voice:normalize_voice_states([
+            #{
+                <<"connection_id">> => <<"conn">>,
+                <<"user_id">> => <<"42">>,
+                <<"channel_id">> => <<"9">>,
+                <<"hide_stream_preview_outside_channel">> => true
+            }
+        ])
+    ).

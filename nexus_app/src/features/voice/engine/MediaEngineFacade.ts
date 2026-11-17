@@ -26,13 +26,14 @@ import * as ToastCommands from '@app/features/ui/commands/ToastCommands';
 import Idle from '@app/features/ui/state/Idle';
 import Sound from '@app/features/ui/state/Sound';
 import {getElectronAPI, isDesktop} from '@app/features/ui/utils/NativeUtils';
+import PrivacyPreferences from '@app/features/user/state/PrivacyPreferences';
 import Users from '@app/features/user/state/Users';
 import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
 import {VoiceP2pPeerFailedModal} from '@app/features/voice/components/alerts/VoiceP2pPeerFailedModal';
 import {getStreamKey, parseStreamKey} from '@app/features/voice/components/StreamKeys';
 import {pushActiveStreamSettings} from '@app/features/voice/components/StreamSettingsMenuContent';
-import {voiceStatsDB} from '@app/features/voice/diagnostics/VoiceStatsDB';
 import {voiceConnectionDiagnostics} from '@app/features/voice/diagnostics/VoiceConnectionDiagnostics';
+import {voiceStatsDB} from '@app/features/voice/diagnostics/VoiceStatsDB';
 import {
 	createMediaEngineFacadeSnapshot,
 	type MediaEngineFacadeEvent,
@@ -176,6 +177,7 @@ import {
 } from '@app/features/voice/utils/VoicePermissionUtils';
 import {getActiveVoiceProcessingMode} from '@app/features/voice/utils/VoiceProcessingProfile';
 import type {NativeAudioStartOptions} from '@app/types/electron.d';
+import {type I18n, i18n as linguiI18n, type MessageDescriptor} from '@lingui/core';
 import {ME} from '@nexus/constants/src/AppConstants';
 import {ChannelTypes} from '@nexus/constants/src/ChannelConstants';
 import {shouldApplyGatewayVoiceStateEcho} from '@nexus/voice_engine_v2/src/core/reducers/gateway';
@@ -195,7 +197,6 @@ import type {
 	VoiceEngineV2VoiceStats,
 } from '@nexus/voice_engine_v2/src/protocol/types';
 import type {VoiceEngineV2Controller} from '@nexus/voice_engine_v2/src/runtime/VoiceEngineV2Controller';
-import {type I18n, i18n as linguiI18n, type MessageDescriptor} from '@lingui/core';
 import type {
 	ConnectionQuality as LiveKitConnectionQuality,
 	Participant,
@@ -1780,6 +1781,7 @@ class MediaEngineFacade extends Store {
 						self_deaf: voiceState.self_deaf,
 						self_video: voiceState.self_video,
 						self_stream: voiceState.self_stream,
+						hide_stream_preview_outside_channel: voiceState.hide_stream_preview_outside_channel === true,
 						viewer_stream_keys: incomingViewerStreamKeys,
 					}
 				: null;
@@ -2029,6 +2031,8 @@ class MediaEngineFacade extends Store {
 			self_deaf: partial?.self_deaf ?? LocalVoiceState.getSelfDeaf(),
 			self_video: partial?.self_video ?? LocalVoiceState.getSelfVideo(),
 			self_stream: partial?.self_stream ?? LocalVoiceState.getSelfStream(),
+			hide_stream_preview_outside_channel:
+				partial?.hide_stream_preview_outside_channel ?? PrivacyPreferences.hideStreamPreviewOutsideChannel,
 			viewer_stream_keys: partial?.viewer_stream_keys ?? LocalVoiceState.getViewerStreamKeys(),
 		};
 		if (!micGranted && !LocalVoiceState.getSelfMute()) {
@@ -2042,8 +2046,11 @@ class MediaEngineFacade extends Store {
 			selfVideo: payload.self_video,
 			selfStream: payload.self_stream,
 		});
-		if (partial?.viewer_stream_keys !== undefined) {
-			syncVoiceStateToServer(guildId, channelId, connectionId, {viewer_stream_keys: payload.viewer_stream_keys});
+		if (partial?.viewer_stream_keys !== undefined || partial?.hide_stream_preview_outside_channel !== undefined) {
+			syncVoiceStateToServer(guildId, channelId, connectionId, {
+				viewer_stream_keys: payload.viewer_stream_keys,
+				hide_stream_preview_outside_channel: payload.hide_stream_preview_outside_channel,
+			});
 		}
 	}
 

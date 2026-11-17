@@ -40,11 +40,11 @@ import type {UserVoiceActivity} from '@app/features/voice/hooks/useUserVoiceActi
 import {useVoiceJoinEligibility} from '@app/features/voice/hooks/useVoiceJoinEligibility';
 import {canViewStreamPreview} from '@app/features/voice/utils/StreamPreviewPermissionUtils';
 import {buildVoiceParticipantIdentity} from '@app/features/voice/utils/VoiceParticipantIdentity';
-import {ME} from '@nexus/constants/src/AppConstants';
-import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {msg} from '@lingui/core/macro';
 import {Trans, useLingui} from '@lingui/react/macro';
-import {CaretRightIcon, MonitorPlayIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
+import {ME} from '@nexus/constants/src/AppConstants';
+import {Permissions} from '@nexus/constants/src/ChannelConstants';
+import {CaretRightIcon, LockSimpleIcon, PhoneIcon, SpeakerHighIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -87,9 +87,9 @@ const OPEN_3_DESCRIPTOR = msg({
 		'Button or menu action label in the user settings voice activity card. Keep it concise. Preserve {displayName}; it is inserted by code.',
 });
 
-const NO_PREVIEW_YET_DESCRIPTOR = msg({
-	message: 'No preview yet',
-	comment: 'Empty-state text in the user settings voice activity card.',
+const STREAM_PREVIEW_LOCKED_DESCRIPTOR = msg({
+	message: 'Join the voice channel to view this stream',
+	comment: 'Locked screen-share preview shown outside the voice channel when the streamer enabled privacy.',
 });
 
 interface VoiceActivityCardProps {
@@ -101,10 +101,8 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 	const {i18n} = useLingui();
 	const {voiceState, connectionId, guildId, channelId, channel, guild, isStreaming, streamKey, participantUsers} =
 		activity;
-	const isConnectedToChannel = useMemo(() => {
-		if (!channelId) return false;
-		return MediaEngine.channelId === channelId && MediaEngine.guildId === (guildId ?? null);
-	}, [channelId, guildId]);
+	const isConnectedToChannel =
+		channelId != null && MediaEngine.channelId === channelId && MediaEngine.guildId === (guildId ?? null);
 	const {canJoin} = useVoiceJoinEligibility({
 		guildId: guildId ?? null,
 		channelId,
@@ -115,8 +113,9 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 		hasConnectPermission: () =>
 			Permission.can(Permissions.CONNECT, {guildId: guildId ?? undefined, channelId: channelId ?? undefined}),
 	});
+	const isStreamPreviewLocked = voiceState.hide_stream_preview_outside_channel === true && !isConnectedToChannel;
 	const {previewUrl, isPreviewLoading} = useStreamPreview(
-		isStreaming && !!streamKey && canFetchStreamPreview,
+		isStreaming && !!streamKey && canFetchStreamPreview && !isStreamPreviewLocked,
 		streamKey ?? '',
 	);
 	const streamWatchArgs = useMemo(
@@ -271,6 +270,8 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					onWatch={handleWatchStream}
 					watchLabel={isWatching ? i18n._(WATCHING_DESCRIPTOR) : i18n._(WATCH_STREAM_DESCRIPTOR)}
 					isSubmitting={isWatchingStarting}
+					isLocked={isStreamPreviewLocked}
+					lockedLabel={i18n._(STREAM_PREVIEW_LOCKED_DESCRIPTOR)}
 					data-flx="user.profile.voice-activity-card.stream-preview-section"
 				/>
 			)}
@@ -462,12 +463,25 @@ interface StreamPreviewSectionProps {
 	onWatch: (event: React.SyntheticEvent) => void;
 	watchLabel: string;
 	isSubmitting?: boolean;
+	isLocked: boolean;
+	lockedLabel: string;
 }
 
 const StreamPreviewSection: React.FC<StreamPreviewSectionProps> = observer(
-	({previewUrl, isPreviewLoading, isWatching, isPendingJoin, canWatch, onWatch, watchLabel, isSubmitting}) => {
+	({
+		previewUrl,
+		isPreviewLoading,
+		isWatching,
+		isPendingJoin,
+		canWatch,
+		onWatch,
+		watchLabel,
+		isSubmitting,
+		isLocked,
+		lockedLabel,
+	}) => {
 		const {i18n} = useLingui();
-		const isDisabled = !canWatch || isPendingJoin || isWatching || isSubmitting;
+		const isDisabled = isLocked || !canWatch || isPendingJoin || isWatching || isSubmitting;
 		const handleClick = useCallback(
 			(event: React.MouseEvent) => {
 				if (isDisabled) return;
@@ -475,6 +489,19 @@ const StreamPreviewSection: React.FC<StreamPreviewSectionProps> = observer(
 			},
 			[isDisabled, onWatch],
 		);
+		if (isLocked) {
+			return (
+				<div
+					className={clsx(styles.previewContainer, styles.previewLocked)}
+					role="img"
+					aria-label={lockedLabel}
+					data-flx="user.profile.voice-activity-card.stream-preview-section.locked-preview"
+				>
+					<LockSimpleIcon size={32} weight="fill" aria-hidden="true" />
+					<span>{lockedLabel}</span>
+				</div>
+			);
+		}
 		return (
 			<div
 				className={clsx(styles.previewContainer, isSubmitting && styles.previewSubmitting)}

@@ -41692,3 +41692,19 @@ msgstr "الألوان البارزة والتنبيهات"
 #: src/features/theme_studio/sections/TokensSection.tsx
 msgid "Surfaces & controls"
 msgstr "الأسطح وعناصر التحكم"
+
+#: src/features/user/components/modals/tabs/advanced_settings_tab/AdvancedVideoControls.tsx
+msgid "Disable stream preview thumbnails everywhere"
+msgstr "تعطيل الصور المصغّرة لمعاينة البث في كل مكان"
+
+#: src/features/user/components/profile/VoiceActivityCard.tsx
+msgid "Join the voice channel to view this stream"
+msgstr "انضم إلى القناة الصوتية لمشاهدة هذا البث"
+
+#: src/features/user/components/modals/tabs/UserVideoTab.tsx
+msgid "Lock my stream preview outside the voice channel"
+msgstr "إخفاء معاينة البث خارج القناة الصوتية"
+
+#: src/features/user/components/modals/tabs/UserVideoTab.tsx
+msgid "People can see your preview after joining the voice channel."
+msgstr "لن تظهر معاينة البث للآخرين إلا بعد انضمامهم إلى القناة الصوتية."

@@ -100,6 +100,7 @@ export interface GatewayVoiceStateUpdateParams {
 	self_deaf: boolean;
 	self_video: boolean;
 	self_stream: boolean;
+	hide_stream_preview_outside_channel?: boolean;
 	viewer_stream_keys?: ReadonlyArray<string>;
 	connection_id: string | null;
 	p2p?: boolean;

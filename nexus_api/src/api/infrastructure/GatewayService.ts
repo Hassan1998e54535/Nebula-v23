@@ -1447,6 +1447,7 @@ export class GatewayService {
 				connection_id: string;
 				user_id: string;
 				channel_id: string;
+				hide_stream_preview_outside_channel?: boolean;
 				region_id?: string;
 				server_id?: string;
 			}>;
@@ -1456,6 +1457,7 @@ export class GatewayService {
 				connectionId: vs.connection_id,
 				userId: vs.user_id,
 				channelId: vs.channel_id,
+				hideStreamPreviewOutsideChannel: vs.hide_stream_preview_outside_channel,
 				regionId: vs.region_id,
 				serverId: vs.server_id,
 			})),

@@ -75,6 +75,7 @@ message PrivacyPreferences {
   bool disable_stream_previews = 1;
   optional bool show_active_now = 2;
   optional bool preupload_message_attachments = 3;
+  optional bool hide_stream_preview_outside_channel = 4;
 }
 
 message LocalUserSpamOverrides {

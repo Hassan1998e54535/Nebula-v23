@@ -181,10 +181,17 @@ normalize_voice_state_entry(VoiceState, Acc) when is_map(VoiceState) ->
             NormalizedVoiceState = maybe_attach_voice_routing_metadata(
                 NormalizedVoiceState0, VoiceState
             ),
-            [NormalizedVoiceState | Acc]
+            [maybe_attach_stream_preview_privacy(NormalizedVoiceState, VoiceState) | Acc]
     end;
 normalize_voice_state_entry(_, Acc) ->
     Acc.
+
+-spec maybe_attach_stream_preview_privacy(map(), map()) -> map().
+maybe_attach_stream_preview_privacy(NormalizedVoiceState, VoiceState) ->
+    case get_map_value(VoiceState, [<<"hide_stream_preview_outside_channel">>, hide_stream_preview_outside_channel]) of
+        true -> NormalizedVoiceState#{<<"hide_stream_preview_outside_channel">> => true};
+        _ -> NormalizedVoiceState
+    end.
 
 -spec maybe_attach_voice_routing_metadata(map(), map()) -> map().
 maybe_attach_voice_routing_metadata(NormalizedVoiceState, VoiceState) ->

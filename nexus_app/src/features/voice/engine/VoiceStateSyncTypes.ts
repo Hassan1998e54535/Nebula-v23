@@ -8,9 +8,18 @@ export interface VoiceStateSyncPayload {
 	self_deaf: boolean;
 	self_video: boolean;
 	self_stream: boolean;
+	hide_stream_preview_outside_channel: boolean;
 	viewer_stream_keys: ReadonlyArray<string>;
 }
 
 export type VoiceStateSyncPartial = Partial<
-	Pick<VoiceStateSyncPayload, 'self_video' | 'self_stream' | 'self_mute' | 'self_deaf' | 'viewer_stream_keys'>
+	Pick<
+		VoiceStateSyncPayload,
+		| 'self_video'
+		| 'self_stream'
+		| 'self_mute'
+		| 'self_deaf'
+		| 'hide_stream_preview_outside_channel'
+		| 'viewer_stream_keys'
+	>
 >;

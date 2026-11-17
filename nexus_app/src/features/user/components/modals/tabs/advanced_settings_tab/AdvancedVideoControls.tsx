@@ -56,8 +56,8 @@ const DISABLE_SCREEN_SHARE_POPOUT_DESCRIPTOR = msg({
 	comment: 'Short label for an advanced screen-share preview preference.',
 });
 const HIDE_STREAM_PREVIEW_THUMBNAIL_DESCRIPTOR = msg({
-	message: 'Hide my stream preview thumbnail',
-	comment: 'Short label for an advanced stream privacy preference.',
+	message: 'Disable stream preview thumbnails everywhere',
+	comment: 'Short label for disabling stream preview thumbnails on this account.',
 });
 
 const ENCODER_PATH_HARDWARE_DESCRIPTOR = msg({

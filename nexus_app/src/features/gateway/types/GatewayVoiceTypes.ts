@@ -15,6 +15,7 @@ export interface VoiceState {
 	self_deaf: boolean;
 	self_video: boolean;
 	self_stream: boolean;
+	hide_stream_preview_outside_channel?: boolean;
 	viewer_stream_keys?: ReadonlyArray<string> | null;
 	suppress?: boolean;
 	member?: GuildMemberData;

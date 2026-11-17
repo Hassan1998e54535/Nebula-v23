@@ -3,6 +3,7 @@
 import {type ChannelID, createChannelID, createGuildID, type GuildID, type UserID} from '@app/api/BrandedTypes';
 import type {ChannelService} from '@app/api/channel/services/ChannelService';
 import type {StreamPreviewService} from '@app/api/channel/services/StreamPreviewService';
+import {isStreamPreviewHiddenFromViewer} from '@app/api/channel/services/StreamPreviewVisibility';
 import type {ThreadViewer} from '@app/api/experiment/ChannelThreadsGate';
 import type {IGatewayService} from '@app/api/infrastructure/IGatewayService';
 import {ChannelTypes, Permissions} from '@nexus/constants/src/ChannelConstants';
@@ -186,6 +187,13 @@ export class StreamService {
 			channelId,
 			parsedKey,
 		});
+		const {voiceStates} = await this.gatewayService.getVoiceStatesForChannel({
+			guildId: this.getGuildIdFromParsedKeyOrThrow(parsedKey),
+			channelId,
+		});
+		if (isStreamPreviewHiddenFromViewer(voiceStates, parsedKey.connectionId, params.userId.toString())) {
+			return null;
+		}
 		return this.streamPreviewService.getPreview(params.streamKey);
 	}
 

@@ -93,6 +93,8 @@ resolve_voice_fields(Flags, Member, ExistingVoiceState, ChannelIdBin, ViewerStre
         self_deaf => maps:get(self_deaf, Flags),
         self_video => maps:get(self_video, Flags),
         self_stream => maps:get(self_stream, Flags),
+        hide_stream_preview_outside_channel =>
+            maps:get(hide_stream_preview_outside_channel, Flags, false),
         is_mobile => maps:get(is_mobile, Flags),
         suppress => maps:get(suppress, Flags),
         channel_id => ChannelIdBin,
@@ -139,7 +141,7 @@ apply_voice_state_change(
 -spec build_updated_voice_state(voice_state(), binary(), map()) -> voice_state().
 build_updated_voice_state(ExistingVoiceState, ChannelIdBin, R) ->
     OldVersion = voice_state_utils:voice_state_version(ExistingVoiceState),
-    Updated = ExistingVoiceState#{
+    Updated0 = ExistingVoiceState#{
         <<"channel_id">> => ChannelIdBin,
         <<"mute">> => maps:get(server_mute, R),
         <<"deaf">> => maps:get(server_deaf, R),
@@ -152,7 +154,16 @@ build_updated_voice_state(ExistingVoiceState, ChannelIdBin, R) ->
         <<"viewer_stream_keys">> => maps:get(viewer_stream_keys, R),
         <<"version">> => OldVersion + 1
     },
+    Updated = set_stream_preview_privacy(
+        Updated0, maps:get(hide_stream_preview_outside_channel, R, false)
+    ),
     voice_state_utils:complete_voice_state(refresh_member(Updated, maps:get(member, R, #{}))).
+
+-spec set_stream_preview_privacy(voice_state(), boolean()) -> voice_state().
+set_stream_preview_privacy(VoiceState, true) ->
+    VoiceState#{<<"hide_stream_preview_outside_channel">> => true};
+set_stream_preview_privacy(VoiceState, false) ->
+    maps:remove(<<"hide_stream_preview_outside_channel">>, VoiceState).
 
 -spec refresh_member(voice_state(), map()) -> voice_state().
 refresh_member(VoiceState, Member) when is_map(Member), map_size(Member) > 0 ->
@@ -221,6 +232,7 @@ voice_state_change_fields() ->
         {<<"self_deaf">>, self_deaf, false},
         {<<"self_video">>, self_video, false},
         {<<"self_stream">>, self_stream, false},
+        {<<"hide_stream_preview_outside_channel">>, hide_stream_preview_outside_channel, false},
         {<<"is_mobile">>, is_mobile, false},
         {<<"suppress">>, suppress, false},
         {<<"viewer_stream_keys">>, viewer_stream_keys, []}
@@ -307,14 +319,17 @@ apply_voice_flags(State, Flags) ->
         is_mobile := IM,
         suppress := Sup
     } = Flags,
-    State#{
+    Updated = State#{
         <<"self_mute">> => SM,
         <<"self_deaf">> => SD,
         <<"self_video">> => SV,
         <<"self_stream">> => SS,
         <<"is_mobile">> => IM,
         <<"suppress">> => Sup
-    }.
+    },
+    set_stream_preview_privacy(
+        Updated, maps:get(hide_stream_preview_outside_channel, Flags, false)
+    ).
 
 -spec extract_session_info_from_voice_state(binary(), voice_state()) -> map().
 extract_session_info_from_voice_state(ConnId, VoiceState) ->
@@ -325,6 +340,8 @@ extract_session_info_from_voice_state(ConnId, VoiceState) ->
         self_deaf => maps:get(<<"self_deaf">>, VoiceState, false),
         self_video => maps:get(<<"self_video">>, VoiceState, false),
         self_stream => maps:get(<<"self_stream">>, VoiceState, false),
+        hide_stream_preview_outside_channel =>
+            maps:get(<<"hide_stream_preview_outside_channel">>, VoiceState, false),
         is_mobile => maps:get(<<"is_mobile">>, VoiceState, false),
         suppress => maps:get(<<"suppress">>, VoiceState, false),
         e2ee_capable => maps:get(<<"e2ee_capable">>, VoiceState, false),

@@ -5,6 +5,7 @@ import GatewaySessions from '@app/features/gateway/transport/GatewaySessionPool'
 import {Logger} from '@app/features/platform/utils/AppLogger';
 import * as ModalCommands from '@app/features/ui/commands/ModalCommands';
 import {modal} from '@app/features/ui/commands/ModalCommands';
+import PrivacyPreferences from '@app/features/user/state/PrivacyPreferences';
 import Users from '@app/features/user/state/Users';
 import {VoiceChannelFullModal} from '@app/features/voice/components/alerts/VoiceChannelFullModal';
 import {VoiceConnectionConfirmModal} from '@app/features/voice/components/alerts/VoiceConnectionConfirmModal';
@@ -192,6 +193,7 @@ export function sendVoiceStateConnect(
 		self_deaf: LocalVoiceState.getSelfDeaf(),
 		self_video: false,
 		self_stream: false,
+		hide_stream_preview_outside_channel: PrivacyPreferences.hideStreamPreviewOutsideChannel,
 		viewer_stream_keys: viewerStreamKeys,
 		connection_id: connectionId,
 		...(VoiceP2pConsent.isAgreed(channelId) ? {p2p: true} : {}),
@@ -237,6 +239,8 @@ export function syncVoiceStateToServer(
 		self_deaf: partial?.self_deaf ?? LocalVoiceState.getSelfDeaf(),
 		self_video: partial?.self_video ?? LocalVoiceState.getSelfVideo(),
 		self_stream: partial?.self_stream ?? LocalVoiceState.getSelfStream(),
+		hide_stream_preview_outside_channel:
+			partial?.hide_stream_preview_outside_channel ?? PrivacyPreferences.hideStreamPreviewOutsideChannel,
 		viewer_stream_keys: partial?.viewer_stream_keys ?? LocalVoiceState.getViewerStreamKeys(),
 		connection_id: connectionId,
 		...(p2p === undefined ? {} : {p2p}),

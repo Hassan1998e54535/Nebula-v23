@@ -62,6 +62,8 @@ extract_voice_params(Data) ->
         self_deaf => maps:get(<<"self_deaf">>, Data, false),
         self_video => maps:get(<<"self_video">>, Data, false),
         self_stream => maps:get(<<"self_stream">>, Data, false),
+        hide_stream_preview_outside_channel =>
+            maps:get(<<"hide_stream_preview_outside_channel">>, Data, false),
         viewer_stream_keys => maps:get(<<"viewer_stream_keys">>, Data, undefined),
         is_mobile => maps:get(<<"is_mobile">>, Data, false),
         latitude => maps:get(<<"latitude">>, Data, null),

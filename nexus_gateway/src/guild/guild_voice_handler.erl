@@ -82,7 +82,11 @@ append_voice_state(_ChannelIdBin, _ConnId, _VS, Acc) ->
 -spec append_matching_voice_state(term(), binary(), term(), map(), [map()]) -> [map()].
 append_matching_voice_state(ChannelIdBin, ChannelIdBin, ConnId, VS, Acc) ->
     UserId = maps:get(<<"user_id">>, VS, null),
-    Entry = #{connection_id => ConnId, user_id => UserId, channel_id => ChannelIdBin},
+    Entry0 = #{connection_id => ConnId, user_id => UserId, channel_id => ChannelIdBin},
+    Entry = case maps:get(<<"hide_stream_preview_outside_channel">>, VS, false) of
+        true -> Entry0#{hide_stream_preview_outside_channel => true};
+        false -> Entry0
+    end,
     [Entry | Acc];
 append_matching_voice_state(_OtherChannelId, _ChannelIdBin, _ConnId, _VS, Acc) ->
     Acc.
