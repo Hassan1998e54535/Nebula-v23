@@ -139,8 +139,10 @@ export async function restoreRememberedRuntimePlan(instanceKey: string): Promise
 	return remembered.plan;
 }
 
+export const DEFAULT_INSTANCE_ENDPOINT = 'https://nexus-nn.duckdns.org';
+
 export function desktopRuntimeInitialInput(): string | null {
-	return getLaunchInstanceEndpointOverride();
+	return getLaunchInstanceEndpointOverride() ?? process.env.NEXUS_DEFAULT_INSTANCE ?? DEFAULT_INSTANCE_ENDPOINT;
 }
 
 async function fetchRuntimePlan(

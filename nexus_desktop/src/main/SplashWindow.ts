@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import {pathToFileURL} from 'node:url';
+import {DESKTOP_APP_NAME} from '@electron/common/DesktopIdentity';
 import {createChildLogger} from '@electron/common/Logger';
 import {getDesktopDistributionPath} from '@electron/main/DesktopDistributionPath';
 import {app, BrowserWindow, type IpcMainEvent, ipcMain, nativeTheme} from 'electron';
@@ -378,6 +379,7 @@ function createSplashWindow(darkThemeOnShow: boolean, heldHidden: boolean): Brow
 	splashDocumentReady = false;
 	if (!darkThemeOnShow) applySplashTheme();
 	const window = new BrowserWindow({
+		title: DESKTOP_APP_NAME,
 		width: SPLASH_WINDOW_WIDTH,
 		height: getSplashWindowHeight(process.platform),
 		frame: false,

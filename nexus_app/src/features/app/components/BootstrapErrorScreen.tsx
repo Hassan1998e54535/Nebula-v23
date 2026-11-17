@@ -126,13 +126,11 @@ export const BootstrapErrorScreen: React.FC<BootstrapErrorScreenProps> = ({error
 						)}
 					</Button>
 				)}
-				{!unreachable && (
-					<Button onClick={handleReset} variant="danger" data-flx="app.bootstrap-error-screen.button.reset">
-						<Trans comment="Destructive button on the startup failure screen. Clears local app data except preserved drafts.">
-							Reset app data
-						</Trans>
-					</Button>
-				)}
+				<Button onClick={handleReset} variant={unreachable ? 'secondary' : 'danger'} data-flx="app.bootstrap-error-screen.button.reset">
+					<Trans comment="Destructive button on the startup failure screen. Clears local app data except preserved drafts.">
+						Reset app data
+					</Trans>
+				</Button>
 			</div>
 		</div>
 	);
