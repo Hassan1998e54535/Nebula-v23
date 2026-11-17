@@ -5,10 +5,10 @@
 	color: var(--text-primary);
 	display: flex;
 	flex-direction: column;
-	gap: 25px;
-	margin: 0 auto;
-	max-width: 820px;
-	padding: 27px;
+	gap: var(--spacing-5, 24px);
+	margin: 0;
+	max-width: none;
+	padding: 0 0 24px;
 	width: 100%;
 }
 
@@ -107,6 +107,34 @@
 
 .switchControl {
 	flex: 0 0 auto;
+}
+
+.detectionStatus {
+	align-items: center;
+	color: var(--text-muted);
+	display: flex;
+	font-size: 0.8rem;
+	gap: 11px;
+	min-height: 28px;
+	padding: 0 2px 3px;
+}
+
+.detectionStatus[data-active='true'] {
+	color: var(--text-primary);
+}
+
+.detectionStatus .statusDot {
+	background: var(--text-muted);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--text-muted) 14%, transparent);
+	flex: 0 0 7px;
+	height: 7px;
+	margin: 0 3px;
+	width: 7px;
+}
+
+.detectionStatus[data-active='true'] .statusDot {
+	background: var(--activity-accent);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--activity-accent) 17%, transparent);
 }
 
 .guildSection {
@@ -638,8 +666,8 @@
 
 @media (max-width: 600px) {
 	.root {
-		gap: 20px;
-		padding: 18px 14px;
+		gap: var(--spacing-4, 18px);
+		padding: 0 0 18px;
 	}
 
 	.settingRow {

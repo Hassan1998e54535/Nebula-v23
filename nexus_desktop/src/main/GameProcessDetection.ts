@@ -342,10 +342,6 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 	'discovery-win64-shipping.exe': {id: 'the-finals', name: 'THE FINALS'},
 	'robrun.exe': {id: 'rob-run', name: 'ROB RUN'},
 	'robrun-win64-shipping.exe': {id: 'rob-run', name: 'ROB RUN'},
-	'soundpad.exe': {id: 'soundpad', name: 'Soundpad'},
-	'blender.exe': {id: 'blender', name: 'Blender'},
-	'wallpaper32.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
-	'wallpaper64.exe': {id: 'wallpaper-engine', name: 'Wallpaper Engine'},
 	'beamng.drive.x64.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
 	'beamng.drive.exe': {id: 'beamng-drive', name: 'BeamNG.drive'},
 	'cs2.exe': {id: 'cs2', name: 'Counter-Strike 2'},
@@ -356,7 +352,6 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 	'cod.exe': {id: 'cod', name: 'Call of Duty'},
 	'modernwarfare.exe': {id: 'cod-mw', name: 'Call of Duty: Modern Warfare'},
 	'blackops6.exe': {id: 'cod-bo6', name: 'Call of Duty: Black Ops 6'},
-	'bootstrapper.exe': {id: 'cod', name: 'Call of Duty'},
 	'fc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
 	'eafc25.exe': {id: 'ea-fc-25', name: 'EA SPORTS FC 25'},
 	'fc24.exe': {id: 'ea-fc-24', name: 'EA SPORTS FC 24'},
@@ -373,11 +368,7 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 	'valorant-win64-shipping.exe': {id: 'valorant', name: 'VALORANT'},
 	'valorant.exe': {id: 'valorant', name: 'VALORANT'},
 	'robloxplayerbeta.exe': {id: 'roblox', name: 'Roblox'},
-	'robloxplayerlauncher.exe': {id: 'roblox', name: 'Roblox'},
-	'javaw.exe': {id: 'minecraft', name: 'Minecraft'},
 	'minecraft.exe': {id: 'minecraft', name: 'Minecraft'},
-	'leagueclient.exe': {id: 'league-of-legends', name: 'League of Legends'},
-	'leagueclientux.exe': {id: 'league-of-legends', name: 'League of Legends'},
 	'league of legends.exe': {id: 'league-of-legends', name: 'League of Legends'},
 	'rocketleague.exe': {id: 'rocket-league', name: 'Rocket League'},
 	'overwatch.exe': {id: 'overwatch-2', name: 'Overwatch 2'},
@@ -393,58 +384,81 @@ export const KNOWN_GAME_PROCESSES: Record<string, {name: string; id: string}> = 
 	'rustclient.exe': {id: 'rust', name: 'Rust'},
 	'palworld-win64-shipping.exe': {id: 'palworld', name: 'Palworld'},
 	'helldivers2.exe': {id: 'helldivers-2', name: 'HELLDIVERS 2'},
+	'eldenring.exe': {id: 'elden-ring', name: 'ELDEN RING'},
+	'bg3.exe': {id: 'baldurs-gate-3', name: "Baldur's Gate 3"},
+	'hogwartslegacy.exe': {id: 'hogwarts-legacy', name: 'Hogwarts Legacy'},
+	'starfield.exe': {id: 'starfield', name: 'Starfield'},
+	'deadbydaylight-win64-shipping.exe': {id: 'dead-by-daylight', name: 'Dead by Daylight'},
+	'valheim.exe': {id: 'valheim', name: 'Valheim'},
+	'satisfactory.exe': {id: 'satisfactory', name: 'Satisfactory'},
+	'terraria.exe': {id: 'terraria', name: 'Terraria'},
 };
+
+function normalizeGameName(value: string): string {
+	return value.normalize('NFKC').trim().replace(/\s+/gu, ' ').toLocaleLowerCase();
+}
+
+export function detectRunningGames(
+	processNames: Array<string>,
+	executablePaths: Array<string>,
+	installations: Array<SteamInstallation>,
+): Array<RunningSteamGame> {
+	const runningGames = new Map<string, RunningSteamGame>();
+	const addGame = (game: RunningSteamGame): void => {
+		if (
+			[...runningGames.values()].some((existing) => normalizeGameName(existing.name) === normalizeGameName(game.name))
+		) {
+			return;
+		}
+		runningGames.set(game.id, game);
+	};
+
+	for (const processName of processNames) {
+		const known = KNOWN_GAME_PROCESSES[normalizeProcessName(processName)];
+		if (known) {
+			addGame({...known, platform: 'computer'});
+		}
+	}
+
+	for (const executablePath of executablePaths) {
+		const known = KNOWN_GAME_PROCESSES[path.basename(executablePath).toLocaleLowerCase()];
+		if (known) {
+			addGame({...known, platform: 'computer'});
+			continue;
+		}
+
+		const installation = findSteamInstallationForExecutable(executablePath, installations);
+		if (!installation) continue;
+		if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {
+			continue;
+		}
+		addGame({
+			id: `steam:${installation.appId}`,
+			name: installation.name,
+			platform: 'computer',
+		});
+	}
+
+	return [...runningGames.values()].sort((left, right) => left.name.localeCompare(right.name));
+}
 
 export async function getRunningSteamGames(): Promise<Array<RunningSteamGame>> {
 	if (process.platform !== 'win32' && process.platform !== 'linux') return [];
 
-	const runningGames = new Map<string, RunningSteamGame>();
-
+	let processNames: Array<string> = [];
 	try {
-		const processNames = await getRunningGameProcessNames();
-		for (const name of processNames) {
-			const lower = normalizeProcessName(name);
-			const known = KNOWN_GAME_PROCESSES[lower];
-			if (known && !runningGames.has(known.id)) {
-				runningGames.set(known.id, {
-					id: known.id,
-					name: known.name,
-					platform: 'computer',
-				});
-			}
-		}
+		processNames = await getRunningGameProcessNames();
 	} catch {
-		// Ignore process scan error
+		// Process-name enumeration can fail independently from executable-path scanning.
 	}
 
+	let executablePaths: Array<string> = [];
+	let installations: Array<SteamInstallation> = [];
 	try {
-		const [installations, executablePaths] = await Promise.all([getSteamInstallations(), getRunningExecutablePaths()]);
-		for (const executablePath of executablePaths) {
-			const baseName = path.basename(executablePath).toLowerCase();
-			const known = KNOWN_GAME_PROCESSES[baseName];
-			if (known && !runningGames.has(known.id)) {
-				runningGames.set(known.id, {
-					id: known.id,
-					name: known.name,
-					platform: 'computer',
-				});
-				continue;
-			}
-
-			const installation = findSteamInstallationForExecutable(executablePath, installations);
-			if (!installation) continue;
-			if (process.platform === 'linux' && /^(?:proton(?:\s|$)|steam linux runtime)/iu.test(installation.name)) {
-				continue;
-			}
-			runningGames.set(installation.appId, {
-				id: `steam:${installation.appId}`,
-				name: installation.name,
-				platform: 'computer',
-			});
-		}
+		[installations, executablePaths] = await Promise.all([getSteamInstallations(), getRunningExecutablePaths()]);
 	} catch {
-		// Ignore Steam detection failure
+		// A failed Steam path scan should still preserve games matched by process name.
 	}
 
-	return [...runningGames.values()].sort((left, right) => left.name.localeCompare(right.name));
+	return detectRunningGames(processNames, executablePaths, installations);
 }

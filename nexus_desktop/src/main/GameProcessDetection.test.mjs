@@ -28,7 +28,8 @@ vm.runInNewContext(transformedSource, {
 	clearTimeout,
 });
 
-const {findSteamInstallationForExecutable, parseSteamAppManifest, parseSteamLibraryPaths} = module.exports;
+const {detectRunningGames, findSteamInstallationForExecutable, parseSteamAppManifest, parseSteamLibraryPaths} =
+	module.exports;
 
 test('reads Steam library paths from both current and legacy VDF formats', () => {
 	const folders = `"libraryfolders"
@@ -75,4 +76,29 @@ test('matches an executable inside a Steam game folder without matching sibling 
 		),
 		null,
 	);
+});
+
+test('detects an unlisted Steam game from its executable path', () => {
+	const installation = {
+		appId: '123456',
+		name: 'A Game Missing From The Built-In List',
+		installDirectory: '/Games/SteamLibrary/steamapps/common/A Game',
+	};
+	const games = detectRunningGames([], ['/Games/SteamLibrary/steamapps/common/A Game/bin/game.exe'], [installation]);
+	assert.deepEqual(JSON.parse(JSON.stringify(games)), [
+		{id: 'steam:123456', name: 'A Game Missing From The Built-In List', platform: 'computer'},
+	]);
+});
+
+test('does not classify common creative and audio apps as games', () => {
+	assert.deepEqual(
+		JSON.parse(JSON.stringify(detectRunningGames(['blender.exe', 'soundpad.exe', 'wallpaper64.exe'], [], []))),
+		[],
+	);
+});
+
+test('recognizes a supported game process without Steam metadata', () => {
+	assert.deepEqual(JSON.parse(JSON.stringify(detectRunningGames(['eldenring.exe'], [], []))), [
+		{id: 'elden-ring', name: 'ELDEN RING', platform: 'computer'},
+	]);
 });

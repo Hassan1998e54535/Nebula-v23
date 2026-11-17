@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Nebula
 
+import {SettingsTabContainer, SettingsTabContent} from '@app/features/app/components/dialogs/shared/SettingsTabLayout';
 import GamingActivityPrivacyPanel, {type GamingActivityGuildRow} from '@app/features/gaming/GamingActivityPrivacyPanel';
 import {fetchGamingProfile, saveGamingProfile} from '@app/features/gaming/GamingClient';
 import {
@@ -28,12 +29,31 @@ function stripControlCharacters(value: string): string {
 		.join('');
 }
 
+function readCurrentGameName(userId: string): string | null {
+	try {
+		const raw = window.localStorage.getItem(`nexus:gaming:active:${userId}`);
+		if (!raw) return null;
+		const parsed = JSON.parse(raw) as {game?: {name?: unknown}; updatedAt?: unknown};
+		if (
+			typeof parsed.game?.name !== 'string' ||
+			typeof parsed.updatedAt !== 'number' ||
+			Date.now() - parsed.updatedAt > 120_000
+		) {
+			return null;
+		}
+		return parsed.game.name;
+	} catch {
+		return null;
+	}
+}
+
 function GamingTab() {
 	const {i18n} = useLingui();
 	const userId = Users.currentUserId ?? '';
 	const nativeApi = getElectronAPI();
-	const detectionAvailable = Boolean(nativeApi?.getRunningGameProcessNames);
+	const detectionAvailable = Boolean(nativeApi?.getRunningGameProcessNames || nativeApi?.getRunningSteamGames);
 	const [profile, setProfile] = useState<GamingProfile | null>(null);
+	const [activeGameName, setActiveGameName] = useState<string | null>(null);
 	const [detectionPreferences, setDetectionPreferences] = useState<GamingDetectionPreferences>({
 		enabled: false,
 		registrations: [],
@@ -67,6 +87,16 @@ function GamingTab() {
 			mounted = false;
 		};
 	}, [i18n, userId]);
+
+	useEffect(() => {
+		setActiveGameName(readCurrentGameName(userId));
+		const handleActivityChange = (event: Event) => {
+			const detail = (event as CustomEvent<{game?: GamingEntry} | null>).detail;
+			setActiveGameName(typeof detail?.game?.name === 'string' ? detail.game.name : null);
+		};
+		window.addEventListener('nexus:gaming:activity-changed', handleActivityChange);
+		return () => window.removeEventListener('nexus:gaming:activity-changed', handleActivityChange);
+	}, [userId]);
 
 	const guildRows: Array<GamingActivityGuildRow> = Guilds.getGuilds()
 		.map((guild) => ({
@@ -192,44 +222,53 @@ function GamingTab() {
 
 	if (loading) {
 		return (
-			<div aria-live="polite">
-				<p>
-					<Trans>Loading game detection settings…</Trans>
-				</p>
-			</div>
+			<SettingsTabContainer>
+				<SettingsTabContent>
+					<div aria-live="polite">
+						<p>
+							<Trans>Loading game detection settings…</Trans>
+						</p>
+					</div>
+				</SettingsTabContent>
+			</SettingsTabContainer>
 		);
 	}
 
 	return (
-		<GamingActivityPrivacyPanel
-			busy={saving}
-			detectionAvailable={detectionAvailable}
-			detectionEnabled={detectionPreferences.enabled}
-			error={error}
-			guilds={guildRows}
-			loading={false}
-			onDetectionEnabledChange={setAutomaticDetection}
-			onGuildSharingChange={setGuildSharing}
-			onLinkProcess={linkRunningProcess}
-			onProcessSelectionChange={setSelectedProcess}
-			onProcessTitleChange={setProcessTitle}
-			onRefreshProcesses={() => void refreshRunningProcesses()}
-			onRemoveProcess={removeLinkedProcess}
-			onSearchChange={setSearchQuery}
-			onShareWithServersChange={setActivitySharing}
-			onToggleAllGuilds={toggleAllGuilds}
-			processLoading={processLoading}
-			processTitle={processTitle}
-			registeredProcesses={detectionPreferences.registrations.map((registration) => ({
-				gameId: registration.game.id,
-				gameName: registration.game.name,
-				processName: registration.process_name,
-			}))}
-			runningProcesses={runningProcesses}
-			searchQuery={searchQuery}
-			selectedProcess={selectedProcess}
-			shareWithServers={Boolean(profile?.share_with_guilds)}
-		/>
+		<SettingsTabContainer>
+			<SettingsTabContent>
+				<GamingActivityPrivacyPanel
+					activeGameName={activeGameName}
+					busy={saving}
+					detectionAvailable={detectionAvailable}
+					detectionEnabled={detectionPreferences.enabled}
+					error={error}
+					guilds={guildRows}
+					loading={false}
+					onDetectionEnabledChange={setAutomaticDetection}
+					onGuildSharingChange={setGuildSharing}
+					onLinkProcess={linkRunningProcess}
+					onProcessSelectionChange={setSelectedProcess}
+					onProcessTitleChange={setProcessTitle}
+					onRefreshProcesses={() => void refreshRunningProcesses()}
+					onRemoveProcess={removeLinkedProcess}
+					onSearchChange={setSearchQuery}
+					onShareWithServersChange={setActivitySharing}
+					onToggleAllGuilds={toggleAllGuilds}
+					processLoading={processLoading}
+					processTitle={processTitle}
+					registeredProcesses={detectionPreferences.registrations.map((registration) => ({
+						gameId: registration.game.id,
+						gameName: registration.game.name,
+						processName: registration.process_name,
+					}))}
+					runningProcesses={runningProcesses}
+					searchQuery={searchQuery}
+					selectedProcess={selectedProcess}
+					shareWithServers={Boolean(profile?.share_with_guilds)}
+				/>
+			</SettingsTabContent>
+		</SettingsTabContainer>
 	);
 }
 

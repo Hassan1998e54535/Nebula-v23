@@ -6,6 +6,7 @@ import {useHover} from '@app/features/app/hooks/useHover';
 import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
 import Authentication from '@app/features/auth/state/Authentication';
 import DeveloperOptions from '@app/features/devtools/state/DeveloperOptions';
+import {GamingActivityCard} from '@app/features/gaming/GamingActivityCard';
 import {OPEN_DM_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import type {GuildMember} from '@app/features/member/models/GuildMember';
 import GuildMembers from '@app/features/member/state/GuildMembers';
@@ -14,23 +15,25 @@ import {Logger} from '@app/features/platform/utils/AppLogger';
 import {usePresenceCustomStatus} from '@app/features/presence/hooks/usePresenceCustomStatus';
 import MemberPresenceSubscription from '@app/features/presence/state/MemberPresenceSubscription';
 import Relationships from '@app/features/relationship/state/Relationships';
+import {CopyUserIdMenuItem} from '@app/features/ui/action_menu/items/CopyMenuItems';
 import {
 	getUserMenuAvatarUrl,
 	getUserMenuBannerUrl,
 	UserImageMenuItems,
 } from '@app/features/ui/action_menu/items/UserImageMenuItems';
+import {MenuGroup} from '@app/features/ui/action_menu/MenuGroup';
 import {Button} from '@app/features/ui/button/Button';
 import * as ContextMenuCommands from '@app/features/ui/commands/ContextMenuCommands';
 import * as ModalCommands from '@app/features/ui/commands/ModalCommands';
 import {modal} from '@app/features/ui/commands/ModalCommands';
 import * as PopoutCommands from '@app/features/ui/commands/PopoutCommands';
 import FocusRingScope from '@app/features/ui/focus_ring/FocusRingScope';
-import {CustomStatusModal} from '@app/features/user/components/modals/CustomStatusModal';
+import ContextMenu from '@app/features/ui/state/ContextMenu';
 import * as UserProfileCommands from '@app/features/user/commands/UserProfileCommands';
+import {CustomStatusModal} from '@app/features/user/components/modals/CustomStatusModal';
 import {LimitedProfileNotice} from '@app/features/user/components/popouts/LimitedProfileNotice';
 import {UserProfileBadges} from '@app/features/user/components/popouts/UserProfileBadges';
 import {UserProfileDataWarning} from '@app/features/user/components/popouts/UserProfileDataWarning';
-import {GamingActivityCard} from '@app/features/gaming/GamingActivityCard';
 import styles from '@app/features/user/components/popouts/UserProfilePopout.module.css';
 import {
 	UserProfileConnections,
@@ -58,11 +61,12 @@ import * as NicknameUtils from '@app/features/user/utils/NicknameUtils';
 import * as ProfileDisplayUtils from '@app/features/user/utils/ProfileDisplayUtils';
 import {resolveProfileGuildMembership} from '@app/features/user/utils/ProfileGuildMembership';
 import {createMockProfile} from '@app/features/user/utils/ProfileUtils';
+import {MORE_ACTIONS_DESCRIPTOR} from '@app/features/user/utils/UserMessageDescriptors';
 import {Trans, useLingui} from '@lingui/react/macro';
 import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {MEDIA_PROXY_PROFILE_BANNER_SIZE_POPOUT} from '@nexus/constants/src/MediaProxyAssetSizes';
 import {RelationshipTypes} from '@nexus/constants/src/UserConstants';
-import {ChatTeardropIcon, IdentificationBadgeIcon, PencilIcon} from '@phosphor-icons/react';
+import {ChatTeardropIcon, DotsThreeIcon, PencilIcon} from '@phosphor-icons/react';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
@@ -166,6 +170,24 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 		const handleClosePopout = useCallback(() => {
 			requestClose();
 		}, [requestClose]);
+		const handleMoreOptionsPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+			if (ContextMenu.contextMenu?.target.target !== event.currentTarget) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+			ContextMenuCommands.close();
+		};
+		const openMoreOptionsMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+			if (ContextMenu.contextMenu?.target.target === event.currentTarget) {
+				return;
+			}
+			ContextMenuCommands.openFromElementBottomRight(event, (props) => (
+				<MenuGroup data-flx="user.user-profile-popout.more-options-menu.group">
+					<CopyUserIdMenuItem user={user} onClose={props.onClose} />
+				</MenuGroup>
+			));
+		};
 		const displayName = guildMember?.nick
 			? NicknameUtils.formatNicknameForStreamerMode(guildMember.nick)
 			: NicknameUtils.getNickname(user, guildId);
@@ -244,9 +266,7 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 		const presenceCustomStatus = usePresenceCustomStatus({userId: user.id, enabled: !isWebhook});
 		const openCustomStatus = useCallback(() => {
 			ModalCommands.push(
-				modal(() => (
-					<CustomStatusModal data-flx="user.user-profile-popout.open-custom-status.custom-status-modal" />
-				)),
+				modal(() => <CustomStatusModal data-flx="user.user-profile-popout.open-custom-status.custom-status-modal" />),
 			);
 			requestClose();
 		}, [requestClose]);
@@ -270,11 +290,11 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 			profile?.guildMemberProfile?.profile_appearance,
 		);
 		const profileEffectId = profileMediaLayers.profileEffectIds.at(-1) ?? null;
-const profileFrameLayers = isWebhook ? [] : profileMediaLayers.cardFrameIds;
-const {borderColor, coverColor: bannerColor} = ProfileDisplayUtils.getProfileSurfaceColors(
-isWebhook ? null : appearance,
-accentColor,
-);
+		const profileFrameLayers = isWebhook ? [] : profileMediaLayers.cardFrameIds;
+		const {borderColor, coverColor: bannerColor} = ProfileDisplayUtils.getProfileSurfaceColors(
+			isWebhook ? null : appearance,
+			accentColor,
+		);
 		const profileCardGeometryStyle = {
 			...PROFILE_POPOUT_GEOMETRY_STYLE,
 			'--profile-popout-content-width': 'min(350px, calc(100vw - 1rem))',
@@ -291,7 +311,7 @@ accentColor,
 						appearance={isWebhook ? null : appearance}
 						profileEffectId={profileEffectId}
 						profileEffectLayers={profileMediaLayers.profileEffectIds}
-profileFrameLayers={profileFrameLayers}
+						profileFrameLayers={profileFrameLayers}
 						hoverRef={hoverRef}
 						className={profileCardClassName}
 						style={profileCardGeometryStyle}
@@ -352,6 +372,18 @@ profileFrameLayers={profileFrameLayers}
 										isHovering={isHovering}
 										onNoteClick={handleOpenFullProfileNote}
 									/>
+									<Button
+										className={styles.moreActionsButton}
+										small={true}
+										square={true}
+										variant="secondary"
+										icon={<DotsThreeIcon weight="bold" className={styles.iconSmall} />}
+										aria-label={i18n._(MORE_ACTIONS_DESCRIPTOR)}
+										title={i18n._(MORE_ACTIONS_DESCRIPTOR)}
+										onPointerDownCapture={handleMoreOptionsPointerDown}
+										onClick={openMoreOptionsMenu}
+										data-flx="user.user-profile-popout.button.more-options"
+									/>
 								</div>
 							)}
 						</div>
@@ -380,7 +412,7 @@ profileFrameLayers={profileFrameLayers}
 									data-flx="user.user-profile-popout.voice-activity-section"
 								/>
 							)}
-			{!isWebhook && <GamingActivityCard guildId={guildId} userId={user.id} />}
+							{!isWebhook && <GamingActivityCard guildId={guildId} userId={user.id} />}
 							{profile && (
 								<UserProfilePreviewBio
 									profile={profile}
@@ -434,22 +466,6 @@ profileFrameLayers={profileFrameLayers}
 											data-flx="user.user-profile-popout.button.edit-profile"
 										>
 											<Trans>Edit Profile</Trans>
-										</Button>
-										<Button
-											className={styles.glassActionButton}
-											small={true}
-											fitContainer={true}
-											rightIcon={
-												<IdentificationBadgeIcon className={styles.iconSmall} />
-											}
-											onClick={() => {
-												if (user?.id) {
-													void navigator.clipboard?.writeText(user.id);
-												}
-											}}
-											data-flx="user.user-profile-popout.button.copy-user-id"
-										>
-											<Trans>Copy User ID</Trans>
 										</Button>
 									</div>
 								) : (

@@ -16,6 +16,7 @@ export interface GamingActivityGuildRow {
 export interface GamingActivityPrivacyPanelProps {
 	detectionEnabled: boolean;
 	detectionAvailable: boolean;
+	activeGameName: string | null;
 	shareWithServers: boolean;
 	guilds: Array<GamingActivityGuildRow>;
 	runningProcesses: Array<string>;
@@ -52,6 +53,7 @@ function initials(name: string): string {
 function GamingActivityPrivacyPanel({
 	detectionEnabled,
 	detectionAvailable,
+	activeGameName,
 	shareWithServers,
 	guilds,
 	runningProcesses,
@@ -89,10 +91,10 @@ function GamingActivityPrivacyPanel({
 				</div>
 				<h2>
 					<GameControllerIcon aria-hidden="true" size={24} weight="duotone" />
-					<Trans>Game activity privacy</Trans>
+					<Trans>Game detection &amp; privacy</Trans>
 				</h2>
 				<p className={styles.intro}>
-					<Trans>Choose what NEXUS detects and where your game activity is visible.</Trans>
+					<Trans>Choose whether NEXUS detects games on this computer and where your activity is shared.</Trans>
 				</p>
 			</header>
 
@@ -123,6 +125,27 @@ function GamingActivityPrivacyPanel({
 						onChange={onDetectionEnabledChange}
 						value={detectionEnabled}
 					/>
+				</div>
+				<div
+					className={styles.detectionStatus}
+					data-active={detectionEnabled && Boolean(activeGameName)}
+					role="status"
+					aria-live="polite"
+				>
+					<span className={styles.statusDot} aria-hidden="true" />
+					<span>
+						{!detectionAvailable ? (
+							<Trans>Open NEXUS desktop on the computer where you play to enable detection.</Trans>
+						) : detectionEnabled ? (
+							activeGameName ? (
+								<Trans>Detected: {activeGameName}</Trans>
+							) : (
+								<Trans>Scanning this computer for Steam and supported PC games.</Trans>
+							)
+						) : (
+							<Trans>Game detection is paused on this computer.</Trans>
+						)}
+					</span>
 				</div>
 
 				<div className={styles.settingRow}>

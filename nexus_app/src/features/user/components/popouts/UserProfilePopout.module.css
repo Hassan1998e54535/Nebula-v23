@@ -71,6 +71,24 @@
 	color: var(--text-primary);
 }
 
+.moreActionsButton {
+	display: flex !important;
+	width: 2.5rem !important;
+	height: 2.5rem !important;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid color-mix(in srgb, var(--profile-sheet-accent) 48%, transparent) !important;
+	border-radius: 50% !important;
+	background: color-mix(in srgb, var(--background-tertiary) 62%, transparent) !important;
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%) !important;
+	-webkit-backdrop-filter: blur(16px) saturate(140%);
+	backdrop-filter: blur(16px) saturate(140%);
+}
+
+.moreActionsButton:hover {
+	background: color-mix(in srgb, var(--background-tertiary) 82%, transparent) !important;
+}
+
 :global(:where(html.window-focused, html.unfocused-fully-interactive):not(.window-focus-activation-guard))
 	.profileCustomStatus:hover
 	.profileCustomStatusText {
@@ -90,6 +108,8 @@
 		var(--profile-popout-border-width)
 	);
 	--profile-card-border-width: var(--profile-popout-border-width);
+	max-height: min(36rem, calc(100dvh - 2rem));
+	min-height: 0;
 
 	box-sizing: border-box;
 	background-color: var(--profile-background-primary, var(--background-primary));
@@ -101,19 +121,30 @@
 	-webkit-backdrop-filter: blur(22px) saturate(145%);
 	backdrop-filter: blur(22px) saturate(145%);
 	border: 1.5px solid color-mix(in srgb, var(--profile-background-primary, #ef4444) 65%, transparent) !important;
-	box-shadow: 0 0 20px color-mix(in srgb, var(--profile-background-primary, #ef4444) 30%, transparent), 0 20px 45px rgba(0, 0, 0, 0.75) !important;
+	box-shadow:
+		0 0 20px color-mix(in srgb, var(--profile-background-primary, #ef4444) 30%, transparent),
+		0 20px 45px rgba(0, 0, 0, 0.75) !important;
 }
 
 .profilePopoutCard .profileHeroActions {
+	display: flex !important;
+}
+
+.profilePopoutCard :global([data-flx='user.profile.profile-card.profile-card-actions.copy-id-button-container']) {
 	display: none !important;
 }
 
-.profilePopoutCardSelf {
-	aspect-ratio: 450 / 800;
+.profilePopoutCard :global(div[data-flx='guild.role-management.role-badge.role-badge.context-menu']) {
+	height: auto;
+	border-color: transparent;
+	background: transparent;
+	box-shadow: none;
+	padding: 0;
 }
 
-.profilePopoutCardMember {
-	aspect-ratio: 450 / 720;
+.profilePopoutCard :global(button[data-flx='guild.role-management.role-list.expand-roles']) {
+	border-color: transparent;
+	background: transparent;
 }
 
 .profilePopoutCard :global(div[data-flx='user.profile.profile-card.profile-card-content.content-section']) {
@@ -161,7 +192,8 @@
 	padding: 0;
 }
 
-.profilePopoutCard :global(button[data-flx='user.user-profile-shared.user-profile-bio.view-full-button.show-more']):hover {
+.profilePopoutCard
+	:global(button[data-flx='user.user-profile-shared.user-profile-bio.view-full-button.show-more']):hover {
 	text-decoration: underline;
 }
 
@@ -227,9 +259,9 @@
 }
 
 .messageFooterActions {
-display: flex;
-width: 100%;
-justify-content: flex-end;
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
 }
 
 .popoutButtonRow {
@@ -252,7 +284,9 @@ justify-content: flex-end;
 }
 
 .glassActionButton,
-.profilePopoutCard :global(footer[data-flx='user.profile.profile-card.profile-card-footer.footer-section']) :global(button) {
+.profilePopoutCard
+	:global(footer[data-flx='user.profile.profile-card.profile-card-footer.footer-section'])
+	:global(button) {
 	border: 1px solid rgba(255, 255, 255, 0.16) !important;
 	border-color: rgba(255, 255, 255, 0.16) !important;
 	border-radius: 0.75rem !important;
@@ -267,11 +301,16 @@ justify-content: flex-end;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
 	min-height: 2.5rem !important;
 	font-weight: 600 !important;
-	transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease !important;
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease,
+		transform 150ms ease !important;
 }
 
 .glassActionButton:hover,
-.profilePopoutCard :global(footer[data-flx='user.profile.profile-card.profile-card-footer.footer-section']) :global(button:hover) {
+.profilePopoutCard
+	:global(footer[data-flx='user.profile.profile-card.profile-card-footer.footer-section'])
+	:global(button:hover) {
 	background: rgba(255, 255, 255, 0.16) !important;
 	background-color: rgba(255, 255, 255, 0.16) !important;
 	background-image: none !important;
