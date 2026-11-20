@@ -22,6 +22,14 @@
 	max-height: min(56vh, 32.5rem);
 	overflow-y: auto;
 	padding-right: 0.125rem;
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+.allCallsGrid::-webkit-scrollbar {
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
 }
 
 .gridItem {

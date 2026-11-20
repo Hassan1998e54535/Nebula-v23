@@ -297,7 +297,7 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 		);
 		const profileCardGeometryStyle = {
 			...PROFILE_POPOUT_GEOMETRY_STYLE,
-			'--profile-popout-content-width': 'min(350px, calc(100vw - 1rem))',
+			'--profile-popout-content-width': 'min(380px, calc(100vw - 1.5rem))',
 			'--profile-sheet-accent': accentColor,
 		} as typeof PROFILE_POPOUT_GEOMETRY_STYLE;
 		const profileCardClassName = isCurrentUser

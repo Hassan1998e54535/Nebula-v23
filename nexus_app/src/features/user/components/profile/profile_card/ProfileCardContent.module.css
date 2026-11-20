@@ -7,6 +7,14 @@
 	padding-top: 0.5rem;
 	padding-left: 1rem;
 	padding-right: 1rem;
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+.contentSection::-webkit-scrollbar {
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
 }
 
 .contentSectionWebhook {

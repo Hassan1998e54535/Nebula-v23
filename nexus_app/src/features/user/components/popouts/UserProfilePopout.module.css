@@ -96,11 +96,12 @@
 }
 
 .profilePopoutCard {
-	--profile-popout-content-width: min(340px, calc(100vw - 1rem));
+	--profile-popout-content-width: min(380px, calc(100vw - 1.5rem));
 	--profile-popout-border-width: 0.15625rem;
 	--profile-card-width: calc(var(--profile-popout-content-width) + var(--profile-popout-border-width) + var(--profile-popout-border-width));
 	--profile-card-border-width: var(--profile-popout-border-width);
-	max-height: min(44rem, calc(100dvh - 2rem));
+	width: var(--profile-card-width) !important;
+	max-height: min(54rem, calc(100dvh - 2rem));
 	min-height: 0;
 
 	box-sizing: border-box;
@@ -114,6 +115,23 @@
 	box-shadow:
 		0 0 20px color-mix(in srgb, var(--profile-background-primary, #ef4444) 30%, transparent),
 		0 20px 45px rgba(0, 0, 0, 0.75) !important;
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+.profilePopoutCard,
+.profilePopoutCard *,
+.profilePopoutCard *::before,
+.profilePopoutCard *::after {
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+.profilePopoutCard::-webkit-scrollbar,
+.profilePopoutCard *::-webkit-scrollbar {
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
 }
 
 .profilePopoutCard .profileHeroActions {
