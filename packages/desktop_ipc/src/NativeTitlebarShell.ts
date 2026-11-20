@@ -42,10 +42,10 @@ export function nativeTitlebarControlIconSvg(icon: NativeTitlebarControlIconName
 }
 
 export function nativeTitlebarWordmarkSvg(className: string = NATIVE_TITLEBAR_CLASS.wordmark): string {
-	const paths = NATIVE_TITLEBAR_WORDMARK_PATHS.map((d) => `<path fill="currentColor" d="${d}"/>`).join('');
 	return (
 		`<svg class="${className}" role="img" aria-label="NEXUS" xmlns="http://www.w3.org/2000/svg" ` +
-		`fill="none" viewBox="${NATIVE_TITLEBAR_WORDMARK_VIEWBOX}">${paths}</svg>`
+		`viewBox="0 0 100 24" style="height: 16px; width: auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 900; letter-spacing: 0.15em;">` +
+		`<text x="0" y="18" fill="currentColor" font-size="17" font-weight="900" letter-spacing="2.5">NEXUS</text></svg>`
 	);
 }
 
