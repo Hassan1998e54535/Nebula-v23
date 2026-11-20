@@ -100,7 +100,7 @@
 }
 
 .profilePopoutCard {
-	--profile-popout-content-width: min(350px, calc(100vw - 1rem));
+	--profile-popout-content-width: min(340px, calc(100vw - 1rem));
 	--profile-popout-border-width: 0.15625rem;
 	--profile-card-width: calc(
 		var(--profile-popout-content-width) +
@@ -108,7 +108,7 @@
 		var(--profile-popout-border-width)
 	);
 	--profile-card-border-width: var(--profile-popout-border-width);
-	max-height: min(36rem, calc(100dvh - 2rem));
+	max-height: min(44rem, calc(100dvh - 2rem));
 	min-height: 0;
 
 	box-sizing: border-box;
@@ -153,8 +153,14 @@
 	overflow-y: auto;
 	gap: 0.625rem;
 	padding-top: 0.75rem;
-	scrollbar-color: color-mix(in srgb, var(--text-primary) 24%, transparent) transparent;
-	scrollbar-width: thin;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.profilePopoutCard :global(div[data-flx='user.profile.profile-card.profile-card-content.content-section'])::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
 }
 
 .profilePopoutCard :global(section[data-flx='user.user-profile-shared.user-profile-bio.bio-container']) {
