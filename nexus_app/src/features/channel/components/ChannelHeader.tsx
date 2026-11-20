@@ -1152,7 +1152,6 @@ export const ChannelHeader = observer(
 									</div>
 								</FocusRing>
 							)}
-							{!isMobile && <UpdaterIcon data-flx="channel.channel-header.updater-icon" />}
 							{!isMobile && <StaffToolsButton data-flx="channel.channel-header.staff-tools-button" />}
 							{!isMobile && <InboxButton data-flx="channel.channel-header.inbox-button" />}
 						</div>
