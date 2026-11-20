@@ -63,8 +63,6 @@ function resolveCoverUrl(game: Pick<GamingEntry, 'name' | 'cover_url'>): string 
 export function GameArtwork({game, variant = 'portrait', showTitle = true}: GameArtworkProps) {
 	const [failedCoverUrl, setFailedCoverUrl] = useState<string | null>(null);
 	const [dynamicCoverUrl, setDynamicCoverUrl] = useState<string | null>(null);
-	const resolvedCover = resolveCoverUrl(game) ?? dynamicCoverUrl;
-	const hasCover = Boolean(resolvedCover) && failedCoverUrl !== resolvedCover;
 
 	useEffect(() => {
 		if (resolveCoverUrl(game) || !game.name) return;
@@ -86,7 +84,8 @@ export function GameArtwork({game, variant = 'portrait', showTitle = true}: Game
 			cancelled = true;
 		};
 	}, [game.name]);
-	const resolvedCover = resolveCoverUrl(game);
+
+	const resolvedCover = resolveCoverUrl(game) ?? dynamicCoverUrl;
 	const hasCover = Boolean(resolvedCover) && failedCoverUrl !== resolvedCover;
 
 	return (
