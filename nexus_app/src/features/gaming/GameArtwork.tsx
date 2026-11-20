@@ -3,7 +3,7 @@
 import styles from '@app/features/gaming/GameArtwork.module.css';
 import type {GamingEntry} from '@app/features/gaming/GamingTypes';
 import {Trans} from '@lingui/react/macro';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 type GameArtworkVariant = 'portrait' | 'wide' | 'thumbnail';
 
@@ -14,9 +14,8 @@ interface GameArtworkProps {
 }
 
 const POPULAR_COVERS: Record<string, string> = {
-	'roblox': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
-	'rob': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
-	'rob run': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20vo.webp',
+	'roblox': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7h.webp',
+	'rob run': 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4262460/header.jpg',
 	'arc raiders': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co68cf.webp',
 	'ea sports fc 27': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
 	'ea sports fc 26': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
@@ -56,13 +55,37 @@ function resolveCoverUrl(game: Pick<GamingEntry, 'name' | 'cover_url'>): string 
 	const norm = game.name.trim().toLowerCase();
 	if (POPULAR_COVERS[norm]) return POPULAR_COVERS[norm];
 	for (const [key, url] of Object.entries(POPULAR_COVERS)) {
-		if (norm.includes(key) || key.includes(norm)) return url;
+		if (norm === key || norm.startsWith(`${key}:`) || norm.startsWith(`${key} -`)) return url;
 	}
 	return null;
 }
 
 export function GameArtwork({game, variant = 'portrait', showTitle = true}: GameArtworkProps) {
 	const [failedCoverUrl, setFailedCoverUrl] = useState<string | null>(null);
+	const [dynamicCoverUrl, setDynamicCoverUrl] = useState<string | null>(null);
+	const resolvedCover = resolveCoverUrl(game) ?? dynamicCoverUrl;
+	const hasCover = Boolean(resolvedCover) && failedCoverUrl !== resolvedCover;
+
+	useEffect(() => {
+		if (resolveCoverUrl(game) || !game.name) return;
+		let cancelled = false;
+		const searchName = encodeURIComponent(game.name.trim());
+		fetch(`https://store.steampowered.com/api/storesearch/?term=${searchName}&l=english&cc=US`)
+			.then((res) => res.json())
+			.then((data: {items?: Array<{id?: number}>}) => {
+				if (cancelled) return;
+				const firstItem = data?.items?.[0];
+				if (firstItem?.id) {
+					setDynamicCoverUrl(
+						`https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${firstItem.id}/header.jpg`,
+					);
+				}
+			})
+			.catch(() => {});
+		return () => {
+			cancelled = true;
+		};
+	}, [game.name]);
 	const resolvedCover = resolveCoverUrl(game);
 	const hasCover = Boolean(resolvedCover) && failedCoverUrl !== resolvedCover;
 

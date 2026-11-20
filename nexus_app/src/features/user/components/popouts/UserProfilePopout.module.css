@@ -161,14 +161,14 @@
 	overflow-y: auto;
 	gap: 0.625rem;
 	padding-top: 0.75rem;
-	scrollbar-width: none;
-	-ms-overflow-style: none;
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
 }
 
 .profilePopoutCard :global(div[data-flx='user.profile.profile-card.profile-card-content.content-section'])::-webkit-scrollbar {
-	display: none;
-	width: 0;
-	height: 0;
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
 }
 
 .profilePopoutCard :global(section[data-flx='user.user-profile-shared.user-profile-bio.bio-container']) {
