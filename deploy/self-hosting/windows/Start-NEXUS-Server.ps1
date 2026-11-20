@@ -3,7 +3,8 @@
 [CmdletBinding()]
 param(
     [switch]$RebuildImages,
-    [string]$PublicOrigin = 'https://nexus-nn.duckdns.org'
+    [string]$PublicOrigin = 'https://nexus-nn.duckdns.org',
+    [switch]$TunnelMode
 )
 
 Set-StrictMode -Version Latest
@@ -309,12 +310,13 @@ function Invoke-NexusCompose([string[]]$Arguments) {
         '--env-file', $envPath,
         '-f', (Join-Path $stackDir 'docker-compose.yml'),
         '-f', (Join-Path $stackDir 'docker-compose.source.yml')
-    ) + $Arguments
+    )
     if ($shareWebWithInternet) {
         $composeArgs += @('-f', (Join-Path $PSScriptRoot 'public-web.compose.yml'))
     } else {
         $composeArgs += @('-f', (Join-Path $stackDir 'tunnel.compose.yml'))
     }
+    $composeArgs += $Arguments
     & docker compose @composeArgs
     if ($LASTEXITCODE -ne 0) {
         throw "docker compose failed with exit code $LASTEXITCODE"
@@ -340,7 +342,13 @@ try {
 
     Stop-LanDiscoveryResponder
     $lanAddress = Get-PreferredLanIPv4
-    if ($null -ne $lanAddress) {
+    if ($TunnelMode) {
+        Write-Host "Configured for Cloudflare Tunnel mode ($publicOrigin)" -ForegroundColor Green
+        Write-Host "Firewall and router port forwarding rules are not needed for tunnel connections." -ForegroundColor Cyan
+        $shareWithLan = $false
+        $shareVoiceWithInternet = $false
+        $shareWebWithInternet = $false
+    } elseif ($null -ne $lanAddress) {
         Write-Host "A private-network address was found: $lanAddress"
         Write-Warning 'LAN testing uses unencrypted HTTP. Other devices on this trusted private network could observe traffic. Never enable it on public or guest Wi-Fi.'
         $lanAnswer = Read-Host 'Allow NEXUS devices on this private Wi-Fi network to connect? [y/N]'
