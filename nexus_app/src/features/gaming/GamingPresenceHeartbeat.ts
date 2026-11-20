@@ -77,11 +77,13 @@ interface StoredGamingActivity {
 	source?: 'manual' | 'auto';
 }
 
-function normalizeProcessName(value: string): string {
+function normalizeProcessName(value?: string | null): string {
+	if (!value || typeof value !== 'string') return '';
 	return value.trim().replace(/^"|"$/g, '').split(/[\\/]/).at(-1)?.toLocaleLowerCase() ?? '';
 }
 
-function normalizeGameTitle(value: string): string {
+function normalizeGameTitle(value?: string | null): string {
+	if (!value || typeof value !== 'string') return '';
 	return value.normalize('NFKC').trim().replace(/\s+/gu, ' ').toLocaleLowerCase();
 }
 
@@ -168,18 +170,24 @@ export function getGamingDetectionPreferences(userId: string): GamingDetectionPr
 
 export function saveGamingDetectionPreferences(userId: string, preferences: GamingDetectionPreferences): boolean {
 	try {
-		const registrations = preferences.registrations
+		const registrations = (preferences?.registrations ?? [])
 			.map((registration) => ({
 				game: registration.game,
-				process_name: normalizeProcessName(registration.process_name),
+				process_name: normalizeProcessName(registration?.process_name),
 			}))
 			.filter((registration) => registration.process_name.length > 0);
 		const suppressed_process_names = [
-			...new Set(preferences.suppressed_process_names.map(normalizeProcessName).filter(Boolean)),
+			...new Set((preferences?.suppressed_process_names ?? []).map(normalizeProcessName).filter(Boolean)),
 		];
-		const suppressed_game_ids = [...new Set(preferences.suppressed_game_ids.map((id) => id.trim()).filter(Boolean))];
+		const suppressed_game_ids = [
+			...new Set(
+				(preferences?.suppressed_game_ids ?? [])
+					.map((id) => (typeof id === 'string' ? id.trim() : ''))
+					.filter(Boolean),
+			),
+		];
 		const suppressed_game_names = [
-			...new Set(preferences.suppressed_game_names.map(normalizeGameTitle).filter(Boolean)),
+			...new Set((preferences?.suppressed_game_names ?? []).map(normalizeGameTitle).filter(Boolean)),
 		];
 		writeGamingStorage(
 			detectionKey(userId),

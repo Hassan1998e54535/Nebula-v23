@@ -13,6 +13,7 @@ import {
 } from '@app/features/gaming/GamingPresenceHeartbeat';
 import type {GamingEntry, GamingProfile} from '@app/features/gaming/GamingTypes';
 import Guilds from '@app/features/guild/state/Guilds';
+import {getProtectedLocalStorage} from '@app/features/platform/state/ProtectedWebStorage';
 import {getElectronAPI} from '@app/features/ui/utils/NativeUtils';
 import Users from '@app/features/user/state/Users';
 import * as AvatarUtils from '@app/features/user/utils/AvatarUtils';
@@ -31,7 +32,8 @@ function stripControlCharacters(value: string): string {
 
 function readCurrentGameName(userId: string): string | null {
 	try {
-		const raw = window.localStorage.getItem(`nexus:gaming:active:${userId}`);
+		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		const raw = storage?.getItem(`nexus:gaming:active:${userId}`);
 		if (!raw) return null;
 		const parsed = JSON.parse(raw) as {game?: {name?: unknown}; updatedAt?: unknown};
 		if (
