@@ -108,18 +108,47 @@ async function migrateStoredTunnelOrigin(newHost: string): Promise<void> {
 			text.replace(/([a-z0-9-]+)\.trycloudflare\.com/giu, newHost);
 		const accounts = await storage.getAllAccounts();
 		for (const account of accounts) {
-			if (!account.storageKey.includes('.trycloudflare.com') || account.storageKey.includes(newHost)) {
+			const serializedRecord = JSON.stringify(account.record);
+			const keyNeedsUpdate = account.storageKey.includes('.trycloudflare.com') && !account.storageKey.includes(newHost);
+			const recordNeedsUpdate = serializedRecord.includes('.trycloudflare.com') && !serializedRecord.includes(newHost);
+			if (!keyNeedsUpdate && !recordNeedsUpdate) {
 				continue;
 			}
 			const updatedKey = replaceHost(account.storageKey);
-			const updatedInstanceKey = replaceHost(account.instanceKey);
-			const updatedRecord = JSON.parse(replaceHost(JSON.stringify(account))) as typeof account;
+			const updatedRecord = JSON.parse(replaceHost(serializedRecord)) as typeof account.record;
 			await storage.upsertAccount({
-				...updatedRecord,
 				storageKey: updatedKey,
-				instanceKey: updatedInstanceKey,
+				record: updatedRecord,
 			});
-			await storage.deleteAccount(account.storageKey);
+			if (updatedKey !== account.storageKey) {
+				try {
+					const scopedEntries = await storage.loadEntries(account.storageKey);
+					for (const entry of scopedEntries) {
+						await storage.setEntry(updatedKey, replaceHost(entry.key), replaceHost(entry.value));
+					}
+					await storage.clearAllForScope(account.storageKey);
+				} catch {}
+				await storage.deleteAccount(account.storageKey);
+			}
+		}
+		const knownInstances = await storage.getAllKnownInstances();
+		for (const instance of knownInstances) {
+			const serializedInstance = JSON.stringify(instance);
+			if (!serializedInstance.includes('.trycloudflare.com') || serializedInstance.includes(newHost)) {
+				continue;
+			}
+			const updatedInstance = JSON.parse(replaceHost(serializedInstance)) as typeof instance;
+			await storage.upsertKnownInstance(updatedInstance);
+			if (updatedInstance.instanceKey !== instance.instanceKey) {
+				try {
+					const scopedEntries = await storage.loadEntries(instance.instanceKey);
+					for (const entry of scopedEntries) {
+						await storage.setEntry(updatedInstance.instanceKey, replaceHost(entry.key), replaceHost(entry.value));
+					}
+					await storage.clearAllForScope(instance.instanceKey);
+				} catch {}
+				await storage.deleteKnownInstance(instance.instanceKey);
+			}
 		}
 		const globalEntries = await storage.loadEntries('global');
 		for (const entry of globalEntries) {
@@ -278,17 +307,7 @@ async function fetchRuntimePlan(
 	if (!instanceUnreachable) {
 		throw new DesktopRuntimeDiscoveryFailedError(apiEndpoint, attempts);
 	}
-	const lastServed = await readLastServedDiscovery(apiEndpoint);
-	if (lastServed === null) {
-		throw new DesktopRuntimeDiscoveryUnreachableError(apiEndpoint, attempts);
-	}
-	log.warn('Instance discovery is unreachable, using the last served discovery document', {apiEndpoint, attempts});
-	return {
-		plan: lastServed.plan,
-		served: null,
-		rememberedAnchorRequirement: lastServed.anchorRequirement,
-		attempts,
-	};
+	throw new DesktopRuntimeDiscoveryUnreachableError(apiEndpoint, attempts);
 }
 
 async function rememberLastServedDiscovery(apiEndpoint: string, served: LastServedDiscovery): Promise<void> {

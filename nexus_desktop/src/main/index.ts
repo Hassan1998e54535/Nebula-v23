@@ -58,6 +58,7 @@ import {
 } from '@electron/main/DesktopDebugInfo';
 import {recordDesktopLastRoute} from '@electron/main/DesktopLastRoute';
 import {cleanupDesktopOutboundHTTP} from '@electron/main/DesktopOutboundHTTP';
+import {refreshLiveServerOrigin} from '@electron/main/DesktopRuntimeDiscovery';
 import {registerDesktopRuntimeConfigHandlers} from '@electron/main/DesktopRuntimeConfigIpc';
 import {installDesktopSystemTrustVerifier} from '@electron/main/DesktopSystemTrustVerifier';
 import {destroyDesktopTray, hasActiveDesktopTray, initializeDesktopTray} from '@electron/main/DesktopTray';
@@ -487,6 +488,11 @@ if (launchConfigurationError) {
 					await recordDesktopAppStoreImportState(appStoreSchemaVersion);
 				} catch (error) {
 					log.error('[AppStore] Desktop app store recovery failed:', error);
+				}
+				try {
+					await runStartupPhaseAsync('live-server-origin', refreshLiveServerOrigin);
+				} catch (error) {
+					log.warn('[Init] Failed to refresh live server origin during startup:', error);
 				}
 				try {
 					runStartupPhase('app-store-ipc', registerDesktopAppStorageHandlers);
