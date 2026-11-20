@@ -45,9 +45,12 @@ const CLICK_TO_RELOAD_AND_UPDATE_2_DESCRIPTOR = msg({
 type UpdaterAffordance = 'desktop' | 'updating' | 'manual' | 'web' | null;
 
 function resolveUpdaterAffordance(): UpdaterAffordance {
-	if (Platform.isElectron && Updater.desktopUpdateInProgress) return 'updating';
-	if (Platform.isElectron && Updater.desktopUpdateAvailable) return 'desktop';
-	if (Platform.isElectron && Updater.nativeManualUpdateAvailable) return 'manual';
+	if (Platform.isElectron) {
+		if (Updater.desktopUpdateInProgress) return 'updating';
+		if (Updater.desktopUpdateAvailable) return 'desktop';
+		if (Updater.nativeManualUpdateAvailable) return 'manual';
+		return null;
+	}
 	if (Updater.updateInfo.web.available) return 'web';
 	return null;
 }
