@@ -3,7 +3,17 @@
 import {fetchGuildGaming} from '@app/features/gaming/GamingClient';
 import type {GamingEntry} from '@app/features/gaming/GamingTypes';
 import Authentication from '@app/features/auth/state/Authentication';
+import {getProtectedLocalStorage} from '@app/features/platform/state/ProtectedWebStorage';
 import {useEffect, useState} from 'react';
+
+function readLocalGamingItem(key: string): string | null {
+	try {
+		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		return storage?.getItem(key) ?? null;
+	} catch {
+		return null;
+	}
+}
 
 const guildCache = new Map<string, {expires: number; players: Map<string, GamingEntry>}>();
 
@@ -15,7 +25,7 @@ export function useUserActiveGame(guildId?: string, userId?: string): GamingEntr
 		if (!userId) return null;
 		if (isCurrentUser) {
 			try {
-				const raw = window.localStorage.getItem(`nexus:gaming:active:${userId}`);
+				const raw = readLocalGamingItem(`nexus:gaming:active:${userId}`);
 				if (raw) {
 					const parsed = JSON.parse(raw);
 					if (parsed?.game) return parsed.game as GamingEntry;
@@ -39,7 +49,7 @@ export function useUserActiveGame(guildId?: string, userId?: string): GamingEntr
 		const readLocal = () => {
 			if (isCurrentUser) {
 				try {
-					const raw = window.localStorage.getItem(`nexus:gaming:active:${userId}`);
+					const raw = readLocalGamingItem(`nexus:gaming:active:${userId}`);
 					if (raw) {
 						const parsed = JSON.parse(raw);
 						if (parsed?.game) {

@@ -52,7 +52,6 @@ export function installBrowserStorageAccessProtection(): void {
 		return;
 	}
 	browserStorageAccessProtected = true;
-	deleteWindowStorageProperty('localStorage');
 	deleteWindowStorageProperty('sessionStorage');
 	deleteWindowStorageProperty('indexedDB');
 	deleteWindowStorageProperty('caches');

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Nebula
 
 import {BUILD_CHANNEL, type BuildChannel} from '@electron/common/BuildChannel';
+import {NEXUS_PRIVATE_INSTANCE_URL} from '@electron/common/Constants';
 
 export type DesktopDownloadArch = 'x64' | 'arm64';
 
@@ -11,17 +12,29 @@ export function getDesktopDownloadArch(arch: NodeJS.Architecture): DesktopDownlo
 export const DESKTOP_DOWNLOAD_ARCH = getDesktopDownloadArch(process.arch);
 const PACKAGE_ORIGIN_ENV = 'NEXUS_DESKTOP_PACKAGE_ORIGIN';
 const CHANNEL_PACKAGE_ORIGINS: Record<BuildChannel, string> = {
-	stable: 'https://pkgs.nexus.com',
-	canary: 'https://pkgs.nexus.com',
+	stable: NEXUS_PRIVATE_INSTANCE_URL,
+	canary: NEXUS_PRIVATE_INSTANCE_URL,
 	development: 'http://localhost:48780',
 };
 
+let dynamicPackageOrigin: string | null = null;
+
+export function setDynamicDesktopPackageOrigin(origin: string | null): void {
+	if (origin == null || origin.trim().length === 0) {
+		return;
+	}
+	dynamicPackageOrigin = origin.trim().replace(/\/+$/u, '');
+}
+
 export function resolveDesktopPackageOrigin(): string {
 	const override = process.env?.[PACKAGE_ORIGIN_ENV];
-	if (override == null || override.trim().length === 0) {
-		return CHANNEL_PACKAGE_ORIGINS[BUILD_CHANNEL];
+	if (override != null && override.trim().length > 0) {
+		return override.trim().replace(/\/+$/u, '');
 	}
-	return override.trim().replace(/\/+$/u, '');
+	if (dynamicPackageOrigin != null) {
+		return dynamicPackageOrigin;
+	}
+	return CHANNEL_PACKAGE_ORIGINS[BUILD_CHANNEL];
 }
 
 export function getUpdateBaseUrl(platform: NodeJS.Platform = process.platform): string {

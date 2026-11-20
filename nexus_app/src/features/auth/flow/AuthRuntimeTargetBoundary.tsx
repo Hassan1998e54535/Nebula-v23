@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Nebula
 
+import {BootstrapErrorScreen} from '@app/features/app/components/BootstrapErrorScreen';
 import InstanceSnapshotStore, {type RuntimeConfigSnapshot} from '@app/features/app/state/InstanceSnapshotStore';
 import {AuthRouteLoadError} from '@app/features/auth/flow/AuthRouteLoadError';
 import {AuthShellLoadingState} from '@app/features/auth/flow/AuthShellLoadingState';
@@ -220,16 +221,18 @@ function ResolvedBrowserAuthRuntimeTargetBoundary({
 }
 
 function DesktopAuthRuntimeTargetBoundary({children}: {readonly children: ReactNode}) {
-	const {state, retry} = useAuthRuntimeResolution(resolveDesktopAuthRuntime, readWarmDesktopAuthRuntime);
+	const {state} = useAuthRuntimeResolution(resolveDesktopAuthRuntime, readWarmDesktopAuthRuntime);
 	if (state.status === AuthRuntimeResolutionStatus.LOADING) {
 		return <AuthShellLoadingState data-flx="auth.flow.auth-runtime-target-boundary.desktop-loading" />;
 	}
 	if (state.status === AuthRuntimeResolutionStatus.FAILED) {
 		return (
-			<AuthRouteLoadError
-				error={state.error}
-				retry={retry}
-				data-flx="auth.flow.auth-runtime-target-boundary.desktop-error"
+			<BootstrapErrorScreen
+				error={
+					state.error instanceof Error
+						? state.error
+						: new Error(`DesktopRuntimeDiscoveryUnreachableError: ${String(state.error)}`)
+				}
 			/>
 		);
 	}

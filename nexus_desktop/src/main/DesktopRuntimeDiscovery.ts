@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: Nebula
 
+import {NEXUS_PRIVATE_INSTANCE_URL} from '@electron/common/Constants';
 import {getLaunchInstanceEndpointOverride} from '@electron/common/DesktopConfig';
 import {createChildLogger} from '@electron/common/Logger';
 import {getDesktopAppStorage} from '@electron/main/DesktopAppStorage';
+import {setDynamicDesktopPackageOrigin} from '@electron/main/ShellDownloadFormats';
+import {net} from 'electron';
 import {
 	DesktopAddressRequirement,
 	getDesktopOutboundHTTP,
@@ -86,6 +89,101 @@ class DesktopRuntimeDiscoveryUnreachableError extends DesktopRuntimeDiscoveryFai
 	}
 }
 
+const LIVE_SERVER_POINTER_URL =
+	'https://api.github.com/repos/Hassan1998e54535/nexus-live-config/contents/server.json';
+const LIVE_SERVER_POINTER_TIMEOUT_MS = 4_000;
+let cachedLiveServerOrigin: string | null = null;
+let lastMigratedLiveHost: string | null = null;
+
+async function migrateStoredTunnelOrigin(newHost: string): Promise<void> {
+	if (lastMigratedLiveHost === newHost) {
+		return;
+	}
+	const storage = getDesktopAppStorage();
+	if (storage === null) {
+		return;
+	}
+	try {
+		const replaceHost = (text: string): string =>
+			text.replace(/([a-z0-9-]+)\.trycloudflare\.com/giu, newHost);
+		const accounts = await storage.getAllAccounts();
+		for (const account of accounts) {
+			if (!account.storageKey.includes('.trycloudflare.com') || account.storageKey.includes(newHost)) {
+				continue;
+			}
+			const updatedKey = replaceHost(account.storageKey);
+			const updatedInstanceKey = replaceHost(account.instanceKey);
+			const updatedRecord = JSON.parse(replaceHost(JSON.stringify(account))) as typeof account;
+			await storage.upsertAccount({
+				...updatedRecord,
+				storageKey: updatedKey,
+				instanceKey: updatedInstanceKey,
+			});
+			await storage.deleteAccount(account.storageKey);
+		}
+		const globalEntries = await storage.loadEntries('global');
+		for (const entry of globalEntries) {
+			if (
+				(entry.key.includes('.trycloudflare.com') || entry.value.includes('.trycloudflare.com')) &&
+				(!entry.key.includes(newHost) || !entry.value.includes(newHost))
+			) {
+				const newKey = replaceHost(entry.key);
+				const newValue = replaceHost(entry.value);
+				await storage.setEntry('global', newKey, newValue);
+				if (newKey !== entry.key) {
+					await storage.deleteEntry('global', entry.key);
+				}
+			}
+		}
+		lastMigratedLiveHost = newHost;
+	} catch (error) {
+		log.warn('Failed to migrate stored tunnel origin', {newHost, error});
+	}
+}
+
+export async function refreshLiveServerOrigin(): Promise<string | null> {
+	try {
+		const response = await net.fetch(`${LIVE_SERVER_POINTER_URL}?t=${Date.now().toString()}`, {
+			cache: 'no-store',
+			headers: {
+				Accept: 'application/vnd.github.v3.raw',
+				'Cache-Control': 'no-cache',
+				'User-Agent': 'NEXUS-Desktop',
+			},
+			signal: AbortSignal.timeout(LIVE_SERVER_POINTER_TIMEOUT_MS),
+		});
+		if (!response.ok) {
+			return cachedLiveServerOrigin;
+		}
+		const payload = (await response.json()) as {url?: unknown};
+		if (typeof payload.url === 'string' && payload.url.startsWith('https://')) {
+			const parsed = new URL(payload.url.trim());
+			cachedLiveServerOrigin = parsed.origin;
+			setDynamicDesktopPackageOrigin(parsed.origin);
+			if (parsed.hostname.endsWith('.trycloudflare.com')) {
+				await migrateStoredTunnelOrigin(parsed.hostname);
+			}
+			return cachedLiveServerOrigin;
+		}
+	} catch (error) {
+		log.debug('Could not fetch live server pointer', {error});
+	}
+	return cachedLiveServerOrigin;
+}
+
+function remapTunnelInputToLiveOrigin(input: string, liveOrigin: string | null): string {
+	if (liveOrigin === null) {
+		return input;
+	}
+	try {
+		const liveHost = new URL(liveOrigin).hostname;
+		if (input.includes('.trycloudflare.com') && !input.includes(liveHost)) {
+			return input.replace(/([a-z0-9-]+)\.trycloudflare\.com/giu, liveHost);
+		}
+	} catch {}
+	return input;
+}
+
 function requireDesktopRuntimeAPIEndpoint(input: string): string {
 	const normalized = normalizeInstanceEndpoint(input, InstanceEndpointKind.API);
 	if (normalized == null || !normalized.includes('://')) {
@@ -98,7 +196,9 @@ export async function resolveDesktopRuntimePlan({
 	input,
 	signal,
 }: ResolveDesktopRuntimeConfigInput): Promise<LocalAppRuntimePlan> {
-	const apiEndpoint = requireDesktopRuntimeAPIEndpoint(input);
+	const liveOrigin = await refreshLiveServerOrigin();
+	const effectiveInput = remapTunnelInputToLiveOrigin(input, liveOrigin);
+	const apiEndpoint = requireDesktopRuntimeAPIEndpoint(effectiveInput);
 	const anchorOrigin = requireDesktopHTTPOrigin(new URL(apiEndpoint).origin);
 	const resolved = await fetchRuntimePlan(apiEndpoint, anchorOrigin, signal);
 	let anchorRequirement: DesktopAddressRequirement;
@@ -121,14 +221,16 @@ export async function resolveDesktopRuntimePlan({
 }
 
 export async function restoreRememberedRuntimePlan(instanceKey: string): Promise<LocalAppRuntimePlan | null> {
+	const liveOrigin = cachedLiveServerOrigin ?? (await refreshLiveServerOrigin());
+	const effectiveKey = remapTunnelInputToLiveOrigin(instanceKey, liveOrigin);
 	let apiEndpoint: string;
 	try {
-		apiEndpoint = requireDesktopRuntimeAPIEndpoint(instanceKey);
+		apiEndpoint = requireDesktopRuntimeAPIEndpoint(effectiveKey);
 	} catch {
 		return null;
 	}
 	const remembered = await readLastServedDiscovery(apiEndpoint);
-	if (remembered === null || remembered.plan.instanceKey !== instanceKey) {
+	if (remembered === null || remembered.plan.instanceKey !== effectiveKey) {
 		return null;
 	}
 	await getDesktopOutboundHTTP().registerAnchoredOrigins({
@@ -139,8 +241,13 @@ export async function restoreRememberedRuntimePlan(instanceKey: string): Promise
 	return remembered.plan;
 }
 
-export function desktopRuntimeInitialInput(): string | null {
-	return getLaunchInstanceEndpointOverride();
+export async function desktopRuntimeInitialInput(): Promise<string | null> {
+	const override = getLaunchInstanceEndpointOverride();
+	if (override !== null) {
+		return override;
+	}
+	const liveOrigin = await refreshLiveServerOrigin();
+	return liveOrigin ?? NEXUS_PRIVATE_INSTANCE_URL;
 }
 
 async function fetchRuntimePlan(

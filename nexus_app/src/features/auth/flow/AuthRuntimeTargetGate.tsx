@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Nebula
 
+import {BootstrapErrorScreen} from '@app/features/app/components/BootstrapErrorScreen';
 import type {RuntimeConfigSnapshot} from '@app/features/app/state/InstanceSnapshotStore';
 import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
-import {AuthLoginInstanceStep} from '@app/features/auth/flow/auth_login_core/AuthLoginInstanceStep';
 import {useAuthRuntimeTarget} from '@app/features/auth/state/AuthRuntimeTarget';
 import {useLocation} from '@app/features/platform/components/router/RouterReact';
 import {Logger} from '@app/features/platform/utils/AppLogger';
@@ -12,10 +12,6 @@ import {useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
 import {type ReactNode, useEffect, useState} from 'react';
 
-const CHOOSE_INSTANCE_DESCRIPTOR = msg({
-	message: 'Choose your instance',
-	comment: 'Heading for an authentication step that requires an instance before continuing.',
-});
 const CONNECTING_TO_NEXUS_DESCRIPTOR = msg({
 	message: 'Connecting to NEXUS',
 	comment: 'Status shown while an app-only invite link selects the configured NEXUS instance.',
@@ -35,7 +31,7 @@ export const AuthRuntimeTargetGate = observer(function AuthRuntimeTargetGate({ch
 	const privateInstanceUrl = globalThis.window?.electron?.nexusPrivateInstanceUrl ?? null;
 	const isInviteRoute = location.pathname.startsWith('/invite/');
 	const [isResolvingInviteInstance, setIsResolvingInviteInstance] = useState(false);
-	const [inviteInstanceResolutionFailed, setInviteInstanceResolutionFailed] = useState(false);
+	const [resolutionError, setResolutionError] = useState<Error | null>(null);
 
 	useEffect(() => {
 		if (runtimeSnapshot != null || privateInstanceUrl == null) {
@@ -43,7 +39,7 @@ export const AuthRuntimeTargetGate = observer(function AuthRuntimeTargetGate({ch
 		}
 		const controller = new AbortController();
 		setIsResolvingInviteInstance(true);
-		setInviteInstanceResolutionFailed(false);
+		setResolutionError(null);
 		void RuntimeConfig.resolveEndpoint({input: privateInstanceUrl, signal: controller.signal})
 			.then((resolution) => {
 				if (!controller.signal.aborted) {
@@ -52,8 +48,8 @@ export const AuthRuntimeTargetGate = observer(function AuthRuntimeTargetGate({ch
 			})
 			.catch((error) => {
 				if (!controller.signal.aborted) {
-					logger.warn('Could not open a NEXUS app invite on its configured instance', error);
-					setInviteInstanceResolutionFailed(true);
+					logger.warn('Could not connect to the primary NEXUS server', error);
+					setResolutionError(error instanceof Error ? error : new Error(String(error)));
 				}
 			})
 			.finally(() => {
@@ -75,15 +71,5 @@ export const AuthRuntimeTargetGate = observer(function AuthRuntimeTargetGate({ch
 			</div>
 		);
 	}
-	return (
-		<AuthLoginInstanceStep
-			extraTopContent={null}
-			title={i18n._(CHOOSE_INSTANCE_DESCRIPTOR)}
-			initialInstanceUrl={inviteInstanceResolutionFailed ? privateInstanceUrl : null}
-			onContinue={runtimeTarget.select}
-			onBackActionChange={null}
-			suppressInlineBackButton={false}
-			data-flx="auth.flow.auth-runtime-target-gate.instance-step"
-		/>
-	);
+	return <BootstrapErrorScreen error={resolutionError ?? new Error('DesktopRuntimeDiscoveryUnreachableError: Primary NEXUS server is offline')} />;
 });

@@ -8,12 +8,12 @@ import FocusRing from '@app/features/ui/focus_ring/FocusRing';
 import {Tooltip} from '@app/features/ui/tooltip/Tooltip';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
-import {ArrowClockwiseIcon} from '@phosphor-icons/react';
+import {ArrowClockwiseIcon, ArrowLineDownIcon} from '@phosphor-icons/react';
 import {observer} from 'mobx-react-lite';
 import {useCallback} from 'react';
 
 const UPDATE_AVAILABLE_DESCRIPTOR = msg({
-	message: 'Update available',
+	message: 'Restart to update',
 	comment:
 		'Tooltip and accessible label on the channel header updater icon in the desktop app. Clicking it downloads the update, then either reloads the window or, when the desktop app itself updates, closes it and opens the updater.',
 });
@@ -71,12 +71,8 @@ export const UpdaterIcon = observer(() => {
 		tooltip = i18n._(UPDATING_DESCRIPTOR);
 	} else if (affordance === 'manual' && Updater.nativeManualDownloadOptions.length > 0) {
 		tooltip = version ? i18n._(CHOOSE_LINUX_PACKAGE_DESCRIPTOR, {version}) : i18n._(CHOOSE_LINUX_PACKAGE_2_DESCRIPTOR);
-	} else if (affordance !== 'web') {
-		tooltip = i18n._(UPDATE_AVAILABLE_DESCRIPTOR);
 	} else {
-		tooltip = version
-			? i18n._(CLICK_TO_RELOAD_AND_UPDATE_DESCRIPTOR, {version, productName: RuntimeConfig.productName})
-			: i18n._(CLICK_TO_RELOAD_AND_UPDATE_2_DESCRIPTOR, {productName: RuntimeConfig.productName});
+		tooltip = i18n._(UPDATE_AVAILABLE_DESCRIPTOR);
 	}
 	return (
 		<Tooltip text={tooltip} position="bottom" data-flx="channel.channel-header-components.updater-icon.tooltip">
@@ -90,11 +86,19 @@ export const UpdaterIcon = observer(() => {
 					aria-label={tooltip}
 					data-flx="channel.channel-header-components.updater-icon.button.click"
 				>
-					<ArrowClockwiseIcon
-						weight="bold"
-						className={affordance === 'updating' ? styles.updateIconSpinning : styles.updateIcon}
-						data-flx="channel.channel-header-components.updater-icon.update-icon"
-					/>
+					{affordance === 'updating' ? (
+						<ArrowClockwiseIcon
+							weight="bold"
+							className={styles.updateIconSpinning}
+							data-flx="channel.channel-header-components.updater-icon.update-icon"
+						/>
+					) : (
+						<ArrowLineDownIcon
+							weight="bold"
+							className={styles.updateIcon}
+							data-flx="channel.channel-header-components.updater-icon.update-icon"
+						/>
+					)}
 				</button>
 			</FocusRing>
 		</Tooltip>

@@ -560,10 +560,7 @@ class Updater {
 		available: boolean;
 		version: string | null;
 	} | null> {
-		if (isDesktop()) {
-			return {available: false, version: null};
-		}
-		if (!ALLOWED_WEB_UPDATE_HOSTS.has(window.location.host)) {
+		if (!isDesktop() && !ALLOWED_WEB_UPDATE_HOSTS.has(window.location.host)) {
 			return {available: false, version: null};
 		}
 		try {

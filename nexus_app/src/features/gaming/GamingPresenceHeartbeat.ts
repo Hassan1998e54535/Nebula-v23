@@ -7,8 +7,37 @@ import {
 	stopGamingActivity,
 } from '@app/features/gaming/GamingClient';
 import type {GamingEntry} from '@app/features/gaming/GamingTypes';
+import {getProtectedLocalStorage} from '@app/features/platform/state/ProtectedWebStorage';
 import {getElectronAPI} from '@app/features/ui/utils/NativeUtils';
 import {useEffect} from 'react';
+
+const memoryStorageFallback = new Map<string, string>();
+
+function readGamingStorage(key: string): string | null {
+	try {
+		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		if (storage != null) {
+			return storage.getItem(key) ?? memoryStorageFallback.get(key) ?? null;
+		}
+	} catch {}
+	return memoryStorageFallback.get(key) ?? null;
+}
+
+function writeGamingStorage(key: string, value: string): void {
+	memoryStorageFallback.set(key, value);
+	try {
+		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		storage?.setItem(key, value);
+	} catch {}
+}
+
+function removeGamingStorage(key: string): void {
+	memoryStorageFallback.delete(key);
+	try {
+		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		storage?.removeItem(key);
+	} catch {}
+}
 
 const STORAGE_PREFIX = 'nexus:gaming:active:';
 const DETECTION_STORAGE_PREFIX = 'nexus:gaming:detection:';
@@ -62,7 +91,7 @@ function detectionKey(userId: string): string {
 
 function readStoredActivity(userId: string): StoredGamingActivity | null {
 	try {
-		const raw = window.localStorage.getItem(`${STORAGE_PREFIX}${userId}`);
+		const raw = readGamingStorage(`${STORAGE_PREFIX}${userId}`);
 		if (!raw) return null;
 		const stored = JSON.parse(raw) as Partial<StoredGamingActivity>;
 		if (
@@ -83,7 +112,7 @@ function readStoredActivity(userId: string): StoredGamingActivity | null {
 
 export function getGamingDetectionPreferences(userId: string): GamingDetectionPreferences {
 	try {
-		const raw = window.localStorage.getItem(detectionKey(userId));
+		const raw = readGamingStorage(detectionKey(userId));
 		if (!raw) {
 			return {
 				enabled: false,
@@ -152,7 +181,7 @@ export function saveGamingDetectionPreferences(userId: string, preferences: Gami
 		const suppressed_game_names = [
 			...new Set(preferences.suppressed_game_names.map(normalizeGameTitle).filter(Boolean)),
 		];
-		window.localStorage.setItem(
+		writeGamingStorage(
 			detectionKey(userId),
 			JSON.stringify({
 				...preferences,
@@ -207,7 +236,7 @@ export function storeGamingActivity(
 			updatedAt: Date.now(),
 			source: source ?? (existing?.game.id === game.id && existing.source === 'auto' ? 'auto' : 'manual'),
 		};
-		window.localStorage.setItem(`${STORAGE_PREFIX}${userId}`, JSON.stringify(value));
+		writeGamingStorage(`${STORAGE_PREFIX}${userId}`, JSON.stringify(value));
 		window.dispatchEvent(new CustomEvent('nexus:gaming:activity-changed', {detail: value}));
 	} catch {
 		// Private browsing may disable local storage; the initial API request still succeeds.
@@ -216,7 +245,7 @@ export function storeGamingActivity(
 
 export function clearStoredGamingActivity(userId: string): void {
 	try {
-		window.localStorage.removeItem(`${STORAGE_PREFIX}${userId}`);
+		removeGamingStorage(`${STORAGE_PREFIX}${userId}`);
 		window.dispatchEvent(new CustomEvent('nexus:gaming:activity-changed', {detail: null}));
 	} catch {
 		// Ignore unavailable local storage.
@@ -229,7 +258,7 @@ function heartbeat(userId: string): void {
 		const stored = readStoredActivity(userId);
 		if (!stored) return;
 		if (Date.now() - stored.updatedAt > MAX_RESUME_AGE_MS) {
-			window.localStorage.removeItem(key);
+			removeGamingStorage(key);
 			return;
 		}
 		const electronApi = getElectronAPI();
@@ -237,7 +266,7 @@ function heartbeat(userId: string): void {
 			return;
 		}
 		stored.updatedAt = Date.now();
-		window.localStorage.setItem(key, JSON.stringify(stored));
+		writeGamingStorage(key, JSON.stringify(stored));
 		void startGamingActivity(stored.game, stored.shareWithGuilds).catch(() => undefined);
 	} catch {
 		// A malformed or unavailable local record must not interrupt the application shell.
@@ -316,7 +345,7 @@ async function reconcileDetectedGame(userId: string): Promise<void> {
 			if (currentActivity?.game.id === detectedGame.id) {
 				if (currentActivity.source !== 'auto') return;
 				currentActivity.updatedAt = Date.now();
-				window.localStorage.setItem(`${STORAGE_PREFIX}${userId}`, JSON.stringify(currentActivity));
+				writeGamingStorage(`${STORAGE_PREFIX}${userId}`, JSON.stringify(currentActivity));
 				return;
 			}
 
