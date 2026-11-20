@@ -426,7 +426,17 @@ class RuntimeConfig {
 			return await this.prepareSnapshot({snapshot, signal});
 		}
 		if (resolution.instanceKey !== expectedInstanceKey) {
-			throw new RuntimeInstanceIdentityChangedError(expectedInstanceKey, resolution.instanceKey);
+			if (
+				expectedInstanceKey.includes('.trycloudflare.com') &&
+				resolution.instanceKey.includes('.trycloudflare.com')
+			) {
+				logger.info('Tunnel instance host changed, accepting new tunnel instance key', {
+					expected: expectedInstanceKey,
+					resolved: resolution.instanceKey,
+				});
+			} else {
+				throw new RuntimeInstanceIdentityChangedError(expectedInstanceKey, resolution.instanceKey);
+			}
 		}
 		return await this.prepareSnapshot({snapshot: resolution.snapshot, signal});
 	}
