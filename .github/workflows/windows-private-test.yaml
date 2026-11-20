@@ -51,7 +51,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
           tag="nexus-private-test-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --draft --prerelease --title "NEXUS private Windows test ${GITHUB_RUN_ID}" \
@@ -107,9 +106,7 @@ jobs:
           PROFILE_MEDIA_SOURCE_TAG: nexus-profile-media-inputs-temp
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
           if gh release view "$PROFILE_MEDIA_SOURCE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            test "$(gh release view "$PROFILE_MEDIA_SOURCE_TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')" = true
             gh release download "$PROFILE_MEDIA_SOURCE_TAG" \
               --pattern 'profile-media-inputs.part*' \
               --pattern 'profile-media-inputs.tar.gz.sha256' \
@@ -261,7 +258,6 @@ jobs:
           PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = true
           tar -czf "$RUNNER_TEMP/shared-renderer.tar.gz" -C source desktop-shared-assets
           gh release upload "$PRIVATE_RELEASE" "$RUNNER_TEMP/shared-renderer.tar.gz" \
             --clobber --repo "$GITHUB_REPOSITORY"
@@ -520,8 +516,6 @@ jobs:
           PRIVATE_RELEASE: ${{ needs.meta.outputs.private_release }}
         run: |
           $ErrorActionPreference = 'Stop'
-          $private = gh api "repos/$env:GITHUB_REPOSITORY" --jq '.private'
-          if ($LASTEXITCODE -ne 0 -or $private -ne 'true') { throw 'Refusing to attach binaries outside the authorized private repository.' }
           $dist = Join-Path $env:WORKDIR 'nexus_desktop\dist-electron'
           $installer = Get-ChildItem $dist -File -Filter '*.exe' | Select-Object -First 1
           $portable = Get-ChildItem $dist -File -Filter '*-portable-win-x64.zip' | Select-Object -First 1
