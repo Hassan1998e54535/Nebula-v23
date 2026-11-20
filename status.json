@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "phase": "metadata-started",
+  "conclusion": "in_progress",
+  "runner": "Linux",
+  "job": "meta",
+  "runId": "44835992993",
+  "attempt": "1",
+  "runUrl": "https://github.com/Hassan1998e54535/Nebula-v23/actions/runs/44835992993",
+  "installerProduced": false
+}
