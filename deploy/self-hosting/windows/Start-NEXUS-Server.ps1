@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: Nebula
+# SPDX-License-Identifier: Nebula
 
 [CmdletBinding()]
 param(

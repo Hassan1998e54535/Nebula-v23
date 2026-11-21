@@ -96,15 +96,12 @@
 }
 
 .profilePopoutCard {
-	--profile-popout-content-width: min(380px, calc(100vw - 1.5rem));
+	--profile-popout-content-width: min(340px, calc(100vw - 1rem));
 	--profile-popout-border-width: 0.15625rem;
 	--profile-card-width: calc(var(--profile-popout-content-width) + var(--profile-popout-border-width) + var(--profile-popout-border-width));
 	--profile-card-border-width: var(--profile-popout-border-width);
-	width: var(--profile-card-width) !important;
-	max-height: none !important;
-	height: auto !important;
+	max-height: min(44rem, calc(100dvh - 2rem));
 	min-height: 0;
-	overflow: visible !important;
 
 	box-sizing: border-box;
 	background-color: var(--profile-background-primary, var(--background-primary));
@@ -172,8 +169,7 @@
 .profilePopoutCard :global(div[data-flx='user.profile.profile-card.profile-card-content.content-section']) {
 	min-height: 0;
 	flex: 1 1 auto;
-	overflow: visible !important;
-	overflow-y: visible !important;
+	overflow-y: auto;
 	gap: 0.625rem;
 	padding-top: 0.75rem;
 	scrollbar-width: none !important;

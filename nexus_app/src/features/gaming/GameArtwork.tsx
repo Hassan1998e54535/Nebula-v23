@@ -15,7 +15,7 @@ interface GameArtworkProps {
 
 const POPULAR_COVERS: Record<string, string> = {
 	'roblox': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7h.webp',
-	'rob run': 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4262460/header.jpg',
+	'rob run': 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4262460/0cef00dbfabf5f15adbf8b18e84cc8ef53dce963/capsule_231x87.jpg',
 	'arc raiders': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co68cf.webp',
 	'ea sports fc 27': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
 	'ea sports fc 26': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
@@ -70,10 +70,12 @@ export function GameArtwork({game, variant = 'portrait', showTitle = true}: Game
 		const searchName = encodeURIComponent(game.name.trim());
 		fetch(`https://store.steampowered.com/api/storesearch/?term=${searchName}&l=english&cc=US`)
 			.then((res) => res.json())
-			.then((data: {items?: Array<{id?: number}>}) => {
+			.then((data: {items?: Array<{id?: number; tiny_image?: string}>}) => {
 				if (cancelled) return;
 				const firstItem = data?.items?.[0];
-				if (firstItem?.id) {
+				if (firstItem?.tiny_image) {
+					setDynamicCoverUrl(firstItem.tiny_image);
+				} else if (firstItem?.id) {
 					setDynamicCoverUrl(
 						`https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${firstItem.id}/header.jpg`,
 					);

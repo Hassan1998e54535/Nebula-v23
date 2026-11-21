@@ -61,7 +61,7 @@ export const ProfileCardBanner: React.FC<ProfileCardBannerProps> = observer(
 		avatarSize,
 	}) => {
 		const isExpanded = variant === 'expanded';
-		const expandedCoverHeightPx = PROFILE_POPOUT_GEOMETRY.contentWidthPx * (175 / 420);
+		const expandedCoverHeightPx = PROFILE_POPOUT_GEOMETRY.contentWidthPx * (451.73 / 420);
 		const bannerHeight = isExpanded ? expandedCoverHeightPx : PROFILE_POPOUT_GEOMETRY.bannerHeightPx;
 		const viewBoxWidth = PROFILE_POPOUT_BANNER_AVATAR_CUTOUT.viewBoxWidthPx;
 		const viewBoxHeight = isExpanded ? expandedCoverHeightPx : PROFILE_POPOUT_BANNER_AVATAR_CUTOUT.viewBoxHeightPx;
@@ -72,7 +72,7 @@ export const ProfileCardBanner: React.FC<ProfileCardBannerProps> = observer(
 		const headerStyle = useMemo<React.CSSProperties>(
 			() =>
 				isExpanded
-					? {aspectRatio: '420 / 175', height: 'auto'}
+					? {aspectRatio: '420 / 451.73', height: 'auto'}
 					: {height: remFromPx(PROFILE_POPOUT_GEOMETRY.headerHeightPx)},
 			[isExpanded],
 		);
