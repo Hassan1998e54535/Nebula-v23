@@ -58,22 +58,27 @@ export function makeProgressReport(env, phase, conclusion, artifact) {
 }
 
 export function publishProgress(env, phase, conclusion, git, artifact) {
-	const {ref, report} = makeProgressReport(env, phase, conclusion, artifact);
-	const existing = git(['ls-remote', '--heads', 'origin', ref]).trim();
-	let parent;
-	if (existing) {
-		const sha = existing.split(/\s+/)[0];
-		if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Invalid prior report revision.');
-		git(['fetch', '--no-tags', '--depth=1', 'origin', ref]);
-		parent = sha;
+	try {
+		const {ref, report} = makeProgressReport(env, phase, conclusion, artifact);
+		const existing = git(['ls-remote', '--heads', 'origin', ref]).trim();
+		let parent;
+		if (existing) {
+			const sha = existing.split(/\s+/)[0];
+			if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Invalid prior report revision.');
+			git(['fetch', '--no-tags', '--depth=1', 'origin', ref]);
+			parent = sha;
+		}
+		const blob = git(['hash-object', '-w', '--stdin'], `${JSON.stringify(report, null, 2)}\n`).trim();
+		const tree = git(['mktree'], `100644 blob ${blob}\tstatus.json\n`).trim();
+		const args = ['commit-tree', tree, ...(parent ? ['-p', parent] : []),
+			'-m', `Record NEXUS ${phase}: ${conclusion}`];
+		const commit = git(args).trim();
+		git(['push', 'origin', `${commit}:${ref}`]);
+		return report;
+	} catch (err) {
+		console.warn('Progress report push skipped or failed:', err?.message || err);
+		return null;
 	}
-	const blob = git(['hash-object', '-w', '--stdin'], `${JSON.stringify(report, null, 2)}\n`).trim();
-	const tree = git(['mktree'], `100644 blob ${blob}\tstatus.json\n`).trim();
-	const args = ['commit-tree', tree, ...(parent ? ['-p', parent] : []),
-		'-m', `Record NEXUS ${phase}: ${conclusion}`];
-	const commit = git(args).trim();
-	git(['push', 'origin', `${commit}:${ref}`]);
-	return report;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -90,6 +95,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 		env,
 	});
 	const artifact = process.argv[4] ? JSON.parse(readFileSync(process.argv[4], 'utf8')) : undefined;
-	const report = publishProgress(env, process.argv[2], process.argv[3], git, artifact);
-	console.log(JSON.stringify(report));
+	try {
+		const report = publishProgress(env, process.argv[2], process.argv[3], git, artifact);
+		if (report) console.log(JSON.stringify(report));
+	} catch (err) {
+		console.warn('Progress reporting skipped:', err?.message || err);
+	}
 }
