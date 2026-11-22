@@ -15,7 +15,8 @@ const memoryStorageFallback = new Map<string, string>();
 
 function readGamingStorage(key: string): string | null {
 	try {
-		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		const storage =
+			getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? (window.localStorage ?? null) : null);
 		if (storage != null) {
 			return storage.getItem(key) ?? memoryStorageFallback.get(key) ?? null;
 		}
@@ -26,7 +27,8 @@ function readGamingStorage(key: string): string | null {
 function writeGamingStorage(key: string, value: string): void {
 	memoryStorageFallback.set(key, value);
 	try {
-		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		const storage =
+			getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? (window.localStorage ?? null) : null);
 		storage?.setItem(key, value);
 	} catch {}
 }
@@ -34,7 +36,8 @@ function writeGamingStorage(key: string, value: string): void {
 function removeGamingStorage(key: string): void {
 	memoryStorageFallback.delete(key);
 	try {
-		const storage = getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? window.localStorage ?? null : null);
+		const storage =
+			getProtectedLocalStorage() ?? (typeof window !== 'undefined' ? (window.localStorage ?? null) : null);
 		storage?.removeItem(key);
 	} catch {}
 }
@@ -181,9 +184,7 @@ export function saveGamingDetectionPreferences(userId: string, preferences: Gami
 		];
 		const suppressed_game_ids = [
 			...new Set(
-				(preferences?.suppressed_game_ids ?? [])
-					.map((id) => (typeof id === 'string' ? id.trim() : ''))
-					.filter(Boolean),
+				(preferences?.suppressed_game_ids ?? []).map((id) => (typeof id === 'string' ? id.trim() : '')).filter(Boolean),
 			),
 		];
 		const suppressed_game_names = [
@@ -281,6 +282,136 @@ function heartbeat(userId: string): void {
 	}
 }
 
+const BUILTIN_GAME_PROCESSES: Array<{processNames: Array<string>; game: GamingEntry}> = [
+	{
+		processNames: [
+			'fivem.exe',
+			'fivem_b2699_gtaprocess.exe',
+			'fivem_b2802_gtaprocess.exe',
+			'fivem_b2944_gtaprocess.exe',
+			'fivem_b3095_gtaprocess.exe',
+			'fivem_b3258_gtaprocess.exe',
+			'fivem_gamestate.exe',
+			'fivem_chromeos.exe',
+		],
+		game: {
+			id: 'fivem',
+			name: 'FiveM',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+		},
+	},
+	{
+		processNames: ['gta5.exe', 'gtav.exe', 'playgtav.exe', 'gta5_enhanced.exe'],
+		game: {
+			id: 'grand theft auto v',
+			name: 'Grand Theft Auto V',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x77.webp',
+		},
+	},
+	{
+		processNames: ['robloxplayerbeta.exe', 'robloxplayer.exe', 'roblox.exe'],
+		game: {
+			id: 'roblox',
+			name: 'Roblox',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7h.webp',
+		},
+	},
+	{
+		processNames: ['minecraft.exe', 'javaw.exe', 'minecraft.windows.exe'],
+		game: {
+			id: 'minecraft',
+			name: 'Minecraft',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co8fv5.webp',
+		},
+	},
+	{
+		processNames: ['valorant.exe', 'valorant-win64-shipping.exe'],
+		game: {
+			id: 'valorant',
+			name: 'VALORANT',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2mvt.webp',
+		},
+	},
+	{
+		processNames: ['fortniteclient-win64-shipping.exe', 'fortnite.exe'],
+		game: {
+			id: 'fortnite',
+			name: 'Fortnite',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1u8v.webp',
+		},
+	},
+	{
+		processNames: ['leagueclientux.exe', 'league of legends.exe'],
+		game: {
+			id: 'league of legends',
+			name: 'League of Legends',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4805.webp',
+		},
+	},
+	{
+		processNames: ['cs2.exe', 'csgo.exe'],
+		game: {
+			id: 'counter-strike 2',
+			name: 'Counter-Strike 2',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6b79.webp',
+		},
+	},
+	{
+		processNames: ['rocketleague.exe'],
+		game: {
+			id: 'rocket league',
+			name: 'Rocket League',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4a2m.webp',
+		},
+	},
+	{
+		processNames: ['r5apex.exe'],
+		game: {
+			id: 'apex legends',
+			name: 'Apex Legends',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20af.webp',
+		},
+	},
+	{
+		processNames: ['fc24.exe', 'fc25.exe', 'fc26.exe', 'fifa23.exe'],
+		game: {
+			id: 'ea sports fc 25',
+			name: 'EA SPORTS FC 25',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6g1r.webp',
+		},
+	},
+	{
+		processNames: ['beamng.drive.x64.exe'],
+		game: {
+			id: 'beamng.drive',
+			name: 'BeamNG.drive',
+			platform: 'computer',
+			cover_url: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co20au.webp',
+		},
+	},
+	{
+		processNames: ['robrun.exe', 'rob run.exe'],
+		game: {
+			id: 'rob run',
+			name: 'ROB RUN',
+			platform: 'computer',
+			cover_url:
+				'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4262460/0cef00dbfabf5f15adbf8b18e84cc8ef53dce963/capsule_231x87.jpg',
+		},
+	},
+];
+
 async function reconcileDetectedGame(userId: string): Promise<void> {
 	const electronApi = getElectronAPI();
 	if (
@@ -324,7 +455,14 @@ async function reconcileDetectedGame(userId: string): Promise<void> {
 				runningProcessNames.has(normalizeProcessName(registration.process_name)) &&
 				!suppressedProcessNames.has(normalizeProcessName(registration.process_name)),
 		);
-		const runningGames = [...(gameRegistration ? [gameRegistration.game] : []), ...runningSteamGames];
+		const builtinMatch = BUILTIN_GAME_PROCESSES.find((item) =>
+			item.processNames.some((pName) => runningProcessNames.has(pName) && !suppressedProcessNames.has(pName)),
+		);
+		const runningGames = [
+			...(gameRegistration ? [gameRegistration.game] : []),
+			...(builtinMatch ? [builtinMatch.game] : []),
+			...runningSteamGames,
+		];
 		const runningGameIds = new Set(runningGames.map((game) => game.id));
 		const runningGameNames = new Set(runningGames.map((game) => normalizeGameTitle(game.name)));
 		const stillSuppressedGameIds = preferences.suppressed_game_ids.filter((id) => runningGameIds.has(id));

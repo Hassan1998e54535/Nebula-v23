@@ -96,7 +96,7 @@
 }
 
 .profilePopoutCard {
-	--profile-popout-content-width: min(340px, calc(100vw - 1rem));
+	--profile-popout-content-width: min(310px, calc(100vw - 1rem));
 	--profile-popout-border-width: 0.15625rem;
 	--profile-card-width: calc(var(--profile-popout-content-width) + var(--profile-popout-border-width) + var(--profile-popout-border-width));
 	--profile-card-border-width: var(--profile-popout-border-width);

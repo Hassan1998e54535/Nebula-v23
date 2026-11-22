@@ -7,6 +7,7 @@ import RuntimeConfig from '@app/features/app/state/RuntimeConfig';
 import Authentication from '@app/features/auth/state/Authentication';
 import DeveloperOptions from '@app/features/devtools/state/DeveloperOptions';
 import {GamingActivityCard} from '@app/features/gaming/GamingActivityCard';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {OPEN_DM_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import type {GuildMember} from '@app/features/member/models/GuildMember';
 import GuildMembers from '@app/features/member/state/GuildMembers';
@@ -62,6 +63,7 @@ import * as ProfileDisplayUtils from '@app/features/user/utils/ProfileDisplayUti
 import {resolveProfileGuildMembership} from '@app/features/user/utils/ProfileGuildMembership';
 import {createMockProfile} from '@app/features/user/utils/ProfileUtils';
 import {MORE_ACTIONS_DESCRIPTOR} from '@app/features/user/utils/UserMessageDescriptors';
+import {useUserVoiceActivityAggregates} from '@app/features/voice/hooks/useUserVoiceActivities';
 import {Trans, useLingui} from '@lingui/react/macro';
 import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {MEDIA_PROXY_PROFILE_BANNER_SIZE_POPOUT} from '@nexus/constants/src/MediaProxyAssetSizes';
@@ -264,6 +266,13 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 		);
 		const shouldAutoplayProfileAnimations = useAutoplayExpandedProfileAnimations();
 		const presenceCustomStatus = usePresenceCustomStatus({userId: user.id, enabled: !isWebhook});
+		const activeGame = useUserActiveGame(guildId, user.id);
+		const voiceAggregates = useUserVoiceActivityAggregates(user.id);
+		const primaryVoiceActivity = voiceAggregates[0]?.primaryActivity;
+		const isStreaming = primaryVoiceActivity?.isStreaming === true;
+		const isInVoice = Boolean(primaryVoiceActivity);
+		const showVoiceActivity = !isWebhook && isInVoice;
+		const hideActiveGame = isStreaming || isInVoice;
 		const openCustomStatus = useCallback(() => {
 			ModalCommands.push(
 				modal(() => <CustomStatusModal data-flx="user.user-profile-popout.open-custom-status.custom-status-modal" />),
@@ -297,7 +306,7 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 		);
 		const profileCardGeometryStyle = {
 			...PROFILE_POPOUT_GEOMETRY_STYLE,
-			'--profile-popout-content-width': 'min(380px, calc(100vw - 1.5rem))',
+			'--profile-popout-content-width': 'min(310px, calc(100vw - 1rem))',
 			'--profile-sheet-accent': accentColor,
 		} as typeof PROFILE_POPOUT_GEOMETRY_STYLE;
 		const profileCardClassName = isCurrentUser
@@ -405,14 +414,15 @@ export const UserProfilePopout: React.FC<UserProfilePopoutProps> = observer(
 									<LimitedProfileNotice data-flx="user.user-profile-popout.limited-profile-notice" />
 								</div>
 							)}
-							{!isWebhook && (
+							{showVoiceActivity && (
 								<VoiceActivitySection
 									userId={user.id}
+									gameName={activeGame?.name}
 									onNavigate={handleClosePopout}
 									data-flx="user.user-profile-popout.voice-activity-section"
 								/>
 							)}
-							{!isWebhook && <GamingActivityCard guildId={guildId} userId={user.id} />}
+							{!isWebhook && <GamingActivityCard guildId={guildId} userId={user.id} hideActiveGame={hideActiveGame} />}
 							{profile && (
 								<UserProfilePreviewBio
 									profile={profile}

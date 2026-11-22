@@ -95,9 +95,10 @@ const STREAM_PREVIEW_LOCKED_DESCRIPTOR = msg({
 interface VoiceActivityCardProps {
 	activity: UserVoiceActivity;
 	onNavigate?: () => void;
+	gameName?: string | null;
 }
 
-export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({activity, onNavigate}) => {
+export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({activity, onNavigate, gameName}) => {
 	const {i18n} = useLingui();
 	const {voiceState, connectionId, guildId, channelId, channel, guild, isStreaming, streamKey, participantUsers} =
 		activity;
@@ -224,7 +225,7 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 									className={clsx(styles.activityLabel, styles.streamingLabel)}
 									data-flx="user.profile.voice-activity-card.activity-label"
 								>
-									<Trans>Streaming</Trans>
+									{gameName ? <Trans>Streaming {gameName}</Trans> : <Trans>Streaming</Trans>}
 								</span>
 								<LiveBadge showTooltip={false} data-flx="user.profile.voice-activity-card.live-badge" />
 							</>
@@ -235,15 +236,17 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 						)}
 					</div>
 				</div>
-				<VoiceActivityContext
-					channel={channel}
-					guild={guild}
-					guildId={guildId}
-					voiceState={voiceState}
-					data-flx="user.profile.voice-activity-card.voice-activity-context"
-				/>
+				{!isStreaming && (
+					<VoiceActivityContext
+						channel={channel}
+						guild={guild}
+						guildId={guildId}
+						voiceState={voiceState}
+						data-flx="user.profile.voice-activity-card.voice-activity-context"
+					/>
+				)}
 			</div>
-			{avatarStackUsers.length > 0 && (
+			{!isStreaming && avatarStackUsers.length > 0 && (
 				<div
 					className={styles.participantsRow}
 					role="group"
@@ -274,6 +277,36 @@ export const VoiceActivityCard: React.FC<VoiceActivityCardProps> = observer(({ac
 					lockedLabel={i18n._(STREAM_PREVIEW_LOCKED_DESCRIPTOR)}
 					data-flx="user.profile.voice-activity-card.stream-preview-section"
 				/>
+			)}
+			{isStreaming && (
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						width: '100%',
+						gap: '8px',
+						minWidth: 0,
+					}}
+				>
+					<VoiceActivityContext
+						channel={channel}
+						guild={guild}
+						guildId={guildId}
+						voiceState={voiceState}
+						data-flx="user.profile.voice-activity-card.voice-activity-context"
+					/>
+					{avatarStackUsers.length > 0 && (
+						<AvatarStack
+							size={20}
+							maxVisible={3}
+							users={avatarStackUsers}
+							guildId={guildId}
+							channelId={channelId}
+							data-flx="user.profile.voice-activity-card.avatar-stack"
+						/>
+					)}
+				</div>
 			)}
 			<div className={styles.actionRow} data-flx="user.profile.voice-activity-card.action-row">
 				{cannotJoinReason ? (

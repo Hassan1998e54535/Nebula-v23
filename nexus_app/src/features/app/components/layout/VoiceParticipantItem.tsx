@@ -5,9 +5,9 @@ import channelItemSurfaceStyles from '@app/features/app/components/layout/Channe
 import {DragItemType} from '@app/features/app/components/layout/types/DndTypes';
 import styles from '@app/features/app/components/layout/VoiceParticipantItem.module.css';
 import {VoiceStateIcons} from '@app/features/app/components/layout/VoiceStateIcons';
-import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {useContextMenuHoverState} from '@app/features/app/hooks/useContextMenuHoverState';
 import {PreloadableUserPopout} from '@app/features/channel/components/PreloadableUserPopout';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import type {VoiceState} from '@app/features/gateway/types/GatewayVoiceTypes';
 import * as NavigationCommands from '@app/features/navigation/commands/NavigationCommands';
 import Permission from '@app/features/permissions/state/Permission';
@@ -30,11 +30,11 @@ import {useStreamWatchDoubleClick} from '@app/features/voice/hooks/useStreamWatc
 import LocalVoiceState from '@app/features/voice/state/LocalVoiceState';
 import {buildVoiceParticipantIdentity} from '@app/features/voice/utils/VoiceParticipantIdentity';
 import {isParticipantVoicePermissionMuted} from '@app/features/voice/utils/VoicePermissionUtils';
-import {ME} from '@nexus/constants/src/AppConstants';
-import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {msg} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
-import {DesktopIcon, DeviceMobileIcon} from '@phosphor-icons/react';
+import {ME} from '@nexus/constants/src/AppConstants';
+import {Permissions} from '@nexus/constants/src/ChannelConstants';
+import {DesktopIcon, DeviceMobileIcon, GameControllerIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
@@ -140,7 +140,13 @@ export const VoiceParticipantItem = observer(function VoiceParticipantItem({
 	const showStreamHover = displayLive && Boolean(connectionId);
 	const activeGame = useUserActiveGame(guildId, user.id);
 	const hasVoiceStateIcons =
-		displayCameraOn || displayLive || isSelfMuted || isSelfDeafened || isGuildMuted || isGuildDeafened || Boolean(activeGame?.name);
+		displayCameraOn ||
+		displayLive ||
+		isSelfMuted ||
+		isSelfDeafened ||
+		isGuildMuted ||
+		isGuildDeafened ||
+		Boolean(activeGame?.name);
 	const streamWatchStateArgs = useMemo(
 		() => ({streamKey, guildId, channelId: currentChannelId}),
 		[streamKey, guildId, currentChannelId],
@@ -269,6 +275,29 @@ export const VoiceParticipantItem = observer(function VoiceParticipantItem({
 						data-flx="app.voice-participant-item.participant-name--2"
 					>
 						{displayName}
+						{activeGame?.name && (
+							<span
+								style={{
+									display: 'inline-flex',
+									alignItems: 'center',
+									gap: '3px',
+									marginLeft: '6px',
+									color: '#23a55a',
+									fontSize: '0.72rem',
+									fontWeight: 600,
+									maxWidth: '120px',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+									opacity: 0.95,
+									verticalAlign: 'middle',
+								}}
+								title={`Playing ${activeGame.name}`}
+							>
+								<GameControllerIcon size={12} weight="fill" />
+								<span>{activeGame.name}</span>
+							</span>
+						)}
 					</span>
 				)}
 				{hasVoiceStateIcons && (

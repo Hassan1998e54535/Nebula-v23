@@ -24,6 +24,24 @@
 	width: 76px;
 }
 
+.compact {
+	aspect-ratio: 1;
+	width: 24px;
+	height: 24px;
+	border-radius: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.compact .sourceMark,
+.compact .placeholder span {
+	display: none !important;
+}
+
+.compact .placeholder svg {
+	width: 14px;
+	height: 14px;
+}
+
 .placeholder {
 	height: 100%;
 	inset: 0;

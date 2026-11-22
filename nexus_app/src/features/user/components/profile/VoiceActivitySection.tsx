@@ -18,10 +18,11 @@ interface VoiceActivitySectionProps {
 	userId: string;
 	onNavigate?: () => void;
 	showAllActivities?: boolean;
+	gameName?: string | null;
 }
 
 export const VoiceActivitySection: React.FC<VoiceActivitySectionProps> = observer(
-	({userId, onNavigate, showAllActivities = false}) => {
+	({userId, onNavigate, showAllActivities = false, gameName}) => {
 		const {i18n} = useLingui();
 		const activityAggregates = useUserVoiceActivityAggregates(userId);
 		const primaryActivity = activityAggregates[0]?.primaryActivity;
@@ -62,6 +63,7 @@ export const VoiceActivitySection: React.FC<VoiceActivitySectionProps> = observe
 			<div className={styles.section} data-flx="user.profile.voice-activity-section.section--2">
 				<VoiceActivityCard
 					activity={primaryActivity}
+					gameName={gameName}
 					onNavigate={onNavigate}
 					data-flx="user.profile.voice-activity-section.voice-activity-card--2"
 				/>

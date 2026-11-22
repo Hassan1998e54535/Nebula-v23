@@ -3,6 +3,7 @@
 import Accessibility from '@app/features/accessibility/state/Accessibility';
 import {LongPressable} from '@app/features/app/components/LongPressable';
 import Channels from '@app/features/channel/state/Channels';
+import {useUserActiveGame} from '@app/features/gaming/useUserActiveGame';
 import {WATCH_STREAM_DESCRIPTOR} from '@app/features/i18n/utils/CommonMessageDescriptors';
 import {isKeyboardActivationKey} from '@app/features/input/utils/KeyboardUtils';
 import Permission from '@app/features/permissions/state/Permission';
@@ -149,16 +150,17 @@ import {parseVoiceParticipantIdentity} from '@app/features/voice/utils/VoicePart
 import {isParticipantVoicePermissionMuted} from '@app/features/voice/utils/VoicePermissionUtils';
 import {UNKNOWN_USER_DESCRIPTOR} from '@app/features/voice/utils/VoiceSharedMessageDescriptors';
 import {VOICE_VOLUME_MAX_SLIDER_VOLUME} from '@app/features/voice/utils/VoiceVolumeUtils';
-import {DEFAULT_ACCENT_COLOR} from '@nexus/constants/src/AppConstants';
-import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {msg, plural} from '@lingui/core/macro';
 import {useLingui} from '@lingui/react/macro';
 import {isTrackReference, useParticipantTile, VideoTrack} from '@livekit/components-react';
+import {DEFAULT_ACCENT_COLOR} from '@nexus/constants/src/AppConstants';
+import {Permissions} from '@nexus/constants/src/ChannelConstants';
 import {
 	DesktopIcon,
 	DeviceMobileIcon,
 	DotsThreeIcon,
 	EyeIcon,
+	GameControllerIcon,
 	MicrophoneSlashIcon,
 	PauseIcon,
 	SpeakerSlashIcon,
@@ -653,6 +655,7 @@ const VoiceParticipantTileInner = observer(function VoiceParticipantTileInner({
 	const participantDisplayName =
 		(participantUser ? NicknameUtils.getNickname(participantUser, guildId, channelId) : participant.name) ||
 		i18n._(UNKNOWN_USER_DESCRIPTOR);
+	const activeGame = useUserActiveGame(guildId ?? undefined, participantUser?.id);
 	const showStreamAudioControls = shouldShowTileStreamAudioControls({
 		isScreenShare,
 		isOwnScreenShare,
@@ -1494,6 +1497,33 @@ const VoiceParticipantTileInner = observer(function VoiceParticipantTileInner({
 											{participantDisplayName}
 										</span>
 									</Tooltip>
+									{activeGame?.name && (
+										<span
+											style={{
+												display: 'inline-flex',
+												alignItems: 'center',
+												gap: '4px',
+												marginLeft: '6px',
+												padding: '2px 7px',
+												borderRadius: '6px',
+												background: 'rgba(35, 165, 90, 0.22)',
+												color: '#23a55a',
+												fontSize: '0.72rem',
+												fontWeight: 600,
+												lineHeight: 1,
+												border: '1px solid rgba(35, 165, 90, 0.35)',
+												verticalAlign: 'middle',
+											}}
+											title={`Playing ${activeGame.name}`}
+										>
+											<GameControllerIcon size={13} weight="fill" />
+											<span
+												style={{maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+											>
+												{activeGame.name}
+											</span>
+										</span>
+									)}
 									{connectionId && (
 										<Tooltip
 											text={i18n._(CONNECTION_DESCRIPTOR, {connectionId})}
